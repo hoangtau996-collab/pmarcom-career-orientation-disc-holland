@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, UserCheck, Eye, Crown, LogIn, LogOut, Menu, X, User } from 'lucide-react';
+import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, UserCheck, Eye, Crown, LogIn, LogOut, Menu, X, User, Globe } from 'lucide-react';
 import { getVisitorStats } from '../utils/visitorCounter';
 import { isAdmin, isSuperAdmin } from '../utils/userManager';
+import { getTranslation } from '../utils/translations';
 
-export default function Header({ currentScreen, setCurrentScreen, darkMode, setDarkMode, user, onOpenAuth, onLogout, onOpenProfile }) {
-  const [stats, setStats] = useState({ totalVisits: '15,420', totalTests: '8,930' });
+export default function Header({ currentScreen, setCurrentScreen, darkMode, setDarkMode, lang = 'vi', setLang, user, onOpenAuth, onLogout, onOpenProfile }) {
+  const [stats, setStats] = useState({ totalVisits: '1,000', totalTests: '600' });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -14,9 +15,16 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
   const userIsAdmin = isAdmin(user);
   const userIsSuperAdmin = isSuperAdmin(user);
 
+  const t = (key, params) => getTranslation(lang, key, params);
+
   const navigateTo = (screen) => {
     setCurrentScreen(screen);
     setMobileMenuOpen(false);
+  };
+
+  const toggleLanguage = () => {
+    const nextLang = lang === 'vi' ? 'en' : 'vi';
+    if (setLang) setLang(nextLang);
   };
 
   return (
@@ -39,11 +47,11 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
           <div>
             <div className="flex items-center space-x-1.5">
               <span className="font-extrabold text-sm sm:text-base md:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
-                Định Hướng Nghề Nghiệp
+                {t('heroTitle')}
               </span>
             </div>
             <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 -mt-0.5 hidden xs:block">
-              Hệ Thống DISC & Holland Code (RIASEC)
+              {t('heroSubtitle')}
             </p>
           </div>
         </div>
@@ -54,7 +62,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
           {/* Visitor Counter */}
           <div className="flex items-center space-x-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900/60 rounded-full text-xs font-semibold text-amber-800 dark:text-amber-300">
             <Eye className="w-3.5 h-3.5 text-amber-600" />
-            <span>{stats.totalVisits} lượt xem</span>
+            <span>{stats.totalVisits} {lang === 'vi' ? 'lượt xem' : 'visits'}</span>
           </div>
 
           {/* Admin Button */}
@@ -64,7 +72,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               className="flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-black text-xs rounded-xl shadow-md transition-all scale-105"
             >
               <Crown className="w-3.5 h-3.5 fill-slate-950" />
-              <span>Quản Trị Admin</span>
+              <span>{t('adminPortal')}</span>
             </button>
           )}
 
@@ -77,7 +85,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Giới thiệu DISC</span>
+            <span>{t('discOverview')}</span>
           </button>
 
           <button
@@ -89,7 +97,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>Giới thiệu Holland</span>
+            <span>{t('hollandOverview')}</span>
           </button>
 
           <button
@@ -101,7 +109,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
             }`}
           >
             <History className="w-3.5 h-3.5" />
-            <span>Lịch sử</span>
+            <span>{t('history')}</span>
           </button>
 
           {/* User Status / Edit Profile Button */}
@@ -120,7 +128,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               <button
                 onClick={onLogout}
                 className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-xl transition-colors"
-                title="Đăng xuất"
+                title={t('logout')}
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -131,20 +139,19 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors"
             >
               <LogIn className="w-3.5 h-3.5 text-indigo-500" />
-              <span>Đăng Nhập</span>
+              <span>{t('login')}</span>
             </button>
           )}
 
-          {/* CTA Test */}
-          {currentScreen !== 'quizDisc' && currentScreen !== 'quizHolland' && currentScreen !== 'results' && (
-            <button
-              onClick={() => navigateTo('selectTest')}
-              className="flex items-center space-x-1.5 px-3.5 py-2 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-500/20 hover:scale-105 transition-all"
-            >
-              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-              <span>Vào Test</span>
-            </button>
-          )}
+          {/* Language Switcher Toggle */}
+          <button
+            onClick={toggleLanguage}
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-sm"
+            title="Chuyển đổi Ngôn ngữ / Switch Language"
+          >
+            <Globe className="w-3.5 h-3.5 text-indigo-500" />
+            <span>{lang === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}</span>
+          </button>
 
           {/* Dark Mode */}
           <button
@@ -156,8 +163,15 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
         </div>
 
         {/* Mobile & Tablet Controls */}
-        <div className="flex items-center space-x-2 lg:hidden">
+        <div className="flex items-center space-x-1.5 lg:hidden">
           
+          <button
+            onClick={toggleLanguage}
+            className="px-2 py-1 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200"
+          >
+            {lang === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}
+          </button>
+
           <button
             onClick={() => setDarkMode(!darkMode)}
             className="p-2 rounded-xl text-slate-500 dark:text-slate-400"
@@ -194,7 +208,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               </button>
 
               <button onClick={onLogout} className="text-xs text-rose-500 font-bold">
-                Đăng xuất
+                {t('logout')}
               </button>
             </div>
           ) : (
@@ -203,7 +217,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               className="w-full py-2.5 bg-indigo-600 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-2"
             >
               <LogIn className="w-4 h-4" />
-              <span>Đăng Nhập / Đăng Ký</span>
+              <span>{t('login')} / {t('register')}</span>
             </button>
           )}
 
@@ -213,7 +227,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               className="w-full py-2.5 bg-amber-500 text-slate-950 font-black text-xs rounded-xl flex items-center justify-center space-x-2 shadow-sm"
             >
               <Crown className="w-4 h-4" />
-              <span>Trang Quản Trị Admin</span>
+              <span>{t('adminPortal')}</span>
             </button>
           )}
 
@@ -223,7 +237,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
             >
               <Sparkles className="w-4 h-4 text-pink-500" />
-              <span>Chọn Bài Test</span>
+              <span>{t('home')}</span>
             </button>
 
             <button
@@ -231,7 +245,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
             >
               <History className="w-4 h-4 text-purple-500" />
-              <span>Lịch Sử Test</span>
+              <span>{t('history')}</span>
             </button>
 
             <button
@@ -239,7 +253,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
             >
               <BookOpen className="w-4 h-4 text-indigo-500" />
-              <span>Giới Thiệu DISC</span>
+              <span>{t('discOverview')}</span>
             </button>
 
             <button
@@ -247,13 +261,13 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
             >
               <Layers className="w-4 h-4 text-purple-500" />
-              <span>Giới Thiệu Holland</span>
+              <span>{t('hollandOverview')}</span>
             </button>
           </div>
 
           <div className="pt-2 text-center text-[11px] text-amber-700 dark:text-amber-400 font-semibold flex items-center justify-center space-x-1">
             <Eye className="w-3.5 h-3.5" />
-            <span>{stats.totalVisits} lượt truy cập hệ thống</span>
+            <span>{stats.totalVisits} {lang === 'vi' ? 'lượt truy cập hệ thống' : 'system visits'}</span>
           </div>
 
         </div>

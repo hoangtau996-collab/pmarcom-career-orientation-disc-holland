@@ -1,9 +1,11 @@
 import React from 'react';
 import { Compass, Sparkles, Layers, ArrowRight, CheckCircle2, Star, Eye, ShieldCheck, Lock, UserCheck, Bell, Award } from 'lucide-react';
 import { getVisitorStats } from '../utils/visitorCounter';
+import { getTranslation } from '../utils/translations';
 
-export default function TestSelector({ onSelectTestMode, user }) {
+export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
   const stats = getVisitorStats();
+  const t = (key, params) => getTranslation(lang, key, params);
 
   return (
     <div className="space-y-8 sm:space-y-10 py-4 sm:py-6">
@@ -17,11 +19,11 @@ export default function TestSelector({ onSelectTestMode, user }) {
             </div>
             <div>
               <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center justify-center sm:justify-start space-x-1.5">
-                <span>Chào mừng Khách Vãng Lai đến với P Marcom!</span>
+                <span>{lang === 'vi' ? 'Chào mừng bạn đến với P Marcom!' : 'Welcome to P Marcom Career Platform!'}</span>
                 <Sparkles className="w-4 h-4 text-amber-500" />
               </h4>
               <p className="text-xs text-slate-600 dark:text-slate-300">
-                Vui lòng <span className="font-bold text-indigo-600 dark:text-indigo-400">Đăng Ký / Đăng Nhập tài khoản</span> để làm bài test và nhận Báo cáo kết quả phân tích chi tiết &amp; lưu lịch sử.
+                {t('guestNotice')}
               </p>
             </div>
           </div>
@@ -30,7 +32,7 @@ export default function TestSelector({ onSelectTestMode, user }) {
             onClick={() => onSelectTestMode('combo')}
             className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs rounded-xl shadow shrink-0"
           >
-            Đăng Nhập Làm Test Ngay
+            {t('login')}
           </button>
         </div>
       )}
@@ -49,37 +51,37 @@ export default function TestSelector({ onSelectTestMode, user }) {
             
             <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-wider">
               <img src="/logo-pmarcom.png" alt="Logo P Marcom" className="h-5 w-auto object-contain" />
-              <span>Nền Tảng Độc Quyền Bản Quyền P Marcom</span>
+              <span>{lang === 'vi' ? 'Nền Tảng Độc Quyền P Marcom' : 'Exclusive P Marcom Platform'}</span>
             </div>
 
-            {/* HEADLINE WITHOUT AWKWARD WORD BREAKS */}
+            {/* HEADLINE */}
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-              Định Hướng Phát Triển <span className="whitespace-nowrap">Nghề Nghiệp</span> <br />
+              {t('heroTitle')} <br />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-pink-400 to-indigo-300">
-                Toàn Diện Với DISC &amp; Holland
+                {t('heroSubtitle')}
               </span>
             </h1>
 
-            {/* PARAGRAPH WITHOUT MARKDOWN ASTERISKS ** */}
+            {/* PARAGRAPH */}
             <p className="text-slate-300 text-xs sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
-              Giải pháp thấu hiểu bản thân chuẩn mực khoa học Hoa Kỳ. Kết hợp bài đánh giá hành vi <strong className="font-bold text-amber-300">DISC (William Marston)</strong> &amp; <strong className="font-bold text-pink-300">Bộ thẻ bài sở thích Holland RIASEC</strong>, mang lại ma trận định hướng ngành học và sự nghiệp tối ưu nhất.
+              {t('heroDesc')}
             </p>
 
-            {/* 2 STATS PILLS (STARTING FROM 1.000 VISITS & 600 TESTS) */}
+            {/* STATS PILLS */}
             <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3">
               
               {/* Visit Counter Pill */}
               <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm text-xs font-semibold">
                 <Eye className="w-4 h-4 text-amber-400 shrink-0" />
                 <span className="text-white font-bold">{stats.totalVisits}</span>
-                <span className="text-slate-300">lượt truy cập hệ thống</span>
+                <span className="text-slate-300">{t('statsVisits')}</span>
               </div>
 
               {/* Completed Tests Counter Pill */}
               <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm text-xs font-semibold">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span className="text-white font-bold">{stats.totalTests}</span>
-                <span className="text-slate-300">bài test hoàn thành</span>
+                <span className="text-slate-300">{t('statsCompletedTests')}</span>
               </div>
 
             </div>
@@ -99,9 +101,9 @@ export default function TestSelector({ onSelectTestMode, user }) {
               <div className="absolute bottom-4 left-4 right-4 p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
                 <div className="font-extrabold text-amber-300 flex items-center space-x-1">
                   <Star className="w-4 h-4 fill-amber-300" />
-                  <span>Ma Trận Gợi Ý 50+ Ngành Học &amp; Nghề Nghiệp</span>
+                  <span>{lang === 'vi' ? 'Ma Trận Gợi Ý 50+ Ngành Học & Nghề Nghiệp' : 'Matrix of 50+ Recommended Majors & Careers'}</span>
                 </div>
-                <div className="text-[11px] text-slate-200 mt-0.5">Dành riêng cho Sinh viên/Học sinh và Người đi làm</div>
+                <div className="text-[11px] text-slate-200 mt-0.5">{lang === 'vi' ? 'Dành cho Sinh viên/Học sinh và Người đi làm' : 'For Students, Fresh Grads & Working Professionals'}</div>
               </div>
             </div>
           </div>
@@ -113,10 +115,11 @@ export default function TestSelector({ onSelectTestMode, user }) {
       <div className="space-y-4">
         <div className="text-center space-y-1">
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-            Chọn Bài Đánh Giá Phù Hợp Với Bạn
+            {t('selectMode')}
           </h3>
           <p className="text-xs sm:text-sm text-slate-500">
-            Khuyến nghị thực hiện <strong className="font-bold text-amber-600 dark:text-amber-400">Bài Đánh Giá Combo Kép</strong> để có kết quả chính xác nhất
+            {lang === 'vi' ? 'Khuyến nghị thực hiện ' : 'Recommended to take the '}
+            <strong className="font-bold text-amber-600 dark:text-amber-400">{t('comboTitle')}</strong>
           </p>
         </div>
 
@@ -133,27 +136,27 @@ export default function TestSelector({ onSelectTestMode, user }) {
                   className="w-full h-full object-cover"
                 />
                 <span className="absolute top-3 left-3 px-3 py-1 bg-indigo-600 text-white font-extrabold text-xs rounded-full shadow">
-                  Mô Hình DISC
+                  DISC Model
                 </span>
               </div>
 
               <div>
                 <h4 className="text-lg font-black text-slate-900 dark:text-white">
-                  Đánh Giá Tính Cách DISC
+                  {t('discTitle')}
                 </h4>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  28 câu hỏi trắc nghiệm Forced-Choice tìm ra nhóm D, I, S, C vượt trội và phong cách làm việc.
+                  {t('discDesc')}
                 </p>
               </div>
 
               <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Thời gian làm: 5 - 7 phút</span>
+                  <span>{t('discTime')}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Phân tích 16 mẫu tính cách</span>
+                  <span>{lang === 'vi' ? 'Phân tích 16 mẫu tính cách' : '16 Personality Profiles'}</span>
                 </div>
               </div>
             </div>
@@ -162,7 +165,7 @@ export default function TestSelector({ onSelectTestMode, user }) {
               onClick={() => onSelectTestMode('disc')}
               className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-2xl shadow-md transition-all flex items-center justify-center space-x-2"
             >
-              <span>Vào Làm Test DISC</span>
+              <span>{t('startDisc')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
@@ -185,21 +188,21 @@ export default function TestSelector({ onSelectTestMode, user }) {
 
               <div>
                 <h4 className="text-lg font-black text-slate-900 dark:text-white">
-                  Holland Card Sort (Trật Tự Thẻ Bài)
+                  {t('hollandTitle')}
                 </h4>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Mô phỏng bộ 36 thẻ bài tương tác sinh động xếp nhóm sở thích R - I - A - S - E - C.
+                  {t('hollandDesc')}
                 </p>
               </div>
 
               <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Trải nghiệm vuốt/chạm thẻ bài</span>
+                  <span>{t('hollandTime')}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>Tìm Mã Holland Top 3</span>
+                  <span>{lang === 'vi' ? 'Tìm Mã Holland Top 3' : 'Top 3 Holland RIASEC Code'}</span>
                 </div>
               </div>
             </div>
@@ -208,7 +211,7 @@ export default function TestSelector({ onSelectTestMode, user }) {
               onClick={() => onSelectTestMode('holland')}
               className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs rounded-2xl shadow-md transition-all flex items-center justify-center space-x-2"
             >
-              <span>Vào Làm Holland Card Sort</span>
+              <span>{t('startHolland')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
@@ -218,7 +221,7 @@ export default function TestSelector({ onSelectTestMode, user }) {
           <div className="bg-gradient-to-b from-amber-50/70 to-amber-100/30 dark:from-slate-900 dark:to-slate-900 rounded-3xl p-6 border-2 border-amber-400 dark:border-amber-500/60 shadow-2xl flex flex-col justify-between space-y-5 relative transform hover:scale-[1.03] transition-all">
             
             <div className="absolute -top-3.5 right-6 px-3 py-1 bg-amber-500 text-slate-950 font-black text-[11px] rounded-full uppercase tracking-wider shadow">
-              🔥 Khuyên Dùng
+              🔥 {lang === 'vi' ? 'Khuyên Dùng' : 'Recommended'}
             </div>
 
             <div className="space-y-4">
@@ -229,27 +232,27 @@ export default function TestSelector({ onSelectTestMode, user }) {
                   className="w-full h-full object-cover"
                 />
                 <span className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-amber-500 to-pink-500 text-slate-950 font-black text-xs rounded-full shadow">
-                  Đánh Giá Kép Toàn Diện
+                  {lang === 'vi' ? 'Đánh Giá Kép Toàn Diện' : 'Comprehensive Dual Combo'}
                 </span>
               </div>
 
               <div>
                 <h4 className="text-lg font-black text-slate-900 dark:text-white">
-                  Đánh Giá Kép: DISC + Holland
+                  {t('comboTitle')}
                 </h4>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Làm liền mạch cả 2 bài test để nhận Báo cáo tổng hợp chuyên sâu và Ma trận chọn ngành chọn nghề.
+                  {t('comboDesc')}
                 </p>
               </div>
 
               <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  <span>Báo cáo tỉ lệ &amp; Biểu đồ kép</span>
+                  <span>{lang === 'vi' ? 'Báo cáo tỉ lệ & Biểu đồ kép' : 'Dual Radar & Bar Charts'}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  <span>Xuất file PDF phân trang chuẩn A4</span>
+                  <span>{lang === 'vi' ? 'Xuất file PDF phân trang chuẩn A4' : 'A4 PDF Report Export'}</span>
                 </div>
               </div>
             </div>
@@ -259,7 +262,7 @@ export default function TestSelector({ onSelectTestMode, user }) {
               className="w-full py-3.5 px-4 bg-gradient-to-r from-amber-500 via-pink-600 to-indigo-600 hover:from-amber-600 hover:to-indigo-500 text-white font-black text-xs sm:text-sm rounded-2xl shadow-lg transition-all flex items-center justify-center space-x-2"
             >
               <Sparkles className="w-4 h-4 animate-pulse" />
-              <span>Vào Đánh Giá Combo Kép</span>
+              <span>{t('startCombo')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 

@@ -15,6 +15,7 @@ import { calculateDiscResult } from './utils/discCalculator';
 import { calculateHollandResult } from './utils/hollandCalculator';
 import { incrementVisitCount, incrementTestCount } from './utils/visitorCounter';
 import { isAdmin } from './utils/userManager';
+import { getTranslation } from './utils/translations';
 
 // Static URL Hash mapping
 const SCREEN_HASH_MAP = {
@@ -47,6 +48,11 @@ export default function App() {
     return HASH_SCREEN_MAP[initialHash] || 'selectTest';
   }); 
 
+  // Language state: 'vi' | 'en'
+  const [lang, setLang] = useState(() => {
+    return localStorage.getItem('disc_lang') || 'vi';
+  });
+
   const [testMode, setTestMode] = useState('combo'); // 'disc' | 'holland' | 'combo'
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -71,6 +77,11 @@ export default function App() {
     const saved = localStorage.getItem('disc_test_history');
     return saved ? JSON.parse(saved) : [];
   });
+
+  // Save language setting
+  useEffect(() => {
+    localStorage.setItem('disc_lang', lang);
+  }, [lang]);
 
   // Increment real visit count once per session / mount
   useEffect(() => {
@@ -106,6 +117,8 @@ export default function App() {
     }
     localStorage.setItem('disc_dark_mode', darkMode);
   }, [darkMode]);
+
+  const t = (key, params) => getTranslation(lang, key, params);
 
   // Request authentication before test
   const handleSelectTestMode = (mode) => {
@@ -148,7 +161,7 @@ export default function App() {
 
   // Logout
   const handleLogout = () => {
-    if (window.confirm('Bạn có chắc chắn muốn đăng xuất tài khoản?')) {
+    if (window.confirm(lang === 'vi' ? 'Bạn có chắc chắn muốn đăng xuất tài khoản?' : 'Are you sure you want to log out?')) {
       setUser(null);
       localStorage.removeItem('disc_active_user');
       setCurrentScreen('selectTest');
@@ -207,7 +220,7 @@ export default function App() {
   };
 
   const handleClearHistory = () => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử test?')) {
+    if (window.confirm(lang === 'vi' ? 'Bạn có chắc chắn muốn xóa toàn bộ lịch sử test?' : 'Are you sure you want to clear test history?')) {
       setHistoryList([]);
       localStorage.removeItem('disc_test_history');
     }
@@ -221,6 +234,8 @@ export default function App() {
         setCurrentScreen={setCurrentScreen}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
+        lang={lang}
+        setLang={setLang}
         user={user}
         onOpenAuth={() => setShowAuthModal(true)}
         onOpenProfile={() => setShowProfileModal(true)}
@@ -247,7 +262,7 @@ export default function App() {
         )}
 
         {currentScreen === 'selectTest' && (
-          <TestSelector onSelectTestMode={handleSelectTestMode} user={user} />
+          <TestSelector onSelectTestMode={handleSelectTestMode} user={user} lang={lang} />
         )}
 
         {currentScreen === 'overviewDisc' && (
@@ -301,15 +316,15 @@ export default function App() {
 
       </main>
 
-      {/* FOOTER CLEANED OF SUPER ADMIN EMAIL */}
+      {/* BILINGUAL FOOTER */}
       <footer className="border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
         <div className="max-w-7xl mx-auto px-4 space-y-3">
           <div className="flex items-center justify-center space-x-3">
             <img src="/logo-pmarcom.png" alt="P Marcom Logo" className="h-7 w-auto object-contain" />
             <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">P Marcom Career Platform</span>
           </div>
-          <p>© 2026 Định Hướng Phát Triển Nghề Nghiệp • Hệ Thống Đánh Giá DISC &amp; Holland Code (RIASEC)</p>
-          <p className="text-[11px] text-slate-400">Bản quyền thuộc về P Marcom • Đồng hành cùng sự phát triển nghề nghiệp</p>
+          <p>{t('footerCopyright')}</p>
+          <p className="text-[11px] text-slate-400">{t('footerRights')}</p>
         </div>
       </footer>
 
