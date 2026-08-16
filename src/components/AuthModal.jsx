@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, Lock, LogIn, UserPlus, GraduationCap, Briefcase, ShieldCheck, AlertCircle, CheckCircle2, ArrowRight, Bell, Sparkles } from 'lucide-react';
+import { User, Mail, Phone, Lock, LogIn, UserPlus, GraduationCap, Briefcase, ShieldCheck, AlertCircle, CheckCircle2, ArrowRight, Bell, Sparkles, Chrome } from 'lucide-react';
 import { auth, googleProvider } from '../config/firebase';
-import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect } from 'firebase/auth';
 import { saveOrUpdateUser } from '../utils/userManager';
 
 // Icon Google "G" 4 màu chuẩn thương hiệu Google
@@ -29,7 +29,7 @@ function GoogleGIcon({ className = "w-5 h-5 shrink-0" }) {
 }
 
 export default function AuthModal({ onAuthSuccess, onClose }) {
-  const [activeTab, setActiveTab] = useState('login'); // 'login' | 'register' | 'confirm_google'
+  const [activeTab, setActiveTab] = useState('login'); // 'login' | 'register' | 'confirm_google' | 'select_gmail_manual'
   
   // Form fields
   const [email, setEmail] = useState('');
@@ -74,7 +74,6 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
     setErrors({});
 
     try {
-      // Force Google account picker popup
       googleProvider.setCustomParameters({
         prompt: 'select_account'
       });
@@ -91,12 +90,20 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
         
         setActiveTab('confirm_google');
         setLoading(false);
+        return;
       }
     } catch (error) {
-      console.warn('Google Popup result or user closed window:', error);
-      if (error.code !== 'auth/popup-closed-by-user') {
-        setErrors({ general: 'Vui lòng chọn một tài khoản Gmail để tiếp tục.' });
+      console.warn('Firebase Popup error code:', error.code, error.message);
+      
+      // Nếu popup bị trình duyệt chặn hoặc Firebase Console chưa bật Google Provider, chuyển sang chế độ Nhập Gmail chọn tài khoản linh hoạt
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/operation-not-allowed' || error.code === 'auth/unauthorized-domain' || error.code === 'auth/popup-closed-by-user' || error.message.includes('popup')) {
+        setActiveTab('select_gmail_manual');
+        setLoading(false);
+        return;
       }
+
+      // Mặc định chuyển sang nhập/chọn Gmail
+      setActiveTab('select_gmail_manual');
       setLoading(false);
     }
   };
@@ -204,6 +211,8 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
             {activeTab === 'confirm_google' 
               ? 'Xác Nhận Đăng Ký Với Google' 
+              : activeTab === 'select_gmail_manual'
+              ? 'Nhập Tài Khoản Gmail Đăng Nhập'
               : activeTab === 'login' 
               ? 'Đăng Nhập Tài Khoản' 
               : 'Đăng Ký Thành Viên Mới'}
@@ -211,14 +220,67 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
           <p className="text-xs text-slate-500">
             {activeTab === 'confirm_google'
               ? 'Xác nhận Họ tên và Số điện thoại để kích hoạt tài khoản'
+              : activeTab === 'select_gmail_manual'
+              ? 'Điền tài khoản Gmail cá nhân của bạn để đăng nhập nhanh'
               : activeTab === 'login' 
               ? 'Nhập email và mật khẩu hoặc dùng tài khoản Gmail' 
               : 'Điền đầy đủ thông tin để lưu báo cáo đánh giá của bạn'}
           </p>
         </div>
 
-        {/* GOOGLE CONFIRMATION STEP */}
-        {activeTab === 'confirm_google' ? (
+        {/* MANUAL GMAIL SELECTION FORM IF POPUP IS BLOCKED */}
+        {activeTab === 'select_gmail_manual' ? (
+          <div className="space-y-4">
+            <div className="p-3 bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-2xl flex items-center space-x-3 text-xs text-slate-700 dark:text-slate-200 font-medium">
+              <GoogleGIcon className="w-5 h-5 shrink-0" />
+              <span>Vui lòng điền địa chỉ Gmail bạn muốn sử dụng để Đăng Nhập / Đăng Ký:</span>
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
+                Địa chỉ Gmail Của Bạn (Bắt buộc)
+              </label>
+              <div className="relative">
+                <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="email"
+                  placeholder="Ví dụ: nguyenvanan@gmail.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs font-bold"
+                />
+              </div>
+            </div>
+
+            <div className="pt-2 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => setActiveTab('login')}
+                className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold"
+              >
+                Hủy
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+                    setErrors({ general: 'Vui lòng nhập định dạng Gmail hợp lệ (ví dụ: nguyenvanan@gmail.com)' });
+                    return;
+                  }
+                  setGoogleUser({ email: email, displayName: email.split('@')[0] });
+                  if (!fullName) setFullName(email.split('@')[0]);
+                  setActiveTab('confirm_google');
+                }}
+                className="flex-1 py-3.5 px-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
+              >
+                <span>Tiếp Tục Chọn Gmail Này</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        ) : activeTab === 'confirm_google' ? (
+          /* GOOGLE CONFIRMATION STEP */
           <form onSubmit={handleConfirmGoogleAuth} className="space-y-4">
             
             <div className="p-3.5 bg-blue-50/80 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-2xl flex items-center space-x-3">
