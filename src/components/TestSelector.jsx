@@ -60,33 +60,26 @@ export default function TestSelector({ onSelectTestMode, user }) {
               </span>
             </h1>
 
+            {/* PARAGRAPH WITHOUT MARKDOWN ASTERISKS ** */}
             <p className="text-slate-300 text-xs sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
-              Giải pháp thấu hiểu bản thân chuẩn mực khoa học Hoa Kỳ. Kết hợp bài đánh giá hành vi **DISC (William Marston)** &amp; **Bộ thẻ bài sở thích Holland RIASEC**, mang lại ma trận định hướng ngành học và sự nghiệp tối ưu nhất.
+              Giải pháp thấu hiểu bản thân chuẩn mực khoa học Hoa Kỳ. Kết hợp bài đánh giá hành vi <strong className="font-bold text-amber-300">DISC (William Marston)</strong> &amp; <strong className="font-bold text-pink-300">Bộ thẻ bài sở thích Holland RIASEC</strong>, mang lại ma trận định hướng ngành học và sự nghiệp tối ưu nhất.
             </p>
 
-            {/* 2 STATS CARDS (REMOVED SATISFACTION RATE, START VISITS AT 1000, TESTS AT 600) */}
-            <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
+            {/* 2 STATS PILLS (STARTING FROM 1.000 VISITS & 600 TESTS) */}
+            <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3">
               
-              {/* Visit Counter */}
-              <div className="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm">
-                <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400">
-                  <Eye className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-lg font-black text-white leading-none">{stats.totalVisits}</div>
-                  <div className="text-[11px] text-slate-300 font-medium mt-1">Lượt truy cập hệ thống</div>
-                </div>
+              {/* Visit Counter Pill */}
+              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm text-xs font-semibold">
+                <Eye className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="text-white font-bold">{stats.totalVisits}</span>
+                <span className="text-slate-300">lượt truy cập hệ thống</span>
               </div>
 
-              {/* Completed Tests Counter */}
-              <div className="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm">
-                <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400">
-                  <Award className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-lg font-black text-white leading-none">{stats.totalTests}</div>
-                  <div className="text-[11px] text-slate-300 font-medium mt-1">Bài test hoàn thành</div>
-                </div>
+              {/* Completed Tests Counter Pill */}
+              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm text-xs font-semibold">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="text-white font-bold">{stats.totalTests}</span>
+                <span className="text-slate-300">bài test hoàn thành</span>
               </div>
 
             </div>
@@ -123,7 +116,7 @@ export default function TestSelector({ onSelectTestMode, user }) {
             Chọn Bài Đánh Giá Phù Hợp Với Bạn
           </h3>
           <p className="text-xs sm:text-sm text-slate-500">
-            Khuyến nghị thực hiện **Bài Đánh Giá Combo Kép** để có kết quả chính xác nhất
+            Khuyến nghị thực hiện <strong className="font-bold text-amber-600 dark:text-amber-400">Bài Đánh Giá Combo Kép</strong> để có kết quả chính xác nhất
           </p>
         </div>
 

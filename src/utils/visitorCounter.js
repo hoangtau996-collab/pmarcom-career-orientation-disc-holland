@@ -1,24 +1,25 @@
 /**
  * BỘ ĐẾM LƯỢT TRUY CẬP THẬT & BÀI TEST THỰC TẾ (P MARCOM)
- * - Khởi chạy ban đầu từ 1,000 lượt truy cập
- * - Số bài test hoàn thành khởi chạy từ 600
- * - Tự động đếm thật mỗi khi người dùng truy cập và hoàn thành test thực tế.
+ * - Khởi tạo từ 1.000 lượt truy cập
+ * - Số bài test hoàn thành khởi tạo từ 600
+ * - Tự động đếm tăng thật mỗi khi có người vào trang hoặc hoàn thành test.
  */
 
-const BASE_VISITS = 1000;
-const BASE_TESTS = 600;
+const INITIAL_VISITS = 1000;
+const INITIAL_TESTS = 600;
 
 export function getVisitorStats() {
   let visits = parseInt(localStorage.getItem('pmarcom_real_visits') || '0', 10);
   let tests = parseInt(localStorage.getItem('pmarcom_real_tests') || '0', 10);
 
-  if (visits === 0) {
-    visits = BASE_VISITS;
+  // Reset if visits/tests have old high values >= 5000 or 0
+  if (visits === 0 || visits >= 5000) {
+    visits = INITIAL_VISITS;
     localStorage.setItem('pmarcom_real_visits', visits.toString());
   }
 
-  if (tests === 0) {
-    tests = BASE_TESTS;
+  if (tests === 0 || tests >= 5000) {
+    tests = INITIAL_TESTS;
     localStorage.setItem('pmarcom_real_tests', tests.toString());
   }
 
