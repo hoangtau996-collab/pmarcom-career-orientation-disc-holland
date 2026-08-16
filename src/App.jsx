@@ -42,7 +42,6 @@ const HASH_SCREEN_MAP = {
 };
 
 export default function App() {
-  // Initialize screen state from URL Hash
   const [currentScreen, setCurrentScreenState] = useState(() => {
     const initialHash = window.location.hash || '#/';
     return HASH_SCREEN_MAP[initialHash] || 'selectTest';
@@ -302,14 +301,15 @@ export default function App() {
 
       </main>
 
+      {/* FOOTER CLEANED OF SUPER ADMIN EMAIL */}
       <footer className="border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
         <div className="max-w-7xl mx-auto px-4 space-y-3">
           <div className="flex items-center justify-center space-x-3">
             <img src="/logo-pmarcom.png" alt="P Marcom Logo" className="h-7 w-auto object-contain" />
             <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">P Marcom Career Platform</span>
           </div>
-          <p>© 2026 Định Hướng Phát Triển Nghề Nghiệp • Hệ Thống Đánh Giá DISC & Holland Code (RIASEC)</p>
-          <p className="text-[11px] text-slate-400">Tài khoản Super Admin chính: pmarcomvn@gmail.com • Bản quyền thuộc về P Marcom</p>
+          <p>© 2026 Định Hướng Phát Triển Nghề Nghiệp • Hệ Thống Đánh Giá DISC &amp; Holland Code (RIASEC)</p>
+          <p className="text-[11px] text-slate-400">Bản quyền thuộc về P Marcom • Đồng hành cùng sự phát triển nghề nghiệp</p>
         </div>
       </footer>
 
