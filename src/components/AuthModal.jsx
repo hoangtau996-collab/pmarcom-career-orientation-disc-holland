@@ -47,7 +47,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
     const newErrors = {};
 
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Vui lòng nhập Email hợp lệ (ví dụ: pmarcomvn@gmail.com)';
+      newErrors.email = 'Vui lòng nhập Email hợp lệ';
     }
 
     if (!password || password.length < 6) {
@@ -60,7 +60,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
       }
 
       if (!phone.trim() || phone.trim().length < 9) {
-        newErrors.phone = 'Bắt buộc nhập Số điện thoại hợp lệ (ví dụ: 0988888888)';
+        newErrors.phone = 'Bắt buộc nhập Số điện thoại hợp lệ';
       }
     }
 
@@ -68,35 +68,35 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Trigger Google Gmail Popup
+  // Trigger Google Gmail Popup (Bắt buộc chọn tài khoản)
   const handleGoogleAuthClick = async () => {
     setLoading(true);
     setErrors({});
 
     try {
-      let gEmail = 'pmarcomvn@gmail.com';
-      let gName = 'Thành Viên P Marcom';
+      // Force Google account picker popup
+      googleProvider.setCustomParameters({
+        prompt: 'select_account'
+      });
 
-      try {
-        const result = await signInWithPopup(auth, googleProvider);
-        if (result.user) {
-          gEmail = result.user.email || gEmail;
-          gName = result.user.displayName || gName;
-        }
-      } catch (err) {
-        console.warn('Firebase popup closed or fallback:', err);
-      }
-
-      setGoogleUser({ email: gEmail, displayName: gName });
-      setEmail(gEmail);
-      if (!fullName) setFullName(gName);
+      const result = await signInWithPopup(auth, googleProvider);
       
-      setActiveTab('confirm_google');
-      setLoading(false);
+      if (result && result.user) {
+        const gEmail = result.user.email || '';
+        const gName = result.user.displayName || '';
 
+        setGoogleUser({ email: gEmail, displayName: gName });
+        setEmail(gEmail);
+        setFullName(gName);
+        
+        setActiveTab('confirm_google');
+        setLoading(false);
+      }
     } catch (error) {
-      console.error('Lỗi xác thực Google Gmail:', error);
-      setErrors({ general: 'Không thể mở cửa sổ Google. Vui lòng thử lại!' });
+      console.warn('Google Popup result or user closed window:', error);
+      if (error.code !== 'auth/popup-closed-by-user') {
+        setErrors({ general: 'Vui lòng chọn một tài khoản Gmail để tiếp tục.' });
+      }
       setLoading(false);
     }
   };
@@ -224,7 +224,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
             <div className="p-3.5 bg-blue-50/80 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-2xl flex items-center space-x-3">
               <GoogleGIcon className="w-6 h-6 shrink-0" />
               <div className="text-xs">
-                <div className="font-bold text-slate-900 dark:text-white">Tài khoản Google / Gmail:</div>
+                <div className="font-bold text-slate-900 dark:text-white">Tài khoản Google / Gmail đã chọn:</div>
                 <div className="font-semibold text-blue-600 dark:text-blue-400 truncate">{googleUser?.email}</div>
               </div>
             </div>
@@ -344,7 +344,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
               </button>
             </div>
 
-            {/* OFFICIAL CHROME GOOGLE BUTTON */}
+            {/* OFFICIAL CHROME GOOGLE BUTTON WITH FORCED ACCOUNT PICKER */}
             <button
               type="button"
               onClick={handleGoogleAuthClick}

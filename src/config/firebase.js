@@ -18,6 +18,12 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+
+// BẮT BUỘC GOOGLE HIỂN THỊ MÀN HÌNH CHỌN TÀI KHOẢN GMAIL MỖI LẦN NHẤP ĐĂNG NHẬP
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
+
 export const db = getFirestore(app);
 
 export default app;
