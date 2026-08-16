@@ -328,7 +328,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
 
               <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-xl text-[11px] font-bold text-slate-200 border border-white/10 flex items-center space-x-1">
                 <Award className="w-3.5 h-3.5 text-emerald-400" />
-                <span>{lang === 'vi' ? 'Hỗ trợ việc làm & Chứng chỉ' : 'Career Support & Certification'}</span>
+                <span>{lang === 'vi' ? 'Cấp chứng chỉ khóa học' : 'Course Certification Included'}</span>
               </span>
             </div>
 
