@@ -1,6 +1,6 @@
-# 🎯 Hướng Dẫn Cài Đặt Firebase Authentication Cho Web App P Marcom
+# 🎯 Hướng Dẫn Cài Đặt Firebase Authentication & Security Rules Cho Web App P Marcom
 
-Tài liệu hướng dẫn từng bước tạo Dự án Firebase miễn phí và lấy **API Keys** kết nối ứng dụng web **Định Hướng Phát Triển Nghề Nghiệp (P Marcom)** để đồng bộ Đăng Nhập bằng Google (Gmail) và Email/Mật khẩu online.
+Tài liệu hướng dẫn từng bước tạo Dự án Firebase miễn phí, lấy **API Keys** và cài đặt **Quy Tắc Bảo Mật (Security Rules)** kết nối ứng dụng web **Định Hướng Phát Triển Nghề Nghiệp (P Marcom)**.
 
 ---
 
@@ -24,72 +24,88 @@ Tài liệu hướng dẫn từng bước tạo Dự án Firebase miễn phí v�
 
 ---
 
-## 🌐 Bước 3: Thêm Tên Miền Cho Phép (Authorized Domains)
+## 🔒 Bước 3: Cài Đặt Quy Tắc Bảo Mật (Firebase Security Rules) - BẮT BUỘC
 
-1. Trong trang **Authentication**, nhấp vào tab **"Settings"** -> chọn **"Authorized domains"**.
-2. Mặc định Firebase đã cho phép `localhost`.
-3. Nếu bạn đưa web lên các nền tảng hosting miễn phí như Vercel, Netlify hay GitHub Pages, hãy bấm **"Add domain"** và điền tên miền web của bạn vào đây.
+Nếu bạn sử dụng **Firestore Database** để lưu trữ thông tin người dùng và kết quả test, bạn cần cài đặt **Rules** để Firebase cho phép đọc/ghi dữ liệu.
+
+### 3.1. Quy Tắc Bảo Mật Cho Firestore Database
+1. Vào menu **Build** -> **Firestore Database** -> Chọn tab **"Rules"**.
+2. Xóa toàn bộ nội dung cũ và dán đoạn mã Rules chuẩn bảo mật dưới đây vào:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Quy tắc cho tập thành viên: Người dùng có thể xem/sửa thông tin chính mình
+    // Super Admin (pmarcomvn@gmail.com) có toàn quyền quản trị
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && (request.auth.uid == userId || request.auth.token.email == 'pmarcomvn@gmail.com');
+    }
+
+    // Quy tắc chung cho toàn bộ tập tài liệu
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+```
+
+*Lưu ý cho giai đoạn chạy thử nghiệm (Test Mode nhanh):* Bạn cũng có thể mở quyền thử nghiệm bằng cách dùng rule:
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+```
+3. Bấm **"Publish"** để lưu quy tắc.
 
 ---
 
-## 🔑 Bước 4: Đăng Ký App Web & Lấy Mã Firebase Config
+## 🌐 Bước 4: Thêm Tên Miền Cho Phép (Authorized Domains)
+
+1. Trong trang **Authentication**, nhấp vào tab **"Settings"** -> chọn **"Authorized domains"**.
+2. Mặc định Firebase đã cho phép `localhost`.
+3. Nếu bạn đưa web lên Vercel, Netlify hay GitHub Pages, hãy bấm **"Add domain"** và điền tên miền web của bạn vào đây.
+
+---
+
+## 🔑 Bước 5: Đăng Ký App Web & Lấy Mã Firebase Config
 
 1. Nhấp vào biểu tượng bánh răng ⚙️ **Project Settings** (Góc trên bên trái).
 2. Kéo xuống mục **"Your apps"** -> Nhấp vào biểu tượng **Web `</>`**.
 3. Đặt tên ứng dụng: `P Marcom Web App` -> Nhấn **Register app**.
-4. Firebase sẽ hiển thị đoạn mã `firebaseConfig` chứa các API Key dạng:
+4. Firebase sẽ hiển thị đoạn mã `firebaseConfig` chứa các API Key.
+
+---
+
+## ⚙️ Bước 6: Cấu Hình API Keys Vào Web App
+
+Dán trực tiếp đoạn mã `firebaseConfig` vào file [`src/config/firebase.js`](file:///d:/CLAUDE%20CODE/DISC%20-%20HOLLAND/src/config/firebase.js) hoặc lưu vào file `.env`:
 
 ```javascript
 const firebaseConfig = {
   apiKey: "AIzaSy...",
-  authDomain: "pmarcom-career.firebaseapp.com",
-  projectId: "pmarcom-career",
-  storageBucket: "pmarcom-career.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdef..."
+  authDomain: "disc---holland.firebaseapp.com",
+  projectId: "disc---holland",
+  storageBucket: "disc---holland.firebasestorage.app",
+  messagingSenderId: "568872886726",
+  appId: "1:568872886726:web:3d674c8bdcee0ca52ad2c7",
+  measurementId: "G-5N4DLWNM3J"
 };
 ```
 
 ---
 
-## ⚙️ Bước 5: Cấu Hình API Keys Vào Web App
+## 🚀 Bước 7: Tự Động Đồng Bộ Lên GitHub
 
-Bạn có thể chọn 1 trong 2 cách sau:
-
-### Cách 1: Thay trực tiếp vào file cấu hình (Dễ thực hiện nhất)
-Mở file [`src/config/firebase.js`](file:///d:/CLAUDE%20CODE/DISC%20-%20HOLLAND/src/config/firebase.js) trong thư mục dự án và dán thông tin từ Firebase của bạn vào đoạn:
-
-```javascript
-const firebaseConfig = {
-  apiKey: "ĐIỀN_API_KEY_CỦA_BẠN",
-  authDomain: "ĐIỀN_AUTH_DOMAIN_CỦA_BẠN",
-  projectId: "ĐIỀN_PROJECT_ID_CỦA_BẠN",
-  storageBucket: "ĐIỀN_STORAGE_BUCKET_CỦA_BẠN",
-  messagingSenderId: "ĐIỀN_MESSAGING_SENDER_ID_CỦA_BẠN",
-  appId: "ĐIỀN_APP_ID_CỦA_BẠN"
-};
-```
-
-### Cách 2: Sử dụng File Biến Môi Trường `.env` (Bảo mật cho GitHub)
-Tạo 1 file tên là `.env` tại thư mục gốc của dự án (`d:\CLAUDE CODE\DISC - HOLLAND\.env`) với nội dung:
-
-```env
-VITE_FIREBASE_API_KEY=AIzaSy...
-VITE_FIREBASE_AUTH_DOMAIN=pmarcom-career.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=pmarcom-career
-VITE_FIREBASE_STORAGE_BUCKET=pmarcom-career.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=123456789012
-VITE_FIREBASE_APP_ID=1:123456789012:web:abcdef...
-```
-
----
-
-## 🚀 Bước 6: Khởi Động Lại & Đồng Bộ Lên GitHub
-
-Sau khi hoàn tất cài đặt, hãy chạy lệnh tự động đẩy code cập nhật lên GitHub:
+Sau khi hoàn tất cài đặt, gõ lệnh trong terminal:
 
 ```bash
 npm run push
 ```
-
-Bây giờ toàn bộ người dùng khi làm bài test trên web đều có thể đăng nhập online thực tế thông qua tài khoản Google hoặc Email!
