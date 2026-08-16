@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Compass, Sparkles, Layers, ArrowRight, CheckCircle2, Star, Eye, ShieldCheck, Lock, UserCheck, Bell, Award } from 'lucide-react';
-import { getVisitorStats } from '../utils/visitorCounter';
+import { getVisitorStats, subscribeToVisitorStats } from '../utils/visitorCounter';
 import { getTranslation } from '../utils/translations';
 
 export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
-  const stats = getVisitorStats();
+  const [stats, setStats] = useState(getVisitorStats());
+
+  useEffect(() => {
+    const unsubscribe = subscribeToVisitorStats((newStats) => {
+      setStats(newStats);
+    });
+    return () => unsubscribe();
+  }, []);
+
   const t = (key, params) => getTranslation(lang, key, params);
 
   return (
@@ -67,7 +75,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
               {t('heroDesc')}
             </p>
 
-            {/* STATS PILLS */}
+            {/* STATS PILLS - ĐỒNG BỘ REALTIME TOÀN CẦU */}
             <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3">
               
               {/* Visit Counter Pill */}

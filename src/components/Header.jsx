@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, UserCheck, Eye, Crown, LogIn, LogOut, Menu, X, User, Globe, UserPlus } from 'lucide-react';
-import { getVisitorStats } from '../utils/visitorCounter';
+import { getVisitorStats, subscribeToVisitorStats } from '../utils/visitorCounter';
 import { isAdmin, isSuperAdmin } from '../utils/userManager';
 import { getTranslation } from '../utils/translations';
 
 export default function Header({ currentScreen, setCurrentScreen, darkMode, setDarkMode, lang = 'vi', setLang, user, onOpenAuth, onLogout, onOpenProfile }) {
-  const [stats, setStats] = useState({ totalVisits: '1,000', totalTests: '600' });
+  const [stats, setStats] = useState(getVisitorStats());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    setStats(getVisitorStats());
-  }, [currentScreen]);
+    const unsubscribe = subscribeToVisitorStats((newStats) => {
+      setStats(newStats);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const userIsAdmin = isAdmin(user);
   const userIsSuperAdmin = isSuperAdmin(user);
@@ -59,7 +62,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
         {/* Desktop & iPad Navigation */}
         <div className="hidden lg:flex items-center space-x-2 xl:space-x-3">
           
-          {/* Visitor Counter */}
+          {/* Visitor Counter (Đồng bộ Realtime Toàn Cầu) */}
           <div className="flex items-center space-x-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900/60 rounded-full text-xs font-semibold text-amber-800 dark:text-amber-300">
             <Eye className="w-3.5 h-3.5 text-amber-600" />
             <span>{stats.totalVisits} {lang === 'vi' ? 'lượt xem' : 'visits'}</span>
