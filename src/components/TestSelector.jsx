@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, Sparkles, Layers, ArrowRight, CheckCircle2, Star, Eye, ShieldCheck, Lock, UserCheck, Bell, Award } from 'lucide-react';
+import { Compass, Sparkles, Layers, ArrowRight, CheckCircle2, Star, Eye, ShieldCheck, Lock, UserCheck, Bell, Award, ExternalLink, GraduationCap, Rocket, Zap } from 'lucide-react';
 import { getVisitorStats, subscribeToVisitorStats } from '../utils/visitorCounter';
 import { getTranslation } from '../utils/translations';
 
@@ -277,6 +277,81 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
           </div>
 
         </div>
+      </div>
+
+      {/* BANNER GIỚI THIỆU KHÓA HỌC DIGITAL MARKETING (P MARCOM ACADEMY) - CHỈ HIỆN Ở TRANG CHỦ */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-indigo-950 to-purple-950 text-white p-6 sm:p-10 shadow-2xl border-2 border-indigo-500/40 group">
+        
+        {/* Decorative Ambient Lighting */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-pink-500/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          {/* Left Course Information */}
+          <div className="lg:col-span-8 space-y-4 text-center lg:text-left">
+            
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-pink-500/20 border border-amber-400/40 text-amber-300 text-xs font-black uppercase tracking-wider">
+              <GraduationCap className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>P Marcom Academy • Digital Marketing Professional</span>
+            </div>
+
+            <h3 className="text-xl sm:text-3xl font-black tracking-tight leading-snug">
+              {lang === 'vi' ? (
+                <>
+                  Khóa Học <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-pink-400 to-indigo-300">Digital Marketing Thực Chiến</span> – Kiến Tạo Sự Nghiệp Đột Phá
+                </>
+              ) : (
+                <>
+                  Practical <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-pink-400 to-indigo-300">Digital Marketing Masterclass</span> – Accelerate Your Career
+                </>
+              )}
+            </h3>
+
+            <p className="text-slate-300 text-xs sm:text-sm max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+              {lang === 'vi' 
+                ? 'Lộ trình đào tạo chuẩn doanh nghiệp từ cơ bản đến chuyên sâu: SEO & Content Strategy, Chạy Quảng Cáo Facebook/Google/TikTok Ads, Xây dựng thương hiệu & Ứng dụng AI trong Marketing.'
+                : 'Enterprise-grade practical training from foundations to advanced: SEO & Content Strategy, Performance Ads (Facebook/Google/TikTok), Brand Strategy & AI Marketing Application.'}
+            </p>
+
+            {/* Feature Pills */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-1">
+              <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-xl text-[11px] font-bold text-slate-200 border border-white/10 flex items-center space-x-1">
+                <Rocket className="w-3.5 h-3.5 text-pink-400" />
+                <span>{lang === 'vi' ? 'Thực chiến 100% Dự án thật' : '100% Real-world Projects'}</span>
+              </span>
+
+              <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-xl text-[11px] font-bold text-slate-200 border border-white/10 flex items-center space-x-1">
+                <Zap className="w-3.5 h-3.5 text-amber-400" />
+                <span>{lang === 'vi' ? 'Ứng dụng AI Marketing Tool' : 'AI Marketing Workflows'}</span>
+              </span>
+
+              <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-xl text-[11px] font-bold text-slate-200 border border-white/10 flex items-center space-x-1">
+                <Award className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{lang === 'vi' ? 'Hỗ trợ việc làm & Chứng chỉ' : 'Career Support & Certification'}</span>
+              </span>
+            </div>
+
+          </div>
+
+          {/* Right Action Button */}
+          <div className="lg:col-span-4 flex flex-col items-center lg:items-end justify-center">
+            <a
+              href="https://academy.pmarcom.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-2xl transition-all duration-300 transform group-hover:scale-105 flex items-center justify-center space-x-2"
+            >
+              <span>{lang === 'vi' ? 'Khám Phá Khóa Học Ngay' : 'Explore Academy Courses'}</span>
+              <ExternalLink className="w-4 h-4 text-slate-950 stroke-[2.5]" />
+            </a>
+            <span className="text-[11px] text-slate-400 mt-2 font-medium">
+              👉 academy.pmarcom.com
+            </span>
+          </div>
+
+        </div>
+
       </div>
 
     </div>
