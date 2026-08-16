@@ -56,6 +56,7 @@ export default function App() {
 
   const [testMode, setTestMode] = useState('combo'); // 'disc' | 'holland' | 'combo'
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authTabMode, setAuthTabMode] = useState('login'); // 'login' | 'register'
   const [showProfileModal, setShowProfileModal] = useState(false);
 
   // Dark mode
@@ -93,9 +94,16 @@ export default function App() {
   useEffect(() => {
     if (!user && (currentScreen === 'quizDisc' || currentScreen === 'quizHolland' || currentScreen === 'results')) {
       setCurrentScreen('selectTest');
+      setAuthTabMode('login');
       setShowAuthModal(true);
     }
   }, [currentScreen, user]);
+
+  // Open Auth modal with specific tab ('login' or 'register')
+  const handleOpenAuthModal = (tab = 'login') => {
+    setAuthTabMode(tab);
+    setShowAuthModal(true);
+  };
 
   // Sync screen state with URL (Cleans # for Home / selectTest)
   const setCurrentScreen = (screen) => {
@@ -122,6 +130,7 @@ export default function App() {
       // Strict guard for direct link visitors
       if (!user && (targetScreen === 'quizDisc' || targetScreen === 'quizHolland' || targetScreen === 'results')) {
         setCurrentScreenState('selectTest');
+        setAuthTabMode('login');
         setShowAuthModal(true);
       } else {
         setCurrentScreenState(targetScreen);
@@ -147,6 +156,7 @@ export default function App() {
   const handleSelectTestMode = (mode) => {
     setTestMode(mode);
     if (!user) {
+      setAuthTabMode('login');
       setShowAuthModal(true);
     } else {
       startTest(mode);
@@ -260,16 +270,17 @@ export default function App() {
         lang={lang}
         setLang={setLang}
         user={user}
-        onOpenAuth={() => setShowAuthModal(true)}
+        onOpenAuth={handleOpenAuthModal}
         onOpenProfile={() => setShowProfileModal(true)}
         onLogout={handleLogout}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        {/* AUTH MODAL POPUP */}
+        {/* AUTH MODAL POPUP WITH SEPARATE TAB MODES */}
         {showAuthModal && (
           <AuthModal
+            initialTab={authTabMode}
             onAuthSuccess={handleAuthSuccess}
             onClose={() => setShowAuthModal(false)}
           />

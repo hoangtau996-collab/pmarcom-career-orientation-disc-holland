@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, Lock, LogIn, UserPlus, GraduationCap, Briefcase, ShieldCheck, AlertCircle, CheckCircle2, ArrowRight, Bell, Sparkles, Chrome } from 'lucide-react';
 import { auth, googleProvider } from '../config/firebase';
-import { signInWithPopup, signInWithRedirect } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 import { saveOrUpdateUser, findRegisteredUserByEmail } from '../utils/userManager';
 
 // Icon Google "G" 4 màu chuẩn thương hiệu Google
@@ -28,8 +28,8 @@ function GoogleGIcon({ className = "w-5 h-5 shrink-0" }) {
   );
 }
 
-export default function AuthModal({ onAuthSuccess, onClose }) {
-  const [activeTab, setActiveTab] = useState('login'); // 'login' | 'register' | 'confirm_google' | 'select_gmail_manual'
+export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose }) {
+  const [activeTab, setActiveTab] = useState(initialTab); // 'login' | 'register' | 'confirm_google' | 'select_gmail_manual'
   
   // Form fields
   const [email, setEmail] = useState('');
@@ -68,7 +68,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Trigger Google Gmail Popup (Ghi nhớ thông tin nếu tài khoản đã tồn tại)
+  // Trigger Google Gmail Popup (Phân định rõ ràng Đăng Nhập vs Đăng Ký)
   const handleGoogleAuthClick = async () => {
     setLoading(true);
     setErrors({});
@@ -88,7 +88,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
         const existingUser = findRegisteredUserByEmail(gEmail);
         
         if (existingUser) {
-          // TỰ ĐỘNG ĐĂNG NHẬP NGAY & GHI NHỚ HỒ SƠ CŨ (KHÔNG CẦN NHẬP LẠI)
+          // TỰ ĐỘNG ĐĂNG NHẬP NGAY & GHI NHỚ HỒ SƠ CŨ
           localStorage.setItem('disc_active_user', JSON.stringify(existingUser));
           setLoading(false);
           onAuthSuccess(existingUser);
@@ -150,7 +150,6 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
 
     try {
       if (activeTab === 'login') {
-        // Kiểm tra xem email này đã đăng ký trước đó chưa
         const existingUser = findRegisteredUserByEmail(email);
 
         if (existingUser) {
@@ -193,9 +192,9 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5">
         
         {/* PROMINENT GUEST REQUIREMENT NOTICE BANNER */}
-        <div className="p-3.5 bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border-2 border-amber-400/60 dark:border-amber-500/50 rounded-2xl flex items-start space-x-3 shadow-sm animate-fade-in">
+        <div className="p-3.5 bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border-2 border-amber-400/60 dark:border-amber-500/50 rounded-2xl flex items-start space-x-3 shadow-sm stroke-none">
           <div className="p-1.5 rounded-xl bg-amber-500 text-slate-950 shrink-0 mt-0.5">
-            <Bell className="w-4 h-4 animate-bounce" />
+            <Bell className="w-4 h-4" />
           </div>
           <div className="space-y-0.5">
             <h4 className="font-black text-xs text-amber-900 dark:text-amber-300 uppercase tracking-wider flex items-center space-x-1">
@@ -224,10 +223,10 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
             {activeTab === 'confirm_google'
               ? 'Nhập Họ tên và Số điện thoại lần đầu để kích hoạt tài khoản'
               : activeTab === 'select_gmail_manual'
-              ? 'Điền tài khoản Gmail cá nhân của bạn để đăng nhập nhanh'
+              ? 'Điền tài khoản Gmail cá nhân của bạn để tiếp tục'
               : activeTab === 'login' 
-              ? 'Nhập email và mật khẩu hoặc dùng tài khoản Gmail' 
-              : 'Điền đầy đủ thông tin để lưu báo cáo đánh giá của bạn'}
+              ? 'Sử dụng tài khoản Google hoặc Gmail đã đăng ký' 
+              : 'Điền thông tin thành viên mới để lưu báo cáo đánh giá'}
           </p>
         </div>
 
@@ -236,7 +235,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
           <div className="space-y-4">
             <div className="p-3 bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-2xl flex items-center space-x-3 text-xs text-slate-700 dark:text-slate-200 font-medium">
               <GoogleGIcon className="w-5 h-5 shrink-0" />
-              <span>Vui lòng điền địa chỉ Gmail bạn muốn sử dụng để Đăng Nhập / Đăng Ký:</span>
+              <span>Vui lòng điền địa chỉ Gmail bạn muốn sử dụng:</span>
             </div>
 
             <div className="space-y-1">
@@ -261,7 +260,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
                 onClick={() => setActiveTab('login')}
                 className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold"
               >
-                Hủy
+                Quay lại
               </button>
 
               <button
@@ -291,7 +290,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
             </div>
           </div>
         ) : activeTab === 'confirm_google' ? (
-          /* GOOGLE CONFIRMATION STEP (CHỈ HIỆN LẦN ĐẦU KHI TÀI KHOẢN MỚI TINH) */
+          /* GOOGLE CONFIRMATION STEP */
           <form onSubmit={handleConfirmGoogleAuth} className="space-y-4">
             
             <div className="p-3.5 bg-blue-50/80 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-2xl flex items-center space-x-3">
@@ -389,46 +388,59 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
 
           </form>
         ) : (
-          /* REGULAR LOGIN / REGISTER FORM */
+          /* REGULAR LOGIN / REGISTER FORM WITH SEPARATE FLOWS */
           <>
             {/* Tab Switcher */}
             <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl">
               <button
                 type="button"
                 onClick={() => { setActiveTab('login'); setErrors({}); }}
-                className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${
+                className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
                   activeTab === 'login'
                     ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
-                Đăng Nhập
+                <LogIn className="w-3.5 h-3.5" />
+                <span>1. Đăng Nhập</span>
               </button>
+
               <button
                 type="button"
                 onClick={() => { setActiveTab('register'); setErrors({}); }}
-                className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${
+                className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
                   activeTab === 'register'
-                    ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                    ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-sm'
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
-                Đăng Ký Mới
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>2. Đăng Ký Mới</span>
               </button>
             </div>
 
-            {/* OFFICIAL CHROME GOOGLE BUTTON WITH AUTOMATIC REMEMBRANCE */}
-            <button
-              type="button"
-              onClick={handleGoogleAuthClick}
-              disabled={loading}
-              className="w-full py-3 px-4 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700/80 border border-slate-300 dark:border-slate-600 rounded-xl font-bold text-slate-700 dark:text-slate-100 text-xs sm:text-sm transition-all flex items-center justify-center space-x-3 shadow-sm hover:shadow active:scale-[0.98]"
-            >
-              <GoogleGIcon className="w-5 h-5 shrink-0" />
-              <span>
-                {activeTab === 'login' ? 'Log In with Google' : 'Sign Up with Google'}
-              </span>
-            </button>
+            {/* CLEAR SEPARATE GOOGLE BUTTON BASED ON TAB */}
+            {activeTab === 'login' ? (
+              <button
+                type="button"
+                onClick={handleGoogleAuthClick}
+                disabled={loading}
+                className="w-full py-3 px-4 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700/80 border-2 border-indigo-200 dark:border-indigo-800 rounded-xl font-extrabold text-indigo-600 dark:text-indigo-300 text-xs sm:text-sm transition-all flex items-center justify-center space-x-3 shadow-sm hover:shadow active:scale-[0.98]"
+              >
+                <GoogleGIcon className="w-5 h-5 shrink-0" />
+                <span>🔑 Đăng Nhập Nhanh bằng Google (Gmail)</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleGoogleAuthClick}
+                disabled={loading}
+                className="w-full py-3 px-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-800 hover:bg-purple-100 dark:hover:bg-slate-700 border-2 border-purple-300 dark:border-purple-700 rounded-xl font-extrabold text-purple-700 dark:text-purple-300 text-xs sm:text-sm transition-all flex items-center justify-center space-x-3 shadow-sm hover:shadow active:scale-[0.98]"
+              >
+                <GoogleGIcon className="w-5 h-5 shrink-0" />
+                <span>✨ Đăng Ký Mới bằng Google (Gmail)</span>
+              </button>
+            )}
 
             <div className="flex items-center space-x-2 my-1">
               <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800"></div>
@@ -460,7 +472,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
                       placeholder="Ví dụ: Nguyễn Văn An"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                     />
                   </div>
                   {errors.fullName && <p className="text-[11px] text-red-500 font-medium">{errors.fullName}</p>}
@@ -479,7 +491,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
                     placeholder="Ví dụ: pmarcomvn@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                   />
                 </div>
                 {errors.email && <p className="text-[11px] text-red-500 font-medium">{errors.email}</p>}
@@ -498,7 +510,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
                       placeholder="Ví dụ: 0988 888 888"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                     />
                   </div>
                   {errors.phone && <p className="text-[11px] text-red-500 font-medium">{errors.phone}</p>}
@@ -517,7 +529,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                   />
                 </div>
                 {errors.password && <p className="text-[11px] text-red-500 font-medium">{errors.password}</p>}
@@ -567,9 +579,13 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 py-3.5 px-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition-all"
+                  className={`flex-1 py-3.5 px-6 text-white font-extrabold text-xs rounded-xl shadow-lg transition-all ${
+                    activeTab === 'login'
+                      ? 'bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-700 hover:from-indigo-500 hover:to-blue-500'
+                      : 'bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500'
+                  }`}
                 >
-                  {loading ? 'Đang xử lý...' : activeTab === 'login' ? 'Đăng Nhập Ngay' : 'Hoàn Tất Đăng Ký'}
+                  {loading ? 'Đang xử lý...' : activeTab === 'login' ? '🔑 Đăng Nhập Ngay' : '✨ Hoàn Tất Đăng Ký Mới'}
                 </button>
               </div>
 

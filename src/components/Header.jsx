@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, UserCheck, Eye, Crown, LogIn, LogOut, Menu, X, User, Globe } from 'lucide-react';
+import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, UserCheck, Eye, Crown, LogIn, LogOut, Menu, X, User, Globe, UserPlus } from 'lucide-react';
 import { getVisitorStats } from '../utils/visitorCounter';
 import { isAdmin, isSuperAdmin } from '../utils/userManager';
 import { getTranslation } from '../utils/translations';
@@ -112,7 +112,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
             <span>{t('history')}</span>
           </button>
 
-          {/* User Status / Edit Profile Button */}
+          {/* User Status / Edit Profile Button OR 2 Distinct Auth Buttons */}
           {user ? (
             <div className="flex items-center space-x-2">
               <button
@@ -134,13 +134,24 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               </button>
             </div>
           ) : (
-            <button
-              onClick={onOpenAuth}
-              className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors"
-            >
-              <LogIn className="w-3.5 h-3.5 text-indigo-500" />
-              <span>{t('login')}</span>
-            </button>
+            /* 2 DISTINCT SEPARATE BUTTONS FOR LOGIN & REGISTER */
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => onOpenAuth('login')}
+                className="flex items-center space-x-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded-xl transition-colors"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>{t('login')}</span>
+              </button>
+
+              <button
+                onClick={() => onOpenAuth('register')}
+                className="flex items-center space-x-1 px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs rounded-xl shadow transition-all hover:scale-105"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>{t('register')}</span>
+              </button>
+            </div>
           )}
 
           {/* Language Switcher Toggle */}
@@ -212,13 +223,23 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               </button>
             </div>
           ) : (
-            <button
-              onClick={() => { onOpenAuth(); setMobileMenuOpen(false); }}
-              className="w-full py-2.5 bg-indigo-600 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-2"
-            >
-              <LogIn className="w-4 h-4" />
-              <span>{t('login')} / {t('register')}</span>
-            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => { onOpenAuth('login'); setMobileMenuOpen(false); }}
+                className="py-2.5 bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>{t('login')}</span>
+              </button>
+
+              <button
+                onClick={() => { onOpenAuth('register'); setMobileMenuOpen(false); }}
+                className="py-2.5 bg-indigo-600 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>{t('register')}</span>
+              </button>
+            </div>
           )}
 
           {userIsAdmin && (
