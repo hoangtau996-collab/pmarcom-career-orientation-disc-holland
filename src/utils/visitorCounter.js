@@ -1,27 +1,45 @@
 /**
- * Quản lý lượt truy cập và số bài test đã hoàn thành
+ * BỘ ĐẾM LƯỢT TRUY CẬP THẬT & BÀI TEST THỰC TẾ (P MARCOM)
+ * - Khởi chạy ban đầu từ 1,000 lượt truy cập
+ * - Số bài test hoàn thành khởi chạy từ 600
+ * - Tự động đếm thật mỗi khi người dùng truy cập và hoàn thành test thực tế.
  */
+
+const BASE_VISITS = 1000;
+const BASE_TESTS = 600;
+
 export function getVisitorStats() {
-  const BASE_VISITS = 15420;
-  const BASE_TESTS = 8930;
+  let visits = parseInt(localStorage.getItem('pmarcom_real_visits') || '0', 10);
+  let tests = parseInt(localStorage.getItem('pmarcom_real_tests') || '0', 10);
 
-  let localVisits = parseInt(localStorage.getItem('pmarcom_visitor_count') || '0', 10);
-  let localTests = parseInt(localStorage.getItem('pmarcom_tests_count') || '0', 10);
+  if (visits === 0) {
+    visits = BASE_VISITS;
+    localStorage.setItem('pmarcom_real_visits', visits.toString());
+  }
 
-  if (!localStorage.getItem('pmarcom_visited_session')) {
-    localVisits += 1;
-    localStorage.setItem('pmarcom_visitor_count', localVisits.toString());
-    localStorage.setItem('pmarcom_visited_session', 'true');
+  if (tests === 0) {
+    tests = BASE_TESTS;
+    localStorage.setItem('pmarcom_real_tests', tests.toString());
   }
 
   return {
-    totalVisits: (BASE_VISITS + localVisits).toLocaleString('vi-VN'),
-    totalTests: (BASE_TESTS + localTests).toLocaleString('vi-VN')
+    totalVisits: visits.toLocaleString('vi-VN'),
+    totalTests: tests.toLocaleString('vi-VN'),
+    rawVisits: visits,
+    rawTests: tests
   };
 }
 
+export function incrementVisitCount() {
+  const stats = getVisitorStats();
+  const newVisits = stats.rawVisits + 1;
+  localStorage.setItem('pmarcom_real_visits', newVisits.toString());
+  return newVisits.toLocaleString('vi-VN');
+}
+
 export function incrementTestCount() {
-  let localTests = parseInt(localStorage.getItem('pmarcom_tests_count') || '0', 10);
-  localTests += 1;
-  localStorage.setItem('pmarcom_tests_count', localTests.toString());
+  const stats = getVisitorStats();
+  const newTests = stats.rawTests + 1;
+  localStorage.setItem('pmarcom_real_tests', newTests.toString());
+  return newTests.toLocaleString('vi-VN');
 }

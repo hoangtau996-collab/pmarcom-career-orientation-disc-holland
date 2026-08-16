@@ -13,11 +13,41 @@ import AdminDashboard from './components/AdminDashboard';
 
 import { calculateDiscResult } from './utils/discCalculator';
 import { calculateHollandResult } from './utils/hollandCalculator';
-import { incrementTestCount } from './utils/visitorCounter';
+import { incrementVisitCount, incrementTestCount } from './utils/visitorCounter';
 import { isAdmin } from './utils/userManager';
 
+// Static URL Hash mapping
+const SCREEN_HASH_MAP = {
+  'selectTest': '#/',
+  'overviewDisc': '#/disc-overview',
+  'overviewHolland': '#/holland-overview',
+  'quizDisc': '#/quiz-disc',
+  'quizHolland': '#/quiz-holland',
+  'results': '#/results',
+  'history': '#/history',
+  'admin': '#/admin'
+};
+
+const HASH_SCREEN_MAP = {
+  '#/': 'selectTest',
+  '': 'selectTest',
+  '#/select-test': 'selectTest',
+  '#/disc-overview': 'overviewDisc',
+  '#/holland-overview': 'overviewHolland',
+  '#/quiz-disc': 'quizDisc',
+  '#/quiz-holland': 'quizHolland',
+  '#/results': 'results',
+  '#/history': 'history',
+  '#/admin': 'admin'
+};
+
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('selectTest'); 
+  // Initialize screen state from URL Hash
+  const [currentScreen, setCurrentScreenState] = useState(() => {
+    const initialHash = window.location.hash || '#/';
+    return HASH_SCREEN_MAP[initialHash] || 'selectTest';
+  }); 
+
   const [testMode, setTestMode] = useState('combo'); // 'disc' | 'holland' | 'combo'
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -42,6 +72,32 @@ export default function App() {
     const saved = localStorage.getItem('disc_test_history');
     return saved ? JSON.parse(saved) : [];
   });
+
+  // Increment real visit count once per session / mount
+  useEffect(() => {
+    incrementVisitCount();
+  }, []);
+
+  // Sync screen state with URL Hash
+  const setCurrentScreen = (screen) => {
+    setCurrentScreenState(screen);
+    const hash = SCREEN_HASH_MAP[screen] || '#/';
+    if (window.location.hash !== hash) {
+      window.history.pushState(null, '', hash);
+    }
+  };
+
+  // Listen to browser Back/Forward buttons and direct URL hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash || '#/';
+      const targetScreen = HASH_SCREEN_MAP[hash] || 'selectTest';
+      setCurrentScreenState(targetScreen);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   useEffect(() => {
     if (darkMode) {
@@ -192,7 +248,7 @@ export default function App() {
         )}
 
         {currentScreen === 'selectTest' && (
-          <TestSelector onSelectTestMode={handleSelectTestMode} />
+          <TestSelector onSelectTestMode={handleSelectTestMode} user={user} />
         )}
 
         {currentScreen === 'overviewDisc' && (

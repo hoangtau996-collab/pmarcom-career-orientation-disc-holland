@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Sparkles, Layers, ArrowRight, CheckCircle2, Star, Eye, ShieldCheck, Lock, UserCheck, Bell } from 'lucide-react';
+import { Compass, Sparkles, Layers, ArrowRight, CheckCircle2, Star, Eye, ShieldCheck, Lock, UserCheck, Bell, Award } from 'lucide-react';
 import { getVisitorStats } from '../utils/visitorCounter';
 
 export default function TestSelector({ onSelectTestMode, user }) {
@@ -38,52 +38,68 @@ export default function TestSelector({ onSelectTestMode, user }) {
       {/* HERO BANNER SECTION */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 text-white p-6 sm:p-12 shadow-2xl border border-indigo-900/50">
         
-        {/* Glow Circles Background */}
+        {/* Glow Background */}
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
           {/* Left Content */}
-          <div className="lg:col-span-7 space-y-5 text-center lg:text-left">
+          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
             
-            <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-wider">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-wider">
               <img src="/logo-pmarcom.png" alt="Logo P Marcom" className="h-5 w-auto object-contain" />
-              <span>Nền tảng Đánh Giá Năng Lực Quốc Tế</span>
+              <span>Nền Tảng Độc Quyền Bản Quyền P Marcom</span>
             </div>
 
+            {/* HEADLINE WITHOUT AWKWARD WORD BREAKS */}
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-              Định Hướng Phát Triển <br />
+              Định Hướng Phát Triển <span className="whitespace-nowrap">Nghề Nghiệp</span> <br />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-pink-400 to-indigo-300">
-                Nghề Nghiệp &amp; Sự Nghiệp
+                Toàn Diện Với DISC &amp; Holland
               </span>
             </h1>
 
             <p className="text-slate-300 text-xs sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
-              Kết hợp đột phá giữa mô hình **DISC** (Hành vi &amp; Tính cách - William Marston) và **Holland Code** (Sở thích nghề nghiệp RIASEC - John Holland).
+              Giải pháp thấu hiểu bản thân chuẩn mực khoa học Hoa Kỳ. Kết hợp bài đánh giá hành vi **DISC (William Marston)** &amp; **Bộ thẻ bài sở thích Holland RIASEC**, mang lại ma trận định hướng ngành học và sự nghiệp tối ưu nhất.
             </p>
 
-            {/* Stats list */}
-            <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-slate-300 font-semibold">
-              <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
-                <Eye className="w-4 h-4 text-amber-400" />
-                <span>{stats.totalVisits} lượt truy cập</span>
+            {/* 2 STATS CARDS (REMOVED SATISFACTION RATE, START VISITS AT 1000, TESTS AT 600) */}
+            <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
+              
+              {/* Visit Counter */}
+              <div className="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm">
+                <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400">
+                  <Eye className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-lg font-black text-white leading-none">{stats.totalVisits}</div>
+                  <div className="text-[11px] text-slate-300 font-medium mt-1">Lượt truy cập hệ thống</div>
+                </div>
               </div>
-              <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>{stats.totalTests} bài test hoàn thành</span>
+
+              {/* Completed Tests Counter */}
+              <div className="flex items-center space-x-3 px-4 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-sm">
+                <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400">
+                  <Award className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-lg font-black text-white leading-none">{stats.totalTests}</div>
+                  <div className="text-[11px] text-slate-300 font-medium mt-1">Bài test hoàn thành</div>
+                </div>
               </div>
+
             </div>
 
           </div>
 
-          {/* Right Unsplash Hero Image */}
+          {/* Right Hero Image */}
           <div className="lg:col-span-5 relative">
-            <div className="relative mx-auto max-w-md rounded-2xl overflow-hidden shadow-2xl border-2 border-indigo-500/30 group">
+            <div className="relative mx-auto max-w-md rounded-3xl overflow-hidden shadow-2xl border-2 border-indigo-500/30 group">
               <img
                 src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop"
-                alt="Định hướng nghề nghiệp"
-                className="w-full h-56 sm:h-72 object-cover group-hover:scale-105 transition-transform duration-500"
+                alt="Định hướng nghề nghiệp P Marcom"
+                className="w-full h-64 sm:h-80 object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
               
