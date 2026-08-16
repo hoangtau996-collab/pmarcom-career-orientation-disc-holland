@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="50%" stop-color="#1E1B4B" />
+      <stop offset="100%" stop-color="#311042" />
+    </linearGradient>
+
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255, 255, 255, 0.08)" />
+      <stop offset="100%" stop-color="rgba(255, 255, 255, 0.02)" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)" />
+  
+  <!-- Grid overlay lines -->
+  <path d="M0 100 L1200 100 M0 200 L1200 200 M0 300 L1200 300 M0 400 L1200 400 M0 500 L1200 500" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+
+  <!-- Decorative glow circles -->
+  <circle cx="1000" cy="150" r="250" fill="#6366F1" opacity="0.15" filter="blur(60px)" />
+  <circle cx="200" cy="500" r="220" fill="#EC4899" opacity="0.15" filter="blur(60px)" />
+
+  <!-- P Marcom Brand Badge -->
+  <g transform="translate(80, 70)">
+    <rect width="240" height="46" rx="23" fill="rgba(245, 158, 11, 0.15)" stroke="rgba(245, 158, 11, 0.4)" stroke-width="1.5"/>
+    <text x="30" y="28" fill="#FBBF24" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="1">P MARCOM CAREER</text>
+  </g>
+
+  <!-- Main Headline -->
+  <text x="80" y="180" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="48" letter-spacing="-1">
+    Định Hướng Phát Triển Nghề Nghiệp
+  </text>
+  
+  <text x="80" y="235" fill="#C084FC" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="34">
+    Hệ Thống Đánh Giá DISC &amp; Holland Code (RIASEC)
+  </text>
+
+  <text x="80" y="285" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="20">
+    Khám phá bản thể tính cách, nhóm sở thích và định hướng sự nghiệp chuẩn Hoa Kỳ
+  </text>
+
+  <!-- Badges Container -->
+  <!-- DISC Quadrants -->
+  <g transform="translate(80, 340)">
+    <rect width="480" height="180" rx="24" fill="url(#cardGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+    <text x="24" y="38" fill="#818CF8" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="16">MÔ HÌNH TÍNH CÁCH DISC</text>
+    
+    <!-- D -->
+    <rect x="24" y="60" width="95" height="90" rx="16" fill="rgba(239, 68, 68, 0.2)" stroke="#EF4444" stroke-width="1.5"/>
+    <text x="60" y="105" fill="#EF4444" font-family="sans-serif" font-weight="900" font-size="32" text-anchor="middle">D</text>
+    <text x="60" y="132" fill="#FCA5A5" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Quyết đoán</text>
+
+    {/* I */}
+    <rect x="134" y="60" width="95" height="90" rx="16" fill="rgba(245, 158, 11, 0.2)" stroke="#F59E0B" stroke-width="1.5"/>
+    <text x="170" y="105" fill="#F59E0B" font-family="sans-serif" font-weight="900" font-size="32" text-anchor="middle">I</text>
+    <text x="170" y="132" fill="#FDE68A" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Ảnh hưởng</text>
+
+    {/* S */}
+    <rect x="244" y="60" width="95" height="90" rx="16" fill="rgba(16, 185, 129, 0.2)" stroke="#10B981" stroke-width="1.5"/>
+    <text x="280" y="105" fill="#10B981" font-family="sans-serif" font-weight="900" font-size="32" text-anchor="middle">S</text>
+    <text x="280" y="132" fill="#A7F3D0" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Kiên định</text>
+
+    {/* C */}
+    <rect x="354" y="60" width="95" height="90" rx="16" fill="rgba(59, 130, 246, 0.2)" stroke="#3B82F6" stroke-width="1.5"/>
+    <text x="390" y="105" fill="#3B82F6" font-family="sans-serif" font-weight="900" font-size="32" text-anchor="middle">C</text>
+    <text x="390" y="132" fill="#BFDBFE" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Tuân thủ</text>
+  </g>
+
+  <!-- Holland Card Sort Badges -->
+  <g transform="translate(600, 340)">
+    <rect width="520" height="180" rx="24" fill="url(#cardGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+    <text x="24" y="38" fill="#F472B6" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="16">HOLLAND CARD SORT (RIASEC)</text>
+
+    <!-- 6 RIASEC Pills -->
+    <g transform="translate(24, 60)">
+      <rect x="0" y="0" width="70" height="90" rx="14" fill="rgba(239,68,68,0.2)" stroke="#EF4444"/>
+      <text x="35" y="45" fill="#EF4444" font-weight="900" font-size="24" text-anchor="middle">R</text>
+      <text x="35" y="70" fill="#FCA5A5" font-weight="700" font-size="10" text-anchor="middle">Thực tế</text>
+
+      <rect x="80" y="0" width="70" height="90" rx="14" fill="rgba(59,130,246,0.2)" stroke="#3B82F6"/>
+      <text x="115" y="45" fill="#3B82F6" font-weight="900" font-size="24" text-anchor="middle">I</text>
+      <text x="115" y="70" fill="#BFDBFE" font-weight="700" font-size="10" text-anchor="middle">Nghiên cứu</text>
+
+      <rect x="160" y="0" width="70" height="90" rx="14" fill="rgba(236,72,153,0.2)" stroke="#EC4899"/>
+      <text x="195" y="45" fill="#EC4899" font-weight="900" font-size="24" text-anchor="middle">A</text>
+      <text x="195" y="70" fill="#FBCFE8" font-weight="700" font-size="10" text-anchor="middle">Nghệ thuật</text>
+
+      <rect x="240" y="0" width="70" height="90" rx="14" fill="rgba(16,185,129,0.2)" stroke="#10B981"/>
+      <text x="275" y="45" fill="#10B981" font-weight="900" font-size="24" text-anchor="middle">S</text>
+      <text x="275" y="70" fill="#A7F3D0" font-weight="700" font-size="10" text-anchor="middle">Xã hội</text>
+
+      <rect x="320" y="0" width="70" height="90" rx="14" fill="rgba(245,158,11,0.2)" stroke="#F59E0B"/>
+      <text x="355" y="45" fill="#F59E0B" font-weight="900" font-size="24" text-anchor="middle">E</text>
+      <text x="355" y="70" fill="#FDE68A" font-weight="700" font-size="10" text-anchor="middle">Quản lý</text>
+
+      <rect x="400" y="0" width="70" height="90" rx="14" fill="rgba(139,92,246,0.2)" stroke="#8B5CF6"/>
+      <text x="435" y="45" fill="#8B5CF6" font-weight="900" font-size="24" text-anchor="middle">C</text>
+      <text x="435" y="70" fill="#DDD6FE" font-weight="700" font-size="10" text-anchor="middle">Nghiệp vụ</text>
+    </g>
+  </g>
+
+  <!-- Footer Link -->
+  <text x="80" y="580" fill="#64748B" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="14">
+    🌐 https://pmarcom.vn • Chuẩn Đánh Giá Quốc Tế Hoa Kỳ (Marston &amp; John Holland)
+  </text>
+</svg>

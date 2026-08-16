@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#1E1B4B" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#F59E0B" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background rounded box -->
+  <rect width="512" height="512" rx="120" fill="url(#bgGrad)" />
+  
+  <!-- Stylized P Marcom Icon -->
+  <g filter="url(#shadow)" transform="translate(60, 40) scale(0.78)">
+    <path fill="url(#goldGrad)" d="M120 40 C260 40 380 120 380 240 C380 340 300 400 200 400 L200 460 C200 475 185 485 170 480 L120 460 C105 455 100 440 100 425 L100 80 C100 55 110 40 120 40 Z M200 130 L200 310 C250 310 300 280 300 220 C300 160 250 130 200 130 Z" />
+    <!-- Paper Plane cut -->
+    <path fill="#0F172A" d="M180 190 L320 230 L230 270 L210 320 L195 280 L180 190 Z" />
+    <path fill="url(#goldGrad)" d="M230 270 L280 240 L210 320 Z" opacity="0.8" />
+  </g>
+</svg>
