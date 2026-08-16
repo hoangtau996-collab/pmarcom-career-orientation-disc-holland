@@ -89,6 +89,14 @@ export default function App() {
     incrementVisitCount();
   }, []);
 
+  // ROUTE PROTECTION GUARD: Bắt buộc đăng nhập để vào bài test
+  useEffect(() => {
+    if (!user && (currentScreen === 'quizDisc' || currentScreen === 'quizHolland' || currentScreen === 'results')) {
+      setCurrentScreen('selectTest');
+      setShowAuthModal(true);
+    }
+  }, [currentScreen, user]);
+
   // Sync screen state with URL (Cleans # for Home / selectTest)
   const setCurrentScreen = (screen) => {
     setCurrentScreenState(screen);
@@ -110,12 +118,19 @@ export default function App() {
     const handleHashChange = () => {
       const hash = window.location.hash || '';
       const targetScreen = HASH_SCREEN_MAP[hash] || 'selectTest';
-      setCurrentScreenState(targetScreen);
+      
+      // Strict guard for direct link visitors
+      if (!user && (targetScreen === 'quizDisc' || targetScreen === 'quizHolland' || targetScreen === 'results')) {
+        setCurrentScreenState('selectTest');
+        setShowAuthModal(true);
+      } else {
+        setCurrentScreenState(targetScreen);
+      }
     };
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (darkMode) {
@@ -281,7 +296,7 @@ export default function App() {
           <HollandOverview onStartTest={() => handleSelectTestMode('holland')} />
         )}
 
-        {currentScreen === 'quizDisc' && (
+        {currentScreen === 'quizDisc' && user && (
           <QuizScreen
             user={user}
             onCompleteQuiz={handleCompleteDisc}
@@ -289,7 +304,7 @@ export default function App() {
           />
         )}
 
-        {currentScreen === 'quizHolland' && (
+        {currentScreen === 'quizHolland' && user && (
           <HollandCardSort
             user={user}
             onCompleteHolland={handleCompleteHolland}
@@ -297,7 +312,7 @@ export default function App() {
           />
         )}
 
-        {currentScreen === 'results' && (
+        {currentScreen === 'results' && user && (
           <ResultsDashboard
             user={user}
             discResult={discResult}
