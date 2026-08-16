@@ -232,7 +232,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
             {/* Full Name */}
             <div className="space-y-1">
               <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                Họ và Tên Của Bạn <span className="text-red-500">*</span>
+                Họ và Tên Của Bạn (Bắt buộc)
               </label>
               <div className="relative">
                 <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -250,7 +250,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
             {/* Phone Number */}
             <div className="space-y-1">
               <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                Số Điện Thoại Liên Hệ <span className="text-red-500">*</span>
+                Số Điện Thoại Liên Hệ (Bắt buộc)
               </label>
               <div className="relative">
                 <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -309,7 +309,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
                 type="submit"
                 className="flex-1 py-3.5 px-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
               >
-                <span>Xác Nhận & Làm Test Ngay</span>
+                <span>Xác Nhận &amp; Làm Test Ngay</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -359,7 +359,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
 
             <div className="flex items-center space-x-2 my-1">
               <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800"></div>
-              <span className="text-[11px] text-slate-400 font-medium">Hoặc bằng Email & Mật khẩu</span>
+              <span className="text-[11px] text-slate-400 font-medium">Hoặc bằng Email &amp; Mật khẩu</span>
               <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800"></div>
             </div>
 
@@ -378,7 +378,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
               {activeTab === 'register' && (
                 <div className="space-y-1">
                   <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                    Họ và Tên <span className="text-red-500">*</span>
+                    Họ và Tên (Bắt buộc)
                   </label>
                   <div className="relative">
                     <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -397,7 +397,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
               {/* Email */}
               <div className="space-y-1">
                 <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                  Địa chỉ Email (Gmail) <span className="text-red-500">*</span>
+                  Địa chỉ Email (Gmail) (Bắt buộc)
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -416,7 +416,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
               {activeTab === 'register' && (
                 <div className="space-y-1">
                   <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                    Số Điện Thoại <span className="text-red-500">*</span>
+                    Số Điện Thoại (Bắt buộc)
                   </label>
                   <div className="relative">
                     <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -435,7 +435,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
               {/* Password */}
               <div className="space-y-1">
                 <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                  Mật khẩu <span className="text-red-500">*</span>
+                  Mật khẩu (Bắt buộc)
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />

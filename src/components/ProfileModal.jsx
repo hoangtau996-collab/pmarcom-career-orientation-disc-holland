@@ -90,7 +90,7 @@ export default function ProfileModal({ user, onSaveProfile, onClose }) {
             {/* Full Name */}
             <div className="space-y-1">
               <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                Họ và Tên <span className="text-red-500">*</span>
+                Họ và Tên (Bắt buộc)
               </label>
               <div className="relative">
                 <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -107,7 +107,7 @@ export default function ProfileModal({ user, onSaveProfile, onClose }) {
             {/* Phone Number */}
             <div className="space-y-1">
               <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                Số Điện Thoại <span className="text-red-500">*</span>
+                Số Điện Thoại (Bắt buộc)
               </label>
               <div className="relative">
                 <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
