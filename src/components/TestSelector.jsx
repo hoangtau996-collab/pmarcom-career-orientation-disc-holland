@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Sparkles, Layers, ArrowRight, CheckCircle2, Star, Eye, ShieldCheck, Lock, UserCheck, Bell, Award } from 'lucide-react';
+import { Compass, Sparkles, Layers, ArrowRight, CheckCircle2, Star, Eye, ShieldCheck, Lock, UserCheck, Bell, Award, Zap } from 'lucide-react';
 import { getVisitorStats } from '../utils/visitorCounter';
 import { getTranslation } from '../utils/translations';
 
@@ -37,78 +37,64 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
         </div>
       )}
 
-      {/* HERO BANNER SECTION */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 text-white p-6 sm:p-12 shadow-2xl border border-indigo-900/50">
+      {/* OFFICIAL CUSTOM HERO BANNER */}
+      <div className="relative overflow-hidden rounded-3xl bg-slate-950 border border-slate-800 shadow-2xl group">
         
-        {/* Glow Background */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl pointer-events-none"></div>
+        {/* Banner Graphic Image */}
+        <div className="relative w-full overflow-hidden">
+          <img
+            src="/hero-banner.png"
+            alt="P Marcom Career Banner - Thấu hiểu bản thân Kiến tạo tương lai"
+            className="w-full h-auto max-h-[480px] object-cover object-center w-full transition-transform duration-700 hover:scale-[1.01]"
+          />
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Subtle Overlay Shadow */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
+        </div>
+
+        {/* Bottom Banner Content & Quick Action Bar */}
+        <div className="p-6 sm:p-8 bg-gradient-to-b from-slate-900/90 to-slate-950 backdrop-blur-md border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-6">
           
-          {/* Left Content */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-wider">
-              <img src="/logo-pmarcom.png" alt="Logo P Marcom" className="h-5 w-auto object-contain" />
-              <span>{lang === 'vi' ? 'Nền Tảng Độc Quyền P Marcom' : 'Exclusive P Marcom Platform'}</span>
+          <div className="space-y-2 text-center md:text-left">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-wider">
+              <Zap className="w-3.5 h-3.5" />
+              <span>{lang === 'vi' ? 'Chuẩn Đánh Giá Quốc Tế Hoa Kỳ' : 'US Standard Assessment Platform'}</span>
             </div>
-
-            {/* HEADLINE */}
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-              {t('heroTitle')} <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-pink-400 to-indigo-300">
-                {t('heroSubtitle')}
-              </span>
-            </h1>
-
-            {/* PARAGRAPH */}
-            <p className="text-slate-300 text-xs sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
+            
+            <h2 className="text-xl sm:text-3xl font-black text-white tracking-tight">
+              Thấu Hiểu Bản Thân – Kiến Tạo Tương Lai
+            </h2>
+            
+            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl">
               {t('heroDesc')}
             </p>
 
-            {/* STATS PILLS */}
-            <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3">
-              
-              {/* Visit Counter Pill */}
-              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm text-xs font-semibold">
-                <Eye className="w-4 h-4 text-amber-400 shrink-0" />
-                <span className="text-white font-bold">{stats.totalVisits}</span>
-                <span className="text-slate-300">{t('statsVisits')}</span>
+            {/* REAL VISITOR & TEST STATS PILLS */}
+            <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
+              <div className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-bold text-amber-300">
+                <Eye className="w-4 h-4 text-amber-400" />
+                <span>{stats.totalVisits} {t('statsVisits')}</span>
               </div>
-
-              {/* Completed Tests Counter Pill */}
-              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm text-xs font-semibold">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-white font-bold">{stats.totalTests}</span>
-                <span className="text-slate-300">{t('statsCompletedTests')}</span>
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* Right Hero Image */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative mx-auto max-w-md rounded-3xl overflow-hidden shadow-2xl border-2 border-indigo-500/30 group">
-              <img
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop"
-                alt="Định hướng nghề nghiệp P Marcom"
-                className="w-full h-64 sm:h-80 object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
               
-              <div className="absolute bottom-4 left-4 right-4 p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
-                <div className="font-extrabold text-amber-300 flex items-center space-x-1">
-                  <Star className="w-4 h-4 fill-amber-300" />
-                  <span>{lang === 'vi' ? 'Ma Trận Gợi Ý 50+ Ngành Học & Nghề Nghiệp' : 'Matrix of 50+ Recommended Majors & Careers'}</span>
-                </div>
-                <div className="text-[11px] text-slate-200 mt-0.5">{lang === 'vi' ? 'Dành cho Sinh viên/Học sinh và Người đi làm' : 'For Students, Fresh Grads & Working Professionals'}</div>
+              <div className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-bold text-emerald-300">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>{stats.totalTests} {t('statsCompletedTests')}</span>
               </div>
             </div>
           </div>
+
+          {/* Quick Call-to-action Button */}
+          <button
+            onClick={() => onSelectTestMode('combo')}
+            className="px-8 py-4 bg-gradient-to-r from-amber-500 via-pink-600 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-black text-sm rounded-2xl shadow-xl transition-all hover:scale-105 flex items-center space-x-2 shrink-0"
+          >
+            <Sparkles className="w-4 h-4 animate-pulse" />
+            <span>{t('startCombo')}</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
 
         </div>
+
       </div>
 
       {/* THREE TEST CARDS */}
