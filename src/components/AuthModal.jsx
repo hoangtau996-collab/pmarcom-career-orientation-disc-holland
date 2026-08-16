@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, Lock, LogIn, UserPlus, GraduationCap, Briefcase, ShieldCheck, AlertCircle, CheckCircle2, ArrowRight } from 'lucide-react';
+import { User, Mail, Phone, Lock, LogIn, UserPlus, GraduationCap, Briefcase, ShieldCheck, AlertCircle, CheckCircle2, ArrowRight, Bell, Sparkles } from 'lucide-react';
 import { auth, googleProvider } from '../config/firebase';
 import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { saveOrUpdateUser } from '../utils/userManager';
@@ -91,7 +91,6 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
       setEmail(gEmail);
       if (!fullName) setFullName(gName);
       
-      // Chuyển sang màn hình xác nhận thông tin Gmail
       setActiveTab('confirm_google');
       setLoading(false);
 
@@ -142,7 +141,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
         try {
           await signInWithEmailAndPassword(auth, email, password);
         } catch (e) {
-          // Fallback to local auth
+          // Fallback
         }
 
         const userData = saveOrUpdateUser({
@@ -156,7 +155,6 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
         onAuthSuccess(userData);
 
       } else {
-        // Đăng ký mới bằng Email/Pass
         try {
           await createUserWithEmailAndPassword(auth, email, password);
         } catch (e) {
@@ -181,13 +179,29 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
   };
 
   return (
-    <div className="max-w-md mx-auto py-8">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-6">
+    <div className="max-w-md mx-auto py-6 sm:py-8">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5">
         
+        {/* PROMINENT GUEST REQUIREMENT NOTICE BANNER */}
+        <div className="p-3.5 bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border-2 border-amber-400/60 dark:border-amber-500/50 rounded-2xl flex items-start space-x-3 shadow-sm animate-fade-in">
+          <div className="p-1.5 rounded-xl bg-amber-500 text-slate-950 shrink-0 mt-0.5">
+            <Bell className="w-4 h-4 animate-bounce" />
+          </div>
+          <div className="space-y-0.5">
+            <h4 className="font-black text-xs text-amber-900 dark:text-amber-300 uppercase tracking-wider flex items-center space-x-1">
+              <span>Yêu Cầu Đăng Nhập Hệ Thống</span>
+              <Sparkles className="w-3 h-3 text-pink-500" />
+            </h4>
+            <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-snug">
+              Vui lòng hoàn thành <span className="text-indigo-600 dark:text-indigo-400 underline">Đăng Nhập</span> hoặc <span className="text-purple-600 dark:text-purple-400 underline">Đăng Ký</span> để làm bài test và nhận báo cáo kết quả chi tiết của bạn!
+            </p>
+          </div>
+        </div>
+
         {/* Header Branding */}
-        <div className="text-center space-y-2">
-          <img src="/logo-pmarcom.png" alt="P Marcom Logo" className="h-10 w-auto mx-auto object-contain" />
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white">
+        <div className="text-center space-y-1.5 pt-1">
+          <img src="/logo-pmarcom.png" alt="P Marcom Logo" className="h-9 w-auto mx-auto object-contain" />
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
             {activeTab === 'confirm_google' 
               ? 'Xác Nhận Đăng Ký Với Google' 
               : activeTab === 'login' 
@@ -198,8 +212,8 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
             {activeTab === 'confirm_google'
               ? 'Xác nhận Họ tên và Số điện thoại để kích hoạt tài khoản'
               : activeTab === 'login' 
-              ? 'Đăng nhập để vào bài đánh giá DISC & Holland' 
-              : 'Tạo tài khoản mới để cá nhân hóa báo cáo của bạn'}
+              ? 'Nhập email và mật khẩu hoặc dùng tài khoản Gmail' 
+              : 'Điền đầy đủ thông tin để lưu báo cáo đánh giá của bạn'}
           </p>
         </div>
 
@@ -295,7 +309,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
                 type="submit"
                 className="flex-1 py-3.5 px-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
               >
-                <span>Xác Nhận & Đăng Nhập Ngay</span>
+                <span>Xác Nhận & Làm Test Ngay</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -330,7 +344,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
               </button>
             </div>
 
-            {/* OFFICIAL CHROME GOOGLE BUTTON (IMAGE 2 STYLE) */}
+            {/* OFFICIAL CHROME GOOGLE BUTTON */}
             <button
               type="button"
               onClick={handleGoogleAuthClick}
@@ -343,7 +357,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
               </span>
             </button>
 
-            <div className="flex items-center space-x-2 my-2">
+            <div className="flex items-center space-x-2 my-1">
               <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800"></div>
               <span className="text-[11px] text-slate-400 font-medium">Hoặc bằng Email & Mật khẩu</span>
               <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800"></div>
