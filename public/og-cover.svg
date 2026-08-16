@@ -1,114 +1,228 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#0F172A" />
-      <stop offset="50%" stop-color="#1E1B4B" />
-      <stop offset="100%" stop-color="#311042" />
+      <stop offset="45%" stop-color="#1E1B4B" />
+      <stop offset="85%" stop-color="#311042" />
+      <stop offset="100%" stop-color="#1E1035" />
     </linearGradient>
 
-    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FEF08A" />
-      <stop offset="50%" stop-color="#F59E0B" />
+    <!-- Golden Logo Gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFBEB" />
+      <stop offset="30%" stop-color="#FDE047" />
+      <stop offset="70%" stop-color="#F59E0B" />
       <stop offset="100%" stop-color="#B45309" />
     </linearGradient>
 
-    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Trail Dash Gradient -->
+    <linearGradient id="trailGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#818CF8" stop-opacity="0.3" />
+      <stop offset="50%" stop-color="#EC4899" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="1" />
+    </linearGradient>
+
+    <!-- Card Background Glassmorphism -->
+    <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="rgba(255, 255, 255, 0.08)" />
       <stop offset="100%" stop-color="rgba(255, 255, 255, 0.02)" />
     </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="glowGold" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#F59E0B" flood-opacity="0.5"/>
+    </filter>
+
+    <filter id="glowPink" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="16" flood-color="#EC4899" flood-opacity="0.4"/>
+    </filter>
+
+    <filter id="glowIndigo" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="20" flood-color="#6366F1" flood-opacity="0.3"/>
+    </filter>
   </defs>
 
-  <!-- Background -->
-  <rect width="1200" height="630" fill="url(#bg)" />
-  
-  <!-- Grid overlay lines -->
-  <path d="M0 100 L1200 100 M0 200 L1200 200 M0 300 L1200 300 M0 400 L1200 400 M0 500 L1200 500" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  <!-- 1. Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)" />
 
-  <!-- Decorative glow circles -->
-  <circle cx="1000" cy="150" r="250" fill="#6366F1" opacity="0.15" filter="blur(60px)" />
-  <circle cx="200" cy="500" r="220" fill="#EC4899" opacity="0.15" filter="blur(60px)" />
+  <!-- Grid Pattern Overlay -->
+  <path d="M0 80 L1200 80 M0 160 L1200 160 M0 240 L1200 240 M0 320 L1200 320 M0 400 L1200 400 M0 480 L1200 480 M0 560 L1200 560" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+  <path d="M150 0 L150 630 M300 0 L300 630 M450 0 L450 630 M600 0 L600 630 M750 0 L750 630 M900 0 L900 630 M1050 0 L1050 630" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
 
-  <!-- P Marcom Brand Badge -->
-  <g transform="translate(80, 70)">
-    <rect width="240" height="46" rx="23" fill="rgba(245, 158, 11, 0.15)" stroke="rgba(245, 158, 11, 0.4)" stroke-width="1.5"/>
-    <text x="30" y="28" fill="#FBBF24" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="1">P MARCOM CAREER</text>
+  <!-- Ambient Glow Blobs -->
+  <circle cx="1050" cy="180" r="280" fill="#8B5CF6" opacity="0.18" filter="blur(80px)" />
+  <circle cx="200" cy="480" r="260" fill="#EC4899" opacity="0.15" filter="blur(80px)" />
+  <circle cx="700" cy="120" r="200" fill="#F59E0B" opacity="0.12" filter="blur(70px)" />
+
+  <!-- 2. CAREER ROADMAP CARTOON TRAJECTORY ARC -->
+  <!-- Curving dashed flight path representing the career journey -->
+  <path d="M 120 500 C 350 480, 480 320, 680 300 C 850 280, 950 190, 1060 110" 
+        fill="none" 
+        stroke="url(#trailGrad)" 
+        stroke-width="5" 
+        stroke-dasharray="10 8" 
+        stroke-linecap="round" />
+
+  <!-- Roadmap Milestone Nodes (Hoạt hình mốc lộ trình) -->
+  <!-- Milestone 1: Khám phá -->
+  <g transform="translate(240, 460)">
+    <circle cx="0" cy="0" r="16" fill="#1E1B4B" stroke="#818CF8" stroke-width="3" />
+    <circle cx="0" cy="0" r="6" fill="#818CF8" />
+    <rect x="-50" y="24" width="100" height="26" rx="8" fill="rgba(129, 140, 248, 0.15)" stroke="rgba(129, 140, 248, 0.3)" stroke-width="1" />
+    <text x="0" y="41" fill="#C7D2FE" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="11" text-anchor="middle">1. Khám Phá</text>
   </g>
 
-  <!-- Main Headline -->
-  <text x="80" y="180" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="48" letter-spacing="-1">
-    Định Hướng Phát Triển Nghề Nghiệp
-  </text>
+  <!-- Milestone 2: DISC & Holland -->
+  <g transform="translate(540, 330)">
+    <circle cx="0" cy="0" r="18" fill="#1E1B4B" stroke="#EC4899" stroke-width="3" />
+    <circle cx="0" cy="0" r="7" fill="#EC4899" />
+    <rect x="-65" y="26" width="130" height="26" rx="8" fill="rgba(236, 72, 153, 0.15)" stroke="rgba(236, 72, 153, 0.3)" stroke-width="1" />
+    <text x="0" y="43" fill="#FBCFE8" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="11" text-anchor="middle">2. DISC &amp; Holland</text>
+  </g>
+
+  <!-- Milestone 3: Chọn Ngành Chọn Nghề -->
+  <g transform="translate(820, 240)">
+    <circle cx="0" cy="0" r="18" fill="#1E1B4B" stroke="#F59E0B" stroke-width="3" />
+    <circle cx="0" cy="0" r="7" fill="#F59E0B" />
+    <rect x="-65" y="26" width="130" height="26" rx="8" fill="rgba(245, 158, 11, 0.15)" stroke="rgba(245, 158, 11, 0.3)" stroke-width="1" />
+    <text x="0" y="43" fill="#FDE68A" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="11" text-anchor="middle">3. Định Hướng Ngành</text>
+  </g>
+
+  <!-- CARTOON GOAL TARGET (Mục tiêu Sự nghiệp 🎯) -->
+  <g transform="translate(1060, 105)" filter="url(#glowGold)">
+    <!-- Target Outer Ring -->
+    <circle cx="0" cy="0" r="38" fill="rgba(245, 158, 11, 0.2)" stroke="#F59E0B" stroke-width="3" />
+    <circle cx="0" cy="0" r="26" fill="rgba(255, 255, 255, 0.9)" stroke="#EF4444" stroke-width="3" />
+    <circle cx="0" cy="0" r="16" fill="#EF4444" />
+    <circle cx="0" cy="0" r="6" fill="#FDE047" />
+
+    <!-- Goal Flag & Arrow -->
+    <path d="M 0 -16 L 22 -28 L 0 -40 Z" fill="#F59E0B" stroke="#B45309" stroke-width="1.5"/>
+    <line x1="0" y1="-16" x2="0" y2="10" stroke="#FFF" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Sparkles -->
+    <path d="M-30 -35 L-25 -30 L-30 -25 L-35 -30 Z" fill="#FDE047" />
+    <path d="M32 20 L36 24 L32 28 L28 24 Z" fill="#FDE047" />
+    <text x="0" y="58" fill="#FDE047" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="13" text-anchor="middle">GOAL SỰ NGHIỆP 🎯</text>
+  </g>
+
+  <!-- CARTOON PAPER PLANE SOARING UPWARDS (Máy bay giấy hoạt hình) -->
+  <g transform="translate(940, 160) rotate(-28)" filter="url(#glowGold)">
+    <!-- Shadow -->
+    <path d="M -40 20 L 50 -10 L -10 -20 Z" fill="rgba(0,0,0,0.3)" />
+    
+    <!-- Main Paper Plane Wings -->
+    <path d="M -45 0 L 55 -25 L -15 -35 Z" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2" />
+    <path d="M -45 0 L 55 -25 L -15 25 Z" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2" />
+    
+    <!-- Center Fold & Underwing Shadow -->
+    <path d="M -45 0 L 55 -25 L -5 0 Z" fill="#E2E8F0" />
+    <path d="M -15 25 L 10 5 L 55 -25 Z" fill="url(#goldGrad)" opacity="0.9" />
+
+    <!-- Flight wind streaks -->
+    <line x1="-70" y1="-10" x2="-50" y2="-10" stroke="#FDE047" stroke-width="3" stroke-linecap="round" />
+    <line x1="-85" y1="10" x2="-60" y2="10" stroke="#EC4899" stroke-width="3" stroke-linecap="round" />
+    <line x1="-65" y1="28" x2="-50" y2="28" stroke="#818CF8" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <!-- 3. BRANDING & HEADER CONTENT (LEFT SIDE) -->
+
+  <!-- Official P MARCOM Golden Logo Graphic -->
+  <g transform="translate(80, 60)" filter="url(#glowGold)">
+    <!-- Golden P shape background -->
+    <rect width="72" height="72" rx="20" fill="url(#goldGrad)" />
+    <!-- Paper Plane Icon Cutout inside P -->
+    <path fill="#0F172A" d="M22 18 L54 36 L34 44 L30 54 L26 46 L22 18 Z" />
+    <path fill="url(#goldGrad)" d="M34 44 L44 38 L30 54 Z" opacity="0.9" />
+  </g>
+
+  <!-- Brand Title Next to Logo -->
+  <g transform="translate(168, 75)">
+    <text x="0" y="24" fill="url(#goldGrad)" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="28" letter-spacing="1">P MARCOM</text>
+    <text x="0" y="46" fill="#E2E8F0" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="3">CAREER ORIENTATION</text>
+  </g>
+
+  <!-- MAIN HEADLINE -->
+  <g transform="translate(80, 185)">
+    <rect width="280" height="30" rx="15" fill="rgba(245, 158, 11, 0.15)" stroke="rgba(245, 158, 11, 0.4)" stroke-width="1"/>
+    <text x="16" y="20" fill="#FBBF24" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="12" letter-spacing="1">✈️ LỘ TRÌNH PHÁT TRIỂN NGHỀ NGHIỆP</text>
+
+    <text x="0" y="75" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="44" letter-spacing="-1">
+      Định Hướng Phát Triển Nghề Nghiệp
+    </text>
+    
+    <text x="0" y="122" fill="#C084FC" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="30">
+      Hệ Thống Đánh Giá DISC &amp; Holland Code (RIASEC)
+    </text>
+
+    <text x="0" y="162" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18">
+      Giải pháp thấu hiểu bản thân, củng cố năng lực &amp; chinh phục mục tiêu sự nghiệp
+    </text>
+  </g>
+
+  <!-- 4. MODEL BADGES CARDS (DISC & HOLLAND HOẠT HÌNH) -->
   
-  <text x="80" y="235" fill="#C084FC" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="34">
-    Hệ Thống Đánh Giá DISC &amp; Holland Code (RIASEC)
-  </text>
-
-  <text x="80" y="285" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="20">
-    Khám phá bản thể tính cách, nhóm sở thích và định hướng sự nghiệp chuẩn Hoa Kỳ
-  </text>
-
-  <!-- Badges Container -->
-  <!-- DISC Quadrants -->
-  <g transform="translate(80, 340)">
-    <rect width="480" height="180" rx="24" fill="url(#cardGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-    <text x="24" y="38" fill="#818CF8" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="16">MÔ HÌNH TÍNH CÁCH DISC</text>
+  <!-- DISC Quadrant Card -->
+  <g transform="translate(80, 395)">
+    <rect width="470" height="150" rx="20" fill="url(#glassGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" />
+    <text x="20" y="32" fill="#818CF8" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="1">MÔ HÌNH HÀNH VI DISC</text>
     
     <!-- D -->
-    <rect x="24" y="60" width="95" height="90" rx="16" fill="rgba(239, 68, 68, 0.2)" stroke="#EF4444" stroke-width="1.5"/>
-    <text x="60" y="105" fill="#EF4444" font-family="sans-serif" font-weight="900" font-size="32" text-anchor="middle">D</text>
-    <text x="60" y="132" fill="#FCA5A5" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Quyết đoán</text>
+    <rect x="20" y="48" width="95" height="82" rx="14" fill="rgba(239, 68, 68, 0.22)" stroke="#EF4444" stroke-width="1.5"/>
+    <text x="67" y="88" fill="#EF4444" font-family="sans-serif" font-weight="900" font-size="28" text-anchor="middle">D</text>
+    <text x="67" y="112" fill="#FCA5A5" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Quyết đoán</text>
 
-    {/* I */}
-    <rect x="134" y="60" width="95" height="90" rx="16" fill="rgba(245, 158, 11, 0.2)" stroke="#F59E0B" stroke-width="1.5"/>
-    <text x="170" y="105" fill="#F59E0B" font-family="sans-serif" font-weight="900" font-size="32" text-anchor="middle">I</text>
-    <text x="170" y="132" fill="#FDE68A" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Ảnh hưởng</text>
+    <!-- I -->
+    <rect x="130" y="48" width="95" height="82" rx="14" fill="rgba(245, 158, 11, 0.22)" stroke="#F59E0B" stroke-width="1.5"/>
+    <text x="177" y="88" fill="#F59E0B" font-family="sans-serif" font-weight="900" font-size="28" text-anchor="middle">I</text>
+    <text x="177" y="112" fill="#FDE68A" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Ảnh hưởng</text>
 
-    {/* S */}
-    <rect x="244" y="60" width="95" height="90" rx="16" fill="rgba(16, 185, 129, 0.2)" stroke="#10B981" stroke-width="1.5"/>
-    <text x="280" y="105" fill="#10B981" font-family="sans-serif" font-weight="900" font-size="32" text-anchor="middle">S</text>
-    <text x="280" y="132" fill="#A7F3D0" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Kiên định</text>
+    <!-- S -->
+    <rect x="240" y="48" width="95" height="82" rx="14" fill="rgba(16, 185, 129, 0.22)" stroke="#10B981" stroke-width="1.5"/>
+    <text x="287" y="88" fill="#10B981" font-family="sans-serif" font-weight="900" font-size="28" text-anchor="middle">S</text>
+    <text x="287" y="112" fill="#A7F3D0" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Kiên định</text>
 
-    {/* C */}
-    <rect x="354" y="60" width="95" height="90" rx="16" fill="rgba(59, 130, 246, 0.2)" stroke="#3B82F6" stroke-width="1.5"/>
-    <text x="390" y="105" fill="#3B82F6" font-family="sans-serif" font-weight="900" font-size="32" text-anchor="middle">C</text>
-    <text x="390" y="132" fill="#BFDBFE" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Tuân thủ</text>
+    <!-- C -->
+    <rect x="350" y="48" width="95" height="82" rx="14" fill="rgba(59, 130, 246, 0.22)" stroke="#3B82F6" stroke-width="1.5"/>
+    <text x="397" y="88" fill="#3B82F6" font-family="sans-serif" font-weight="900" font-size="28" text-anchor="middle">C</text>
+    <text x="397" y="112" fill="#BFDBFE" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Tuân thủ</text>
   </g>
 
-  <!-- Holland Card Sort Badges -->
-  <g transform="translate(600, 340)">
-    <rect width="520" height="180" rx="24" fill="url(#cardGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-    <text x="24" y="38" fill="#F472B6" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="16">HOLLAND CARD SORT (RIASEC)</text>
+  <!-- Holland Card Sort Card -->
+  <g transform="translate(575, 395)">
+    <rect width="545" height="150" rx="20" fill="url(#glassGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" />
+    <text x="20" y="32" fill="#F472B6" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="1">HOLLAND CARD SORT (RIASEC)</text>
 
-    <!-- 6 RIASEC Pills -->
-    <g transform="translate(24, 60)">
-      <rect x="0" y="0" width="70" height="90" rx="14" fill="rgba(239,68,68,0.2)" stroke="#EF4444"/>
-      <text x="35" y="45" fill="#EF4444" font-weight="900" font-size="24" text-anchor="middle">R</text>
-      <text x="35" y="70" fill="#FCA5A5" font-weight="700" font-size="10" text-anchor="middle">Thực tế</text>
+    <g transform="translate(20, 48)">
+      <rect x="0" y="0" width="75" height="82" rx="14" fill="rgba(239,68,68,0.2)" stroke="#EF4444" stroke-width="1.5"/>
+      <text x="37" y="40" fill="#EF4444" font-weight="900" font-size="22" text-anchor="middle">R</text>
+      <text x="37" y="64" fill="#FCA5A5" font-weight="700" font-size="10" text-anchor="middle">Thực tế</text>
 
-      <rect x="80" y="0" width="70" height="90" rx="14" fill="rgba(59,130,246,0.2)" stroke="#3B82F6"/>
-      <text x="115" y="45" fill="#3B82F6" font-weight="900" font-size="24" text-anchor="middle">I</text>
-      <text x="115" y="70" fill="#BFDBFE" font-weight="700" font-size="10" text-anchor="middle">Nghiên cứu</text>
+      <rect x="88" y="0" width="75" height="82" rx="14" fill="rgba(59,130,246,0.2)" stroke="#3B82F6" stroke-width="1.5"/>
+      <text x="125" y="40" fill="#3B82F6" font-weight="900" font-size="22" text-anchor="middle">I</text>
+      <text x="125" y="64" fill="#BFDBFE" font-weight="700" font-size="10" text-anchor="middle">Nghiên cứu</text>
 
-      <rect x="160" y="0" width="70" height="90" rx="14" fill="rgba(236,72,153,0.2)" stroke="#EC4899"/>
-      <text x="195" y="45" fill="#EC4899" font-weight="900" font-size="24" text-anchor="middle">A</text>
-      <text x="195" y="70" fill="#FBCFE8" font-weight="700" font-size="10" text-anchor="middle">Nghệ thuật</text>
+      <rect x="176" y="0" width="75" height="82" rx="14" fill="rgba(236,72,153,0.2)" stroke="#EC4899" stroke-width="1.5"/>
+      <text x="213" y="40" fill="#EC4899" font-weight="900" font-size="22" text-anchor="middle">A</text>
+      <text x="213" y="64" fill="#FBCFE8" font-weight="700" font-size="10" text-anchor="middle">Nghệ thuật</text>
 
-      <rect x="240" y="0" width="70" height="90" rx="14" fill="rgba(16,185,129,0.2)" stroke="#10B981"/>
-      <text x="275" y="45" fill="#10B981" font-weight="900" font-size="24" text-anchor="middle">S</text>
-      <text x="275" y="70" fill="#A7F3D0" font-weight="700" font-size="10" text-anchor="middle">Xã hội</text>
+      <rect x="264" y="0" width="75" height="82" rx="14" fill="rgba(16,185,129,0.2)" stroke="#10B981" stroke-width="1.5"/>
+      <text x="301" y="40" fill="#10B981" font-weight="900" font-size="22" text-anchor="middle">S</text>
+      <text x="301" y="64" fill="#A7F3D0" font-weight="700" font-size="10" text-anchor="middle">Xã hội</text>
 
-      <rect x="320" y="0" width="70" height="90" rx="14" fill="rgba(245,158,11,0.2)" stroke="#F59E0B"/>
-      <text x="355" y="45" fill="#F59E0B" font-weight="900" font-size="24" text-anchor="middle">E</text>
-      <text x="355" y="70" fill="#FDE68A" font-weight="700" font-size="10" text-anchor="middle">Quản lý</text>
+      <rect x="352" y="0" width="75" height="82" rx="14" fill="rgba(245,158,11,0.2)" stroke="#F59E0B" stroke-width="1.5"/>
+      <text x="389" y="40" fill="#F59E0B" font-weight="900" font-size="22" text-anchor="middle">E</text>
+      <text x="389" y="64" fill="#FDE68A" font-weight="700" font-size="10" text-anchor="middle">Quản lý</text>
 
-      <rect x="400" y="0" width="70" height="90" rx="14" fill="rgba(139,92,246,0.2)" stroke="#8B5CF6"/>
-      <text x="435" y="45" fill="#8B5CF6" font-weight="900" font-size="24" text-anchor="middle">C</text>
-      <text x="435" y="70" fill="#DDD6FE" font-weight="700" font-size="10" text-anchor="middle">Nghiệp vụ</text>
+      <rect x="440" y="0" width="75" height="82" rx="14" fill="rgba(139,92,246,0.2)" stroke="#8B5CF6" stroke-width="1.5"/>
+      <text x="477" y="40" fill="#8B5CF6" font-weight="900" font-size="22" text-anchor="middle">C</text>
+      <text x="477" y="64" fill="#DDD6FE" font-weight="700" font-size="10" text-anchor="middle">Nghiệp vụ</text>
     </g>
   </g>
 
-  <!-- Footer Link -->
-  <text x="80" y="580" fill="#64748B" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="14">
-    🌐 https://pmarcom.vn • Chuẩn Đánh Giá Quốc Tế Hoa Kỳ (Marston &amp; John Holland)
+  <!-- 5. FOOTER BRANDING -->
+  <text x="80" y="585" fill="#64748B" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="13">
+    🌐 Bản quyền thuộc về P Marcom • Chuẩn Đánh Giá Quốc Tế Hoa Kỳ (William Marston &amp; John Holland)
   </text>
 </svg>
