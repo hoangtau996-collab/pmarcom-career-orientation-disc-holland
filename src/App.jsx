@@ -171,7 +171,7 @@ export default function App() {
     }
   };
 
-  // Auth Success Callback
+  // Auth Success Callback: QUAY VỀ TRANG CHỦ ĐỂ NGƯỜI DÙNG TỰ CHỌN BÀI TEST
   const handleAuthSuccess = (userData) => {
     setUser(userData);
     setShowAuthModal(false);
@@ -183,7 +183,8 @@ export default function App() {
       }
     }
 
-    startTest(testMode);
+    // Quay về Trang chủ để người dùng tự do lựa chọn bài test
+    setCurrentScreen('selectTest');
   };
 
   // Save Profile Update
