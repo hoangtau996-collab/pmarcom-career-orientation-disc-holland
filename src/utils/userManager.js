@@ -45,6 +45,13 @@ export function getRegisteredUsers() {
   return JSON.parse(saved);
 }
 
+// Tìm thông tin thành viên theo Email đã đăng ký
+export function findRegisteredUserByEmail(email) {
+  if (!email) return null;
+  const users = getRegisteredUsers();
+  return users.find(u => u.email.toLowerCase() === email.toLowerCase().trim()) || null;
+}
+
 // Đăng ký hoặc cập nhật tài khoản người dùng
 export function saveOrUpdateUser(userData) {
   const users = getRegisteredUsers();

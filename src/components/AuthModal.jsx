@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { User, Mail, Phone, Lock, LogIn, UserPlus, GraduationCap, Briefcase, ShieldCheck, AlertCircle, CheckCircle2, ArrowRight, Bell, Sparkles, Chrome } from 'lucide-react';
 import { auth, googleProvider } from '../config/firebase';
 import { signInWithPopup, signInWithRedirect } from 'firebase/auth';
-import { saveOrUpdateUser } from '../utils/userManager';
+import { saveOrUpdateUser, findRegisteredUserByEmail } from '../utils/userManager';
 
 // Icon Google "G" 4 màu chuẩn thương hiệu Google
 function GoogleGIcon({ className = "w-5 h-5 shrink-0" }) {
@@ -68,7 +68,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Trigger Google Gmail Popup (Bắt buộc chọn tài khoản)
+  // Trigger Google Gmail Popup (Ghi nhớ thông tin nếu tài khoản đã tồn tại)
   const handleGoogleAuthClick = async () => {
     setLoading(true);
     setErrors({});
@@ -84,6 +84,18 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
         const gEmail = result.user.email || '';
         const gName = result.user.displayName || '';
 
+        // KIỂM TRA TÀI KHOẢN ĐÃ ĐĂNG KÝ TRƯỚC ĐÓ HAY CHƯA
+        const existingUser = findRegisteredUserByEmail(gEmail);
+        
+        if (existingUser) {
+          // TỰ ĐỘNG ĐĂNG NHẬP NGAY & GHI NHỚ HỒ SƠ CŨ (KHÔNG CẦN NHẬP LẠI)
+          localStorage.setItem('disc_active_user', JSON.stringify(existingUser));
+          setLoading(false);
+          onAuthSuccess(existingUser);
+          return;
+        }
+
+        // LẦN ĐẦU ĐĂNG KÝ MỚI: CHUYỂN SANG BƯỚC ĐIỀN HỌ TÊN VÀ SĐT
         setGoogleUser({ email: gEmail, displayName: gName });
         setEmail(gEmail);
         setFullName(gName);
@@ -95,14 +107,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
     } catch (error) {
       console.warn('Firebase Popup error code:', error.code, error.message);
       
-      // Nếu popup bị trình duyệt chặn hoặc Firebase Console chưa bật Google Provider, chuyển sang chế độ Nhập Gmail chọn tài khoản linh hoạt
-      if (error.code === 'auth/popup-blocked' || error.code === 'auth/operation-not-allowed' || error.code === 'auth/unauthorized-domain' || error.code === 'auth/popup-closed-by-user' || error.message.includes('popup')) {
-        setActiveTab('select_gmail_manual');
-        setLoading(false);
-        return;
-      }
-
-      // Mặc định chuyển sang nhập/chọn Gmail
+      // Nếu popup bị trình duyệt chặn, chuyển sang chế độ Nhập Gmail thủ công
       setActiveTab('select_gmail_manual');
       setLoading(false);
     }
@@ -145,10 +150,14 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
 
     try {
       if (activeTab === 'login') {
-        try {
-          await signInWithEmailAndPassword(auth, email, password);
-        } catch (e) {
-          // Fallback
+        // Kiểm tra xem email này đã đăng ký trước đó chưa
+        const existingUser = findRegisteredUserByEmail(email);
+
+        if (existingUser) {
+          localStorage.setItem('disc_active_user', JSON.stringify(existingUser));
+          setLoading(false);
+          onAuthSuccess(existingUser);
+          return;
         }
 
         const userData = saveOrUpdateUser({
@@ -162,12 +171,6 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
         onAuthSuccess(userData);
 
       } else {
-        try {
-          await createUserWithEmailAndPassword(auth, email, password);
-        } catch (e) {
-          // Fallback
-        }
-
         const userData = saveOrUpdateUser({
           fullName: fullName,
           email: email,
@@ -210,7 +213,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
           <img src="/logo-pmarcom.png" alt="P Marcom Logo" className="h-9 w-auto mx-auto object-contain" />
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
             {activeTab === 'confirm_google' 
-              ? 'Xác Nhận Đăng Ký Với Google' 
+              ? 'Xác Nhận Thông Tin Lần Đầu' 
               : activeTab === 'select_gmail_manual'
               ? 'Nhập Tài Khoản Gmail Đăng Nhập'
               : activeTab === 'login' 
@@ -219,7 +222,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
           </h2>
           <p className="text-xs text-slate-500">
             {activeTab === 'confirm_google'
-              ? 'Xác nhận Họ tên và Số điện thoại để kích hoạt tài khoản'
+              ? 'Nhập Họ tên và Số điện thoại lần đầu để kích hoạt tài khoản'
               : activeTab === 'select_gmail_manual'
               ? 'Điền tài khoản Gmail cá nhân của bạn để đăng nhập nhanh'
               : activeTab === 'login' 
@@ -268,25 +271,33 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
                     setErrors({ general: 'Vui lòng nhập định dạng Gmail hợp lệ (ví dụ: nguyenvanan@gmail.com)' });
                     return;
                   }
+                  
+                  const existingUser = findRegisteredUserByEmail(email);
+                  if (existingUser) {
+                    localStorage.setItem('disc_active_user', JSON.stringify(existingUser));
+                    onAuthSuccess(existingUser);
+                    return;
+                  }
+
                   setGoogleUser({ email: email, displayName: email.split('@')[0] });
                   if (!fullName) setFullName(email.split('@')[0]);
                   setActiveTab('confirm_google');
                 }}
                 className="flex-1 py-3.5 px-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
               >
-                <span>Tiếp Tục Chọn Gmail Này</span>
+                <span>Tiếp Tục Đăng Nhập</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
         ) : activeTab === 'confirm_google' ? (
-          /* GOOGLE CONFIRMATION STEP */
+          /* GOOGLE CONFIRMATION STEP (CHỈ HIỆN LẦN ĐẦU KHI TÀI KHOẢN MỚI TINH) */
           <form onSubmit={handleConfirmGoogleAuth} className="space-y-4">
             
             <div className="p-3.5 bg-blue-50/80 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-2xl flex items-center space-x-3">
               <GoogleGIcon className="w-6 h-6 shrink-0" />
               <div className="text-xs">
-                <div className="font-bold text-slate-900 dark:text-white">Tài khoản Google / Gmail đã chọn:</div>
+                <div className="font-bold text-slate-900 dark:text-white">Tài khoản Google / Gmail mới:</div>
                 <div className="font-semibold text-blue-600 dark:text-blue-400 truncate">{googleUser?.email}</div>
               </div>
             </div>
@@ -406,7 +417,7 @@ export default function AuthModal({ onAuthSuccess, onClose }) {
               </button>
             </div>
 
-            {/* OFFICIAL CHROME GOOGLE BUTTON WITH FORCED ACCOUNT PICKER */}
+            {/* OFFICIAL CHROME GOOGLE BUTTON WITH AUTOMATIC REMEMBRANCE */}
             <button
               type="button"
               onClick={handleGoogleAuthClick}
