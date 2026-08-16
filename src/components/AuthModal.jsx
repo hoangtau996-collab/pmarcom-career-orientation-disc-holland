@@ -192,7 +192,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5">
         
         {/* PROMINENT GUEST REQUIREMENT NOTICE BANNER */}
-        <div className="p-3.5 bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border-2 border-amber-400/60 dark:border-amber-500/50 rounded-2xl flex items-start space-x-3 shadow-sm stroke-none">
+        <div className="p-3.5 bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border-2 border-amber-400/60 dark:border-amber-500/50 rounded-2xl flex items-start space-x-3 shadow-sm">
           <div className="p-1.5 rounded-xl bg-amber-500 text-slate-950 shrink-0 mt-0.5">
             <Bell className="w-4 h-4" />
           </div>
@@ -202,7 +202,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
               <Sparkles className="w-3 h-3 text-pink-500" />
             </h4>
             <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-snug">
-              Vui lòng hoàn thành <span className="text-indigo-600 dark:text-indigo-400 underline">Đăng Nhập</span> hoặc <span className="text-purple-600 dark:text-purple-400 underline">Đăng Ký</span> để làm bài test và nhận báo cáo kết quả chi tiết của bạn!
+              Vui lòng <span className="text-indigo-600 dark:text-indigo-400 underline">Đăng Nhập</span> hoặc <span className="text-purple-600 dark:text-purple-400 underline">Đăng Ký</span> để quay về Trang chủ và tự do lựa chọn các bài test!
             </p>
           </div>
         </div>
@@ -381,7 +381,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                 type="submit"
                 className="flex-1 py-3.5 px-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
               >
-                <span>Xác Nhận &amp; Làm Test Ngay</span>
+                <span>Xác Nhận &amp; Quay Về Trang Chủ</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -585,7 +585,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                       : 'bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500'
                   }`}
                 >
-                  {loading ? 'Đang xử lý...' : activeTab === 'login' ? '🔑 Đăng Nhập Ngay' : '✨ Hoàn Tất Đăng Ký Mới'}
+                  {loading ? 'Đang xử lý...' : activeTab === 'login' ? '🔑 Đăng Nhập & Quay Về Trang Chủ' : '✨ Đăng Ký & Quay Về Trang Chủ'}
                 </button>
               </div>
 
