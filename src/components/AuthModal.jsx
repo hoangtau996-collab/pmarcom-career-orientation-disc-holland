@@ -42,12 +42,12 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Validate required fields
+  // Validate required fields (BẮT BUỘC ĐIỀN ĐẦY ĐỦ TẤT CẢ THÔNG TIN MỚI ĐƯỢC ĐĂNG KÝ)
   const validateForm = () => {
     const newErrors = {};
 
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Vui lòng nhập Email hợp lệ';
+      newErrors.email = 'Vui lòng nhập Email / Gmail hợp lệ';
     }
 
     if (!password || password.length < 6) {
@@ -55,13 +55,18 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
     }
 
     if (activeTab === 'register') {
-      if (!fullName.trim()) {
-        newErrors.fullName = 'Bắt buộc nhập Họ và tên';
+      if (!fullName.trim() || fullName.trim().length < 2) {
+        newErrors.fullName = 'Bắt buộc nhập đầy đủ Họ và tên (ít nhất 2 ký tự)';
       }
 
-      if (!phone.trim() || phone.trim().length < 9) {
-        newErrors.phone = 'Bắt buộc nhập Số điện thoại hợp lệ';
+      const cleanPhone = phone.trim().replace(/\s+/g, '');
+      if (!cleanPhone || !/^[0-9]{9,11}$/.test(cleanPhone)) {
+        newErrors.phone = 'Bắt buộc nhập Số điện thoại hợp lệ (9 - 11 chữ số)';
       }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      newErrors.general = 'Vui lòng điền đầy đủ tất cả các thông tin bắt buộc trước khi xác nhận!';
     }
 
     setErrors(newErrors);
@@ -95,7 +100,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
           return;
         }
 
-        // LẦN ĐẦU ĐĂNG KÝ MỚI: CHUYỂN SANG BƯỚC ĐIỀN HỌ TÊN VÀ SĐT
+        // LẦN ĐẦU ĐĂNG KÝ MỚI: YÊU CẦU ĐIỀN ĐẦY ĐỦ HỌ TÊN VÀ SỐ ĐIỆN THOẠI
         setGoogleUser({ email: gEmail, displayName: gName });
         setEmail(gEmail);
         setFullName(gName);
@@ -113,20 +118,22 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
     }
   };
 
-  // Complete Google Registration / Sign In Confirmation
+  // Complete Google Registration / Sign In Confirmation (BẮT BUỘC ĐIỀN ĐẦY ĐỦ)
   const handleConfirmGoogleAuth = (e) => {
     e.preventDefault();
     const newErrors = {};
 
-    if (!fullName.trim()) {
-      newErrors.fullName = 'Bắt buộc nhập Họ và tên của bạn';
+    if (!fullName.trim() || fullName.trim().length < 2) {
+      newErrors.fullName = 'Bắt buộc nhập đầy đủ Họ và tên của bạn';
     }
 
-    if (!phone.trim() || phone.trim().length < 9) {
-      newErrors.phone = 'Bắt buộc nhập Số điện thoại liên hệ';
+    const cleanPhone = phone.trim().replace(/\s+/g, '');
+    if (!cleanPhone || !/^[0-9]{9,11}$/.test(cleanPhone)) {
+      newErrors.phone = 'Bắt buộc nhập Số điện thoại liên hệ hợp lệ (9-11 số)';
     }
 
     if (Object.keys(newErrors).length > 0) {
+      newErrors.general = 'Vui lòng điền đầy đủ Họ tên và Số điện thoại trước khi hoàn tất đăng ký!';
       setErrors(newErrors);
       return;
     }
@@ -159,21 +166,16 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
           return;
         }
 
-        const userData = saveOrUpdateUser({
-          fullName: fullName || email.split('@')[0],
-          email: email,
-          phone: phone || '0988 888 888',
-          category: category
-        });
-
+        // Nếu đăng nhập với email chưa từng tồn tại, yêu cầu chuyển sang tab Đăng Ký
+        setErrors({ general: 'Email này chưa được đăng ký trong hệ thống. Vui lòng chọn tab "2. Đăng Ký Mới" để tạo tài khoản!' });
         setLoading(false);
-        onAuthSuccess(userData);
 
       } else {
+        // ĐĂNG KÝ MỚI: BẮT BUỘC ĐIỀN ĐẦY ĐỦ
         const userData = saveOrUpdateUser({
-          fullName: fullName,
-          email: email,
-          phone: phone,
+          fullName: fullName.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
           category: category
         });
 
@@ -182,7 +184,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
       }
     } catch (error) {
       console.error('Auth Error:', error);
-      setErrors({ general: 'Đăng nhập/Đăng ký không thành công. Vui lòng thử lại!' });
+      setErrors({ general: 'Đăng nhập/Đăng ký không thành công. Vui lòng kiểm tra lại thông tin!' });
       setLoading(false);
     }
   };
@@ -202,7 +204,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
               <Sparkles className="w-3 h-3 text-pink-500" />
             </h4>
             <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-snug">
-              Vui lòng <span className="text-indigo-600 dark:text-indigo-400 underline">Đăng Nhập</span> hoặc <span className="text-purple-600 dark:text-purple-400 underline">Đăng Ký</span> để quay về Trang chủ và tự do lựa chọn các bài test!
+              Vui lòng điền <span className="text-indigo-600 dark:text-indigo-400 underline">đầy đủ thông tin</span> để hoàn tất Đăng Nhập hoặc Đăng Ký và quay về Trang chủ tự do làm bài test!
             </p>
           </div>
         </div>
@@ -221,12 +223,12 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
           </h2>
           <p className="text-xs text-slate-500">
             {activeTab === 'confirm_google'
-              ? 'Nhập Họ tên và Số điện thoại lần đầu để kích hoạt tài khoản'
+              ? 'Yêu cầu nhập đầy đủ Họ tên và Số điện thoại để hoàn tất kích hoạt'
               : activeTab === 'select_gmail_manual'
-              ? 'Điền tài khoản Gmail cá nhân của bạn để tiếp tục'
+              ? 'Điền địa chỉ Gmail cá nhân của bạn để tiếp tục'
               : activeTab === 'login' 
               ? 'Sử dụng tài khoản Google hoặc Gmail đã đăng ký' 
-              : 'Điền thông tin thành viên mới để lưu báo cáo đánh giá'}
+              : 'Yêu cầu điền đầy đủ thông tin bên dưới để tạo tài khoản mới'}
           </p>
         </div>
 
@@ -290,9 +292,16 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
             </div>
           </div>
         ) : activeTab === 'confirm_google' ? (
-          /* GOOGLE CONFIRMATION STEP */
+          /* GOOGLE CONFIRMATION STEP (BẮT BUỘC ĐIỀN ĐẦY ĐỦ THÔNG TIN) */
           <form onSubmit={handleConfirmGoogleAuth} className="space-y-4">
             
+            {errors.general && (
+              <div className="p-3 bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-300 text-xs font-bold rounded-xl border border-red-200 dark:border-red-900 flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{errors.general}</span>
+              </div>
+            )}
+
             <div className="p-3.5 bg-blue-50/80 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-2xl flex items-center space-x-3">
               <GoogleGIcon className="w-6 h-6 shrink-0" />
               <div className="text-xs">
@@ -304,7 +313,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
             {/* Full Name */}
             <div className="space-y-1">
               <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                Họ và Tên Của Bạn (Bắt buộc)
+                Họ và Tên Của Bạn <span className="text-red-500 font-bold">*</span>
               </label>
               <div className="relative">
                 <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -316,13 +325,13 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs font-bold"
                 />
               </div>
-              {errors.fullName && <p className="text-[11px] text-red-500 font-medium">{errors.fullName}</p>}
+              {errors.fullName && <p className="text-[11px] text-red-500 font-bold">{errors.fullName}</p>}
             </div>
 
             {/* Phone Number */}
             <div className="space-y-1">
               <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                Số Điện Thoại Liên Hệ (Bắt buộc)
+                Số Điện Thoại Liên Hệ <span className="text-red-500 font-bold">*</span>
               </label>
               <div className="relative">
                 <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -334,13 +343,13 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs font-bold"
                 />
               </div>
-              {errors.phone && <p className="text-[11px] text-red-500 font-medium">{errors.phone}</p>}
+              {errors.phone && <p className="text-[11px] text-red-500 font-bold">{errors.phone}</p>}
             </div>
 
             {/* Category */}
             <div className="space-y-1">
               <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                Nhóm Đối Tượng
+                Nhóm Đối Tượng <span className="text-red-500 font-bold">*</span>
               </label>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <button
@@ -453,7 +462,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
               
               {/* General Error */}
               {errors.general && (
-                <div className="p-3 bg-red-50 text-red-600 text-xs font-medium rounded-xl border border-red-200 flex items-center space-x-2">
+                <div className="p-3 bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-300 text-xs font-bold rounded-xl border border-red-200 dark:border-red-900 flex items-center space-x-2">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{errors.general}</span>
                 </div>
@@ -463,7 +472,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
               {activeTab === 'register' && (
                 <div className="space-y-1">
                   <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                    Họ và Tên (Bắt buộc)
+                    Họ và Tên <span className="text-red-500 font-bold">*</span>
                   </label>
                   <div className="relative">
                     <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -475,14 +484,14 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                       className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                     />
                   </div>
-                  {errors.fullName && <p className="text-[11px] text-red-500 font-medium">{errors.fullName}</p>}
+                  {errors.fullName && <p className="text-[11px] text-red-500 font-bold">{errors.fullName}</p>}
                 </div>
               )}
 
               {/* Email */}
               <div className="space-y-1">
                 <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                  Địa chỉ Email (Gmail) (Bắt buộc)
+                  Địa chỉ Email / Gmail <span className="text-red-500 font-bold">*</span>
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -494,14 +503,14 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                   />
                 </div>
-                {errors.email && <p className="text-[11px] text-red-500 font-medium">{errors.email}</p>}
+                {errors.email && <p className="text-[11px] text-red-500 font-bold">{errors.email}</p>}
               </div>
 
               {/* Phone Number (Required on Register) */}
               {activeTab === 'register' && (
                 <div className="space-y-1">
                   <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                    Số Điện Thoại (Bắt buộc)
+                    Số Điện Thoại Liên Hệ <span className="text-red-500 font-bold">*</span>
                   </label>
                   <div className="relative">
                     <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -513,14 +522,14 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                       className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                     />
                   </div>
-                  {errors.phone && <p className="text-[11px] text-red-500 font-medium">{errors.phone}</p>}
+                  {errors.phone && <p className="text-[11px] text-red-500 font-bold">{errors.phone}</p>}
                 </div>
               )}
 
               {/* Password */}
               <div className="space-y-1">
                 <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                  Mật khẩu (Bắt buộc)
+                  Mật khẩu <span className="text-red-500 font-bold">*</span>
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -532,13 +541,13 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                   />
                 </div>
-                {errors.password && <p className="text-[11px] text-red-500 font-medium">{errors.password}</p>}
+                {errors.password && <p className="text-[11px] text-red-500 font-bold">{errors.password}</p>}
               </div>
 
               {/* Category selection */}
               <div className="space-y-1">
                 <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                  Đối tượng
+                  Đối tượng <span className="text-red-500 font-bold">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <button
