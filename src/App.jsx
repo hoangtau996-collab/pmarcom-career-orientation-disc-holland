@@ -19,7 +19,7 @@ import { getTranslation } from './utils/translations';
 
 // Static URL Hash mapping
 const SCREEN_HASH_MAP = {
-  'selectTest': '#/',
+  'selectTest': '',
   'overviewDisc': '#/disc-overview',
   'overviewHolland': '#/holland-overview',
   'quizDisc': '#/quiz-disc',
@@ -30,8 +30,9 @@ const SCREEN_HASH_MAP = {
 };
 
 const HASH_SCREEN_MAP = {
-  '#/': 'selectTest',
   '': 'selectTest',
+  '#': 'selectTest',
+  '#/': 'selectTest',
   '#/select-test': 'selectTest',
   '#/disc-overview': 'overviewDisc',
   '#/holland-overview': 'overviewHolland',
@@ -44,7 +45,7 @@ const HASH_SCREEN_MAP = {
 
 export default function App() {
   const [currentScreen, setCurrentScreenState] = useState(() => {
-    const initialHash = window.location.hash || '#/';
+    const initialHash = window.location.hash || '';
     return HASH_SCREEN_MAP[initialHash] || 'selectTest';
   }); 
 
@@ -88,19 +89,26 @@ export default function App() {
     incrementVisitCount();
   }, []);
 
-  // Sync screen state with URL Hash
+  // Sync screen state with URL (Cleans # for Home / selectTest)
   const setCurrentScreen = (screen) => {
     setCurrentScreenState(screen);
-    const hash = SCREEN_HASH_MAP[screen] || '#/';
-    if (window.location.hash !== hash) {
-      window.history.pushState(null, '', hash);
+    const hash = SCREEN_HASH_MAP[screen];
+    
+    if (screen === 'selectTest') {
+      if (window.location.hash !== '') {
+        window.history.pushState(null, '', window.location.pathname);
+      }
+    } else {
+      if (window.location.hash !== hash) {
+        window.history.pushState(null, '', hash);
+      }
     }
   };
 
   // Listen to browser Back/Forward buttons and direct URL hash changes
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash || '#/';
+      const hash = window.location.hash || '';
       const targetScreen = HASH_SCREEN_MAP[hash] || 'selectTest';
       setCurrentScreenState(targetScreen);
     };
