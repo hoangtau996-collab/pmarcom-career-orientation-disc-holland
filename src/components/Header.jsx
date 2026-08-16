@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, UserCheck, Eye, Crown, LogIn, LogOut, Menu, X } from 'lucide-react';
+import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, UserCheck, Eye, Crown, LogIn, LogOut, Menu, X, User } from 'lucide-react';
 import { getVisitorStats } from '../utils/visitorCounter';
 import { isAdmin, isSuperAdmin } from '../utils/userManager';
 
-export default function Header({ currentScreen, setCurrentScreen, darkMode, setDarkMode, user, onOpenAuth, onLogout }) {
+export default function Header({ currentScreen, setCurrentScreen, darkMode, setDarkMode, user, onOpenAuth, onLogout, onOpenProfile }) {
   const [stats, setStats] = useState({ totalVisits: '15,420', totalTests: '8,930' });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -104,14 +104,18 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
             <span>Lịch sử</span>
           </button>
 
-          {/* User Status */}
+          {/* User Status / Edit Profile Button */}
           {user ? (
             <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-full border border-slate-200 dark:border-slate-700">
-                <UserCheck className="w-3.5 h-3.5 text-indigo-500" />
-                <span className="max-w-[90px] truncate">{user.fullName}</span>
+              <button
+                onClick={onOpenProfile}
+                className="flex items-center space-x-1.5 px-3 py-1 bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-full border border-indigo-200 dark:border-slate-700 transition-all"
+                title="Bấm để chỉnh sửa hồ sơ cá nhân"
+              >
+                <UserCheck className="w-3.5 h-3.5 text-indigo-600" />
+                <span className="max-w-[100px] truncate">{user.fullName}</span>
                 {userIsSuperAdmin && <span className="text-[10px] text-amber-500 font-bold">👑</span>}
-              </div>
+              </button>
 
               <button
                 onClick={onLogout}
@@ -151,7 +155,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
           </button>
         </div>
 
-        {/* Mobile & Tablet Controls (Hamburger Menu Button) */}
+        {/* Mobile & Tablet Controls */}
         <div className="flex items-center space-x-2 lg:hidden">
           
           <button
@@ -178,11 +182,16 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
           {/* User info on mobile */}
           {user ? (
             <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
-              <div className="flex items-center space-x-2">
-                <UserCheck className="w-4 h-4 text-indigo-500" />
-                <span className="font-bold text-xs text-slate-900 dark:text-white">{user.fullName}</span>
-                {userIsSuperAdmin && <span className="text-xs">👑 Super Admin</span>}
-              </div>
+              <button onClick={() => { onOpenProfile(); setMobileMenuOpen(false); }} className="flex items-center space-x-2 text-left">
+                <UserCheck className="w-4 h-4 text-indigo-500 shrink-0" />
+                <div>
+                  <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center space-x-1">
+                    <span>{user.fullName}</span>
+                    {userIsSuperAdmin && <span>👑</span>}
+                  </div>
+                  <div className="text-[10px] text-indigo-600 dark:text-indigo-400">SĐT: {user.phone || 'Bấm để sửa'}</div>
+                </div>
+              </button>
 
               <button onClick={onLogout} className="text-xs text-rose-500 font-bold">
                 Đăng xuất

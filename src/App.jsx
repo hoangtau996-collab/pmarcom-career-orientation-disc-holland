@@ -4,6 +4,7 @@ import TestSelector from './components/TestSelector';
 import DiscOverview from './components/DiscOverview';
 import HollandOverview from './components/HollandOverview';
 import AuthModal from './components/AuthModal';
+import ProfileModal from './components/ProfileModal';
 import QuizScreen from './components/QuizScreen';
 import HollandCardSort from './components/HollandCardSort';
 import ResultsDashboard from './components/ResultsDashboard';
@@ -19,6 +20,7 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState('selectTest'); 
   const [testMode, setTestMode] = useState('combo'); // 'disc' | 'holland' | 'combo'
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   // Dark mode
   const [darkMode, setDarkMode] = useState(() => {
@@ -73,7 +75,6 @@ export default function App() {
     setUser(userData);
     setShowAuthModal(false);
 
-    // If Super Admin logs in, prompt or go to test
     if (userData.email.toLowerCase() === 'pmarcomvn@gmail.com') {
       if (window.confirm('Chào mừng Super Admin P Marcom! Bạn có muốn mở Trang Quản Trị Admin ngay không?')) {
         setCurrentScreen('admin');
@@ -82,6 +83,12 @@ export default function App() {
     }
 
     startTest(testMode);
+  };
+
+  // Save Profile Update
+  const handleSaveProfile = (updatedUserData) => {
+    setUser(updatedUserData);
+    setShowProfileModal(false);
   };
 
   // Logout
@@ -161,6 +168,7 @@ export default function App() {
         setDarkMode={setDarkMode}
         user={user}
         onOpenAuth={() => setShowAuthModal(true)}
+        onOpenProfile={() => setShowProfileModal(true)}
         onLogout={handleLogout}
       />
 
@@ -171,6 +179,15 @@ export default function App() {
           <AuthModal
             onAuthSuccess={handleAuthSuccess}
             onClose={() => setShowAuthModal(false)}
+          />
+        )}
+
+        {/* PROFILE EDIT MODAL */}
+        {showProfileModal && user && (
+          <ProfileModal
+            user={user}
+            onSaveProfile={handleSaveProfile}
+            onClose={() => setShowProfileModal(false)}
           />
         )}
 
