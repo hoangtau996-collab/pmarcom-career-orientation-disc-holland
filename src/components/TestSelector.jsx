@@ -361,8 +361,8 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
 
             <p className="text-slate-300 text-xs sm:text-sm max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
               {lang === 'vi' 
-                ? 'Lộ trình đào tạo chuẩn doanh nghiệp từ cơ bản đến chuyên sâu: SEO & Content Strategy, Chạy Quảng Cáo Facebook/Google/TikTok Ads, Xây dựng thương hiệu & Ứng dụng AI trong Marketing.'
-                : 'Enterprise-grade practical training from foundations to advanced: SEO & Content Strategy, Performance Ads (Facebook/Google/TikTok), Brand Strategy & AI Marketing Application.'}
+                ? 'Lộ trình đào tạo chuẩn doanh nghiệp từ cơ bản đến chuyên sâu: SEO & Content Strategy, Performance Ads, Xây dựng thương hiệu & Ứng dụng AI trong Marketing.'
+                : 'Enterprise-grade practical training from foundations to advanced: SEO & Content Strategy, Performance Ads, Brand Strategy & AI Marketing Application.'}
             </p>
 
             {/* Feature Pills */}
@@ -418,7 +418,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                     <span>Digital Marketing & AI Tools 2026</span>
                   </div>
-                  <div className="text-[11px] text-slate-300">Facebook • Google • TikTok • SEO & Content</div>
+                  <div className="text-[11px] text-slate-300">Performance Ads • SEO & Content Strategy</div>
                 </div>
                 <span className="px-2.5 py-1 bg-pink-600 text-white font-extrabold text-[10px] rounded-lg shrink-0">
                   P MARCOM ACADEMY
