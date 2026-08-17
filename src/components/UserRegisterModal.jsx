@@ -174,7 +174,7 @@ export default function UserRegisterModal({ onSubmitUser, onCancel }) {
                 className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm appearance-none"
               >
                 <option value="Dự định sự nghiệp & phát triển bản thân">Dự định sự nghiệp & phát triển bản thân</option>
-                <option value="Định hướng chọn ngành đại học / học nghề">Định hướng chọn ngành đại học / học nghề</option>
+                <option value="Định hướng chọn ngành nghề phù hợp">Định hướng chọn ngành nghề phù hợp</option>
                 <option value="Cải thiện kỹ năng giao tiếp & làm việc nhóm">Cải thiện kỹ năng giao tiếp & làm việc nhóm</option>
                 <option value="Tìm kiếm phong cách quản lý & lãnh đạo phù hợp">Tìm kiếm phong cách quản lý & lãnh đạo phù hợp</option>
               </select>

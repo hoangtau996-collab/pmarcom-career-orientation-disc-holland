@@ -1,14 +1,14 @@
-// Gợi ý Nghề nghiệp & Ngành học Chuyên biệt cho Sinh viên/Học sinh và Người đi làm
+// Gợi ý Ngành nghề & Lĩnh vực Chuyên môn Phù hợp cho Sinh viên/Học sinh và Người đi làm
 
 export const CAREER_MAPPINGS = {
   'D': {
     student: {
       majors: [
-        { name: 'Quản trị Kinh doanh (BBA)', match: 95, reason: 'Phát huy tối đa tư duy lãnh đạo, quản lý và định hướng kết quả.' },
-        { name: 'Kinh doanh Quốc tế & Thương mại', match: 92, reason: 'Phù hợp với tính cách xông xáo, dám thách thức và đàm phán.' },
-        { name: 'Luật học & Luật Kinh tế', match: 90, reason: 'Tư duy sắc bén, lập luận quyết đoán và bảo vệ quan điểm.' },
-        { name: 'Công nghệ Thông tin / Quản lý Dự án IT', match: 88, reason: 'Lãnh đạo đội ngũ kỹ thuật và giải quyết các bài toán công nghệ lớn.' },
-        { name: 'Tài chính - Ngân hàng / Đầu tư', match: 86, reason: 'Chịu được áp lực cao, quyết đoán trong các quyết định tài chính.' }
+        { name: 'Ngành Quản trị Kinh doanh & Vận hành', match: 95, reason: 'Phát huy tối đa tư duy lãnh đạo, quản lý tổ chức và định hướng kết quả.' },
+        { name: 'Ngành Kinh doanh Quốc tế & Thương mại', match: 92, reason: 'Phù hợp với tính cách xông xáo, dám thách thức và đàm phán thương lượng.' },
+        { name: 'Ngành Luật Thương mại & Pháp chế Doanh nghiệp', match: 90, reason: 'Tư duy sắc bén, lập luận quyết đoán và bảo vệ quan điểm chiến lược.' },
+        { name: 'Ngành Công nghệ Thông tin & Quản lý Dự án IT', match: 88, reason: 'Lãnh đạo đội ngũ kỹ thuật và giải quyết các bài toán công nghệ lớn.' },
+        { name: 'Ngành Tài chính - Ngân hàng & Đầu tư', match: 86, reason: 'Chịu được áp lực cao, quyết đoán trong các quyết định tài chính.' }
       ],
       clubRoles: [
         'Chủ tịch / Trưởng ban Điều hành Câu lạc bộ',
@@ -38,24 +38,24 @@ export const CAREER_MAPPINGS = {
       ],
       leadershipStyle: 'Lãnh đạo độc đoán / Định hướng mục tiêu (Autocratic & Results-driven). Bạn tạo động lực bằng thử thách và yêu cầu hiệu suất tối đa.',
       stressManagement: 'Tránh quá tải bằng cách ủy quyền công việc chi tiết cho cấp dưới. Dành thời gian tập thể thao hoặc thiền để giải tỏa năng lượng tích cực.',
-      recommendedCertificates: ['Chứng chỉ Quản lý Dự án PMP®', 'Bằng MBA Quản trị Kinh doanh', 'Chứng chỉ Lãnh đạo Chiến lược']
+      recommendedCertificates: ['Chứng chỉ Quản lý Dự án PMP®', 'Chứng chỉ Quản trị Kinh doanh Quốc tế', 'Chứng chỉ Lãnh đạo Chiến lược']
     }
   },
 
   'I': {
     student: {
       majors: [
-        { name: 'Truyền thông Mới & Quản trị Truyền thông', match: 96, reason: 'Phát huy năng khiếu sáng tạo nội dung, giao tiếp và lan tỏa thông điệp.' },
-        { name: 'Marketing & Quảng cáo (Digital Marketing)', match: 94, reason: 'Tối ưu hóa khả năng hiểu tâm lý khách hàng và bắt xu hướng.' },
-        { name: 'Quan hệ Công chúng (PR) & Event Management', match: 92, reason: 'Môi trường kết nối xã hội sôi nổi, sáng tạo và tự do.' },
-        { name: 'Ngôn ngữ Anh / Du lịch - Khách sạn', match: 88, reason: 'Giao lưu văn hóa, ngoại giao và tạo sự thiện cảm.' },
-        { name: 'Tâm lý học / Sư phạm', match: 85, reason: 'Truyền cảm hứng, kết nối tâm hồn và thấu hiểu con người.' }
+        { name: 'Ngành Truyền thông Mới & Sáng tạo Nội dung', match: 96, reason: 'Phát huy năng khiếu sáng tạo nội dung, giao tiếp và lan tỏa thông điệp.' },
+        { name: 'Ngành Marketing & Quảng cáo (Digital Marketing)', match: 94, reason: 'Tối ưu hóa khả năng hiểu tâm lý khách hàng và bắt xu hướng thị trường.' },
+        { name: 'Ngành Quan hệ Công chúng (PR) & Quản lý Sự kiện', match: 92, reason: 'Môi trường kết nối xã hội sôi nổi, sáng tạo và tự do.' },
+        { name: 'Ngành Ngoại giao & Dịch vụ Du lịch - Khách sạn', match: 88, reason: 'Giao lưu văn hóa, ngoại giao và tạo sự thiện cảm tích cực.' },
+        { name: 'Ngành Tâm lý học & Đào tạo Con người', match: 85, reason: 'Truyền cảm hứng, kết nối tâm hồn và thấu hiểu nhu cầu con người.' }
       ],
       clubRoles: [
         'Trưởng ban Truyền thông & Event',
-        'MC / Host chương trình sinh viên',
+        'MC / Host chương trình sự kiện',
         'Phụ trách Đối ngoại & Sáng tạo Nội dung',
-        'Đại sứ hình ảnh sinh viên'
+        'Đại sứ hình ảnh thương hiệu'
       ],
       softSkills: [
         'Kỹ năng lập kế hoạch và quản lý thời gian (Time Management)',
@@ -86,15 +86,15 @@ export const CAREER_MAPPINGS = {
   'S': {
     student: {
       majors: [
-        { name: 'Quản trị Nhân sự (Human Resources Management)', match: 96, reason: 'Tận tụy, thấu hiểu, lắng nghe và chăm sóc sự phát triển của con người.' },
-        { name: 'Sư phạm / Giáo dục & Đào tạo', match: 94, reason: 'Kiên nhẫn truyền đạt tri thức và đồng hành cùng thế hệ trẻ.' },
-        { name: 'Y khoa / Dược khoa / Điều dưỡng / Y tế Cộng đồng', match: 92, reason: 'Chăm sóc sức khỏe chân thành, kiên trì và chu đáo.' },
-        { name: 'Tâm lý học Tư vấn & Công tác Xã hội', match: 90, reason: 'Lắng nghe sâu sắc, hỗ trợ tinh thần cho cộng đồng.' },
-        { name: 'Hành chính - Văn phòng / Quản trị Công', match: 88, reason: 'Duy trì sự ổn định, cẩn thận và trách nhiệm lâu dài.' }
+        { name: 'Ngành Quản trị & Phát triển Nhân sự (HRM)', match: 96, reason: 'Tận tụy, thấu hiểu, lắng nghe và chăm sóc sự phát triển của con người.' },
+        { name: 'Ngành Giáo dục & Đào tạo Kỹ năng', match: 94, reason: 'Kiên nhẫn truyền đạt tri thức và đồng hành cùng sự phát triển cá nhân.' },
+        { name: 'Ngành Y tế, Dược phẩm & Chăm sóc Sức khỏe', match: 92, reason: 'Chăm sóc sức khỏe chân thành, kiên trì và chu đáo.' },
+        { name: 'Ngành Tư vấn Tâm lý & Công tác Xã hội', match: 90, reason: 'Lắng nghe sâu sắc, hỗ trợ tinh thần cho cộng đồng.' },
+        { name: 'Ngành Hành chính - Quản trị Công & Dịch vụ', match: 88, reason: 'Duy trì sự ổn định, cẩn thận và trách nhiệm lâu dài.' }
       ],
       clubRoles: [
         'Trưởng/Phó ban Nhân sự (HR Club)',
-        'Thành viên ban Hậu cần / Chăm sóc Sinh viên',
+        'Thành viên ban Hậu cần / Chăm sóc Thành viên',
         'Tình nguyện viên nòng cốt các chiến dịch Xã hội',
         'Thủ quỹ / Ban Thư ký'
       ],
@@ -116,7 +116,7 @@ export const CAREER_MAPPINGS = {
         { title: 'Chuyên gia Tư vấn Tâm lý / Thợ hòa giải', match: 94, desc: 'Hỗ trợ giải tỏa căng thẳng và tư duy cho cá nhân/tập thể.' },
         { title: 'Bác sĩ / Chuyên gia Y tế / Quản lý Y tế', match: 93, desc: 'Tận tụy cứu chữa và nâng cao sức khỏe cộng đồng.' },
         { title: 'Quản lý Dịch vụ Khách hàng (Customer Support Manager)', match: 90, desc: 'Duy trì sự hài lòng bền vững và trải nghiệm khách hàng.' },
-        { title: 'Giảng viên Đại học / Chuyên gia Đào tạo Kỹ năng', match: 89, desc: 'Truyền thụ tri thức bài bản và kiên nhẫn với người học.' }
+        { title: 'Giảng viên Chuyên ngành / Chuyên gia Đào tạo Kỹ năng', match: 89, desc: 'Truyền thụ tri thức bài bản và kiên nhẫn với người học.' }
       ],
       leadershipStyle: 'Lãnh đạo Phục vụ (Servant Leadership). Bạn luôn quan tâm, hỗ trợ và tạo môi trường an toàn để cấp dưới phát huy năng lực.',
       stressManagement: 'Học cách từ chối các yêu cầu ngoài phạm vi trách nhiệm. Chia sẻ cảm xúc với bạn bè thân thiết thay vì giữ trong lòng.',
@@ -127,11 +127,11 @@ export const CAREER_MAPPINGS = {
   'C': {
     student: {
       majors: [
-        { name: 'Khoa học Máy tính & Kỹ thuật Phần mềm (Software Engineering)', match: 97, reason: 'Tư duy logic sắc bén, kỷ luật và phân tích hệ thống hoàn hảo.' },
-        { name: 'Kế toán - Kiểm toán (ACCA / CPA)', match: 95, reason: 'Đòi hỏi sự chính xác tuyệt đối, cẩn trọng với các con số và pháp lý.' },
-        { name: 'Khoa học Dữ liệu (Data Science) & Phân tích Kinh doanh (BI)', match: 94, reason: 'Nghiên cứu số liệu, phát hiện quy luật và đưa ra báo cáo khách quan.' },
-        { name: 'Kỹ thuật Cơ khí / Điện - Điện tử / Tự động hóa', match: 90, reason: 'Tân tụy với kỹ thuật, chuẩn mực chất lượng và tính toán chính xác.' },
-        { name: 'Tài chính Định lượng & Quản trị Rủi ro', match: 89, reason: 'Xây dựng mô hình tài chính và phòng ngừa rủi ro cho doanh nghiệp.' }
+        { name: 'Ngành Công nghệ Phần mềm & Khoa học Máy tính', match: 97, reason: 'Tư duy logic sắc bén, kỷ luật và phân tích hệ thống hoàn hảo.' },
+        { name: 'Ngành Kế toán - Kiểm toán & Tài chính', match: 95, reason: 'Đòi hỏi sự chính xác tuyệt đối, cẩn trọng với các con số và pháp lý.' },
+        { name: 'Ngành Khoa học Dữ liệu (Data Science) & Business Intelligence', match: 94, reason: 'Nghiên cứu số liệu, phát hiện quy luật và đưa ra báo cáo khách quan.' },
+        { name: 'Ngành Kỹ thuật Cơ khí - Điện & Tự động hóa', match: 90, reason: 'Tận tụy với kỹ thuật, chuẩn mực chất lượng và tính toán chính xác.' },
+        { name: 'Ngành Tài chính Định lượng & Quản trị Rủi ro', match: 89, reason: 'Xây dựng mô hình tài chính và phòng ngừa rủi ro cho doanh nghiệp.' }
       ],
       clubRoles: [
         'Trưởng ban Tài chính / Thư ký Chuyên môn',

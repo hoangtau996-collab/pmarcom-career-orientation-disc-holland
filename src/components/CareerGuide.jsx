@@ -16,7 +16,7 @@ export default function CareerGuide({ primaryTrait, userCategory = 'student' }) 
         </div>
         <div>
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-            {isStudent ? '🎓 Định Hướng Ngành Học & Lập Nghiệp' : '💼 Gợi Ý Sự Nghiệp & Vị Trí Công Việc'}
+            {isStudent ? '🎯 Định Hướng Ngành Nghề & Lĩnh Vực Phù Hợp' : '💼 Gợi Ý Sự Nghiệp & Vị Trí Công Việc'}
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             Dựa trên thiên hướng tự nhiên của nhóm tính cách <strong className="text-indigo-600 dark:text-indigo-400">{primaryTrait}</strong>
@@ -32,7 +32,7 @@ export default function CareerGuide({ primaryTrait, userCategory = 'student' }) 
           <div className="space-y-4">
             <h4 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
               <BookMarked className="w-5 h-5 text-indigo-600" />
-              <span>Top Ngành Học Đại Học / Cao Đẳng Phù Hợp Nhất</span>
+              <span>Top Ngành Nghề & Lĩnh Vực Chuyên Môn Phù Hợp Nhất</span>
             </h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

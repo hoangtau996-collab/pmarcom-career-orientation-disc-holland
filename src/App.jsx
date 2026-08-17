@@ -85,9 +85,13 @@ export default function App() {
     localStorage.setItem('disc_lang', lang);
   }, [lang]);
 
-  // Increment real visit count once per session / mount
+  // Increment real visit count once per session
   useEffect(() => {
-    incrementVisitCount();
+    const hasVisited = sessionStorage.getItem('pmarcom_visited_session');
+    if (!hasVisited) {
+      sessionStorage.setItem('pmarcom_visited_session', 'true');
+      incrementVisitCount();
+    }
   }, []);
 
   // ROUTE PROTECTION GUARD: Bắt buộc đăng nhập để vào bài test

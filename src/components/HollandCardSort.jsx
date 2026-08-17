@@ -5,6 +5,7 @@ import confetti from 'canvas-confetti';
 
 export default function HollandCardSort({ user, onCompleteHolland, onBackToOverview }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showGuide, setShowGuide] = useState(true);
   const [cardChoices, setCardChoices] = useState(() => {
     const saved = localStorage.getItem('holland_current_choices');
     return saved ? JSON.parse(saved) : {};
@@ -74,6 +75,62 @@ export default function HollandCardSort({ user, onCompleteHolland, onBackToOverv
         </div>
       </div>
 
+      {/* INSTRUCTION BOX - HƯỚNG DẪN CHỌN CÂU TRẢ LỜI RÕ RÀNG */}
+      <div className="bg-gradient-to-r from-purple-900/10 via-indigo-900/10 to-pink-900/10 dark:from-purple-950/40 dark:via-indigo-950/40 dark:to-pink-950/40 rounded-2xl p-4 sm:p-5 border-2 border-purple-300/60 dark:border-purple-800/60 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2 font-black text-purple-900 dark:text-purple-200 text-sm sm:text-base">
+            <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400 shrink-0" />
+            <span>📌 Hướng Dẫn Chọn Câu Trả Lời Holland</span>
+          </div>
+          <button
+            onClick={() => setShowGuide(!showGuide)}
+            className="text-xs font-bold text-purple-600 dark:text-purple-300 hover:underline"
+          >
+            {showGuide ? 'Thu gọn ▲' : 'Xem hướng dẫn ▼'}
+          </button>
+        </div>
+
+        {showGuide && (
+          <div className="space-y-3 pt-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300 border-t border-purple-200/60 dark:border-purple-900/60">
+            <p className="font-semibold text-slate-900 dark:text-white leading-relaxed">
+              🎯 <strong>Nguyên tắc cốt lõi:</strong> Hãy chọn đáp án dựa trên <strong>SỞ THÍCH & HỨNG THÚ THỰC TẾ</strong> của bạn với từng công việc/hoạt động (bạn có <em>thích</em> hoặc <em>hào hứng</em> làm hay không). <em>Không đánh giá dựa trên mức lương, độ khó hay việc bạn đã có kinh nghiệm hay chưa.</em>
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+              <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900/60 space-y-1">
+                <div className="font-bold text-emerald-800 dark:text-emerald-300 text-xs flex items-center space-x-1">
+                  <Heart className="w-3.5 h-3.5 fill-emerald-600 text-emerald-600 shrink-0" />
+                  <span>Thích / Rất Phù Hợp</span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug">
+                  Bạn hào hứng, yêu thích hoặc cảm thấy hoạt động này rất hợp với tính cách của mình.
+                </p>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900/60 space-y-1">
+                <div className="font-bold text-amber-800 dark:text-amber-300 text-xs flex items-center space-x-1">
+                  <HelpCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                  <span>Phân Vân</span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug">
+                  Bạn cảm thấy bình thường, chưa rõ sở thích, hoặc đang phân vân giữa thích và không thích.
+                </p>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900/60 space-y-1">
+                <div className="font-bold text-rose-800 dark:text-rose-300 text-xs flex items-center space-x-1">
+                  <XCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                  <span>Không Phù Hợp</span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug">
+                  Bạn không có hứng thú, thấy nhàm chán hoặc không muốn làm loại hoạt động này.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Progress bar */}
       <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
         <div
@@ -108,8 +165,15 @@ export default function HollandCardSort({ user, onCompleteHolland, onBackToOverv
             ))}
           </div>
 
+          {/* CHOICE ACTION GUIDANCE LABEL */}
+          <div className="pt-3">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Chọn cảm nhận thực tế của bạn với công việc/hoạt động trên:
+            </span>
+          </div>
+
           {/* TOUCH-FRIENDLY ACTION BUTTONS (STACK ON MOBILE, GRID ON TABLET/DESKTOP) */}
-          <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl mx-auto">
+          <div className="pt-1 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl mx-auto">
             
             {/* LIKE */}
             <button
