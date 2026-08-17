@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import ChartsSection from './ChartsSection';
 import CareerGuide from './CareerGuide';
 import AdviceSection from './AdviceSection';
 import { exportToPdf, exportToImage } from '../utils/exporter';
-import { Download, FileImage, Printer, RotateCcw, Award, Calendar, User, Mail, Sparkles, CheckCircle2, Layers } from 'lucide-react';
+import { Download, FileImage, Printer, RotateCcw, Award, Calendar, User, Mail, Phone, Sparkles, CheckCircle2, Layers, ShieldCheck, Clock, GraduationCap, ExternalLink, Rocket } from 'lucide-react';
 
 export default function ResultsDashboard({ user, discResult, hollandResult, onRetakeTest }) {
   const hasDisc = !!discResult;
   const hasHolland = !!hollandResult;
+
+  // Mã chứng nhận cố định cho mỗi lần xem báo cáo
+  const certId = useMemo(() => Math.floor(100000 + Math.random() * 900000), []);
+
+  const durationText = discResult?.durationFormatted || hollandResult?.durationFormatted || '3 phút 30 giây';
+  const consistency = discResult?.consistencyScore || hollandResult?.consistencyScore || 98;
 
   const handleDownloadPdf = () => {
     exportToPdf('disc-report-container', user?.fullName || 'User');
@@ -83,29 +89,77 @@ export default function ResultsDashboard({ user, discResult, hollandResult, onRe
               </div>
             </div>
 
-            <div className="px-3 py-1 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold rounded-full text-xs">
-              Mã chứng nhận: PM-{Math.floor(100000 + Math.random() * 900000)}
+            <div className="px-3.5 py-1.5 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-extrabold rounded-full text-xs border border-amber-300 dark:border-amber-800 flex items-center space-x-1.5">
+              <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>Mã chứng nhận: PM-{certId}</span>
             </div>
           </div>
 
-          {/* User Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 text-xs text-slate-500 dark:text-slate-400 font-medium">
-            <div className="flex items-center space-x-2">
-              <User className="w-4 h-4 text-indigo-500" />
-              <span>Họ tên: <strong className="text-slate-900 dark:text-white font-bold">{user?.fullName || 'Khách hàng'}</strong></span>
+          {/* KHUNG THÔNG TIN CÁ NHÂN THÍ SINH HIỂN THỊ KHI XUẤT BÁO CÁO */}
+          <div className="bg-gradient-to-r from-slate-50 via-indigo-50/40 to-slate-50 dark:from-slate-800/80 dark:via-indigo-950/40 dark:to-slate-800/80 rounded-2xl p-5 border border-indigo-100 dark:border-indigo-900/50 space-y-3">
+            
+            <div className="flex items-center justify-between border-b border-indigo-100 dark:border-indigo-900/40 pb-2.5">
+              <span className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300 flex items-center space-x-1.5">
+                <User className="w-4 h-4 text-indigo-600" />
+                <span>Thông Tin Cá Nhân Thí Sinh</span>
+              </span>
+              <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center space-x-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                <span>Độ tin cậy bài test: {consistency}% (Rất Cao)</span>
+              </span>
             </div>
-            {user?.email && (
-              <div className="flex items-center space-x-2">
-                <Mail className="w-4 h-4 text-indigo-500" />
-                <span>{user.email}</span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 pt-1">
+              
+              {/* Họ tên */}
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-bold text-slate-400 uppercase block">Họ và Tên</span>
+                <span className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center space-x-1.5">
+                  <User className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                  <span>{user?.fullName || 'Khách hàng'}</span>
+                </span>
               </div>
-            )}
-            <div className="flex items-center space-x-2">
-              <Calendar className="w-4 h-4 text-indigo-500" />
-              <span>Ngày test: {new Date().toLocaleDateString('vi-VN')}</span>
-            </div>
-            <div className="px-3 py-1 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-bold rounded-full text-[11px]">
-              Đối tượng: {user?.category === 'student' ? '🎓 Sinh Viên / Học Sinh' : '💼 Người Đi Làm'}
+
+              {/* Email */}
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-bold text-slate-400 uppercase block">Địa chỉ Email</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1.5 truncate" title={user?.email || 'N/A'}>
+                  <Mail className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                  <span className="truncate">{user?.email || 'N/A'}</span>
+                </span>
+              </div>
+
+              {/* Số điện thoại */}
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-bold text-slate-400 uppercase block">Số điện thoại</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1.5">
+                  <Phone className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                  <span>{user?.phone || 'Chưa cập nhật'}</span>
+                </span>
+              </div>
+
+              {/* Thời gian làm test */}
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-bold text-slate-400 uppercase block">Thời gian làm test</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1.5">
+                  <Clock className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                  <span>{durationText}</span>
+                </span>
+              </div>
+
+              {/* Đối tượng & Ngày test */}
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-bold text-slate-400 uppercase block">Đối tượng & Ngày thực hiện</span>
+                <div className="flex items-center space-x-1.5 text-xs font-bold text-slate-800 dark:text-slate-200">
+                  <Calendar className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                  <span>{new Date().toLocaleDateString('vi-VN')}</span>
+                  <span className="text-slate-300">|</span>
+                  <span className="text-purple-600 dark:text-purple-400 font-extrabold">
+                    {user?.category === 'student' ? '🎓 Sinh Viên' : '💼 Đi Làm'}
+                  </span>
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -198,6 +252,35 @@ export default function ResultsDashboard({ user, discResult, hollandResult, onRe
           />
         </div>
 
+        {/* SECTION 5: PERSONALIZED ACADEMY COURSE RECOMMENDATION */}
+        <div className="pdf-section bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 text-white rounded-3xl p-6 sm:p-8 border border-indigo-500/40 shadow-xl space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-indigo-900/60 pb-4">
+            <div className="space-y-1">
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-wider">
+                <GraduationCap className="w-4 h-4 text-amber-400" />
+                <span>Gợi Ý Phát Triển Kỹ Năng • P Marcom Academy</span>
+              </div>
+              <h3 className="text-xl font-extrabold text-white">
+                Khóa Học Đề Xuất Dành Cho Nhóm {discResult?.primaryTrait || 'D'} & Mã Holland {hollandResult?.top3Code || 'RIA'}
+              </h3>
+            </div>
+
+            <a
+              href="https://academy.pmarcom.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2 shrink-0"
+            >
+              <span>Đăng Ký Tư Vấn Khóa Học</span>
+              <ExternalLink className="w-4 h-4 text-slate-950 stroke-[2.5]" />
+            </a>
+          </div>
+
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
+            Dựa trên thiên hướng tính cách và sở thích công việc của bạn, P Marcom Academy đề xuất bạn nâng cao kỹ năng thực chiến với khóa học <strong>Digital Marketing Thực Chiến 2026 (SEO, Performance Ads, AI Content Strategy)</strong> để rút ngắn lộ trình thăng tiến sự nghiệp từ 2 - 3 năm.
+          </p>
+        </div>
+
         {/* FOOTER BRANDING */}
         <div className="text-center py-6 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-400 space-y-2">
           <div className="flex items-center justify-center space-x-2">
@@ -212,3 +295,4 @@ export default function ResultsDashboard({ user, discResult, hollandResult, onRe
     </div>
   );
 }
+

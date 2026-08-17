@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import Header from './components/Header';
 import TestSelector from './components/TestSelector';
 import DiscOverview from './components/DiscOverview';
@@ -7,9 +7,11 @@ import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import QuizScreen from './components/QuizScreen';
 import HollandCardSort from './components/HollandCardSort';
-import ResultsDashboard from './components/ResultsDashboard';
-import HistoryModal from './components/HistoryModal';
-import AdminDashboard from './components/AdminDashboard';
+
+// Code Splitting cho các trang nặng giúp tối ưu tốc độ tải trang chủ (FCP)
+const ResultsDashboard = lazy(() => import('./components/ResultsDashboard'));
+const HistoryModal = lazy(() => import('./components/HistoryModal'));
+const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 
 import { calculateDiscResult } from './utils/discCalculator';
 import { calculateHollandResult } from './utils/hollandCalculator';
@@ -175,7 +177,7 @@ export default function App() {
     }
   };
 
-  // Auth Success Callback: QUAY VỀ TRANG CHỦ ĐỂ NGƯỜI DÙNG TỰ CHỌN BÀI TEST
+  // Auth Success Callback
   const handleAuthSuccess = (userData) => {
     setUser(userData);
     setShowAuthModal(false);
@@ -187,7 +189,6 @@ export default function App() {
       }
     }
 
-    // Quay về Trang chủ để người dùng tự do lựa chọn bài test
     setCurrentScreen('selectTest');
   };
 
@@ -207,8 +208,9 @@ export default function App() {
   };
 
   // DISC completed
-  const handleCompleteDisc = (answers) => {
+  const handleCompleteDisc = (answers, durationFormatted = '') => {
     const dRes = calculateDiscResult(answers);
+    if (durationFormatted) dRes.durationFormatted = durationFormatted;
     setDiscResult(dRes);
 
     if (testMode === 'combo') {
@@ -220,8 +222,9 @@ export default function App() {
   };
 
   // Holland completed
-  const handleCompleteHolland = (choices) => {
+  const handleCompleteHolland = (choices, durationFormatted = '') => {
     const hRes = calculateHollandResult(choices);
+    if (durationFormatted) hRes.durationFormatted = durationFormatted;
     setHollandResult(hRes);
 
     incrementTestCount();
@@ -328,30 +331,37 @@ export default function App() {
           />
         )}
 
-        {currentScreen === 'results' && user && (
-          <ResultsDashboard
-            user={user}
-            discResult={discResult}
-            hollandResult={hollandResult}
-            onRetakeTest={handleRetakeTest}
-          />
-        )}
+        <Suspense fallback={
+          <div className="py-16 text-center space-y-3">
+            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="text-xs font-bold text-slate-500">Đang tải dữ liệu báo cáo...</p>
+          </div>
+        }>
+          {currentScreen === 'results' && user && (
+            <ResultsDashboard
+              user={user}
+              discResult={discResult}
+              hollandResult={hollandResult}
+              onRetakeTest={handleRetakeTest}
+            />
+          )}
 
-        {currentScreen === 'history' && (
-          <HistoryModal
-            historyList={historyList}
-            onSelectHistory={handleSelectHistoryItem}
-            onClearHistory={handleClearHistory}
-            onClose={() => setCurrentScreen('selectTest')}
-          />
-        )}
+          {currentScreen === 'history' && (
+            <HistoryModal
+              historyList={historyList}
+              onSelectHistory={handleSelectHistoryItem}
+              onClearHistory={handleClearHistory}
+              onClose={() => setCurrentScreen('selectTest')}
+            />
+          )}
 
-        {currentScreen === 'admin' && (
-          <AdminDashboard
-            currentUser={user}
-            onClose={() => setCurrentScreen('selectTest')}
-          />
-        )}
+          {currentScreen === 'admin' && (
+            <AdminDashboard
+              currentUser={user}
+              onClose={() => setCurrentScreen('selectTest')}
+            />
+          )}
+        </Suspense>
 
       </main>
 

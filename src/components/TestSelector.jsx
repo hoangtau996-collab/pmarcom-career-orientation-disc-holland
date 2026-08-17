@@ -5,6 +5,13 @@ import { getTranslation } from '../utils/translations';
 
 export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
   const [stats, setStats] = useState(getVisitorStats());
+  const [hasUnfinished, setHasUnfinished] = useState(() => {
+    const discSaved = localStorage.getItem('disc_current_answers');
+    const hollandSaved = localStorage.getItem('holland_current_choices');
+    const dCount = discSaved ? Object.keys(JSON.parse(discSaved)).length : 0;
+    const hCount = hollandSaved ? Object.keys(JSON.parse(hollandSaved)).length : 0;
+    return { dCount, hCount };
+  });
 
   useEffect(() => {
     const unsubscribe = subscribeToVisitorStats((newStats) => {
@@ -13,10 +20,54 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
     return () => unsubscribe();
   }, []);
 
+  const handleClearSavedProgress = () => {
+    if (window.confirm(lang === 'vi' ? 'Bạn có muốn xóa câu trả lời dở dang và làm lại từ đầu?' : 'Clear saved progress and start fresh?')) {
+      localStorage.removeItem('disc_current_answers');
+      localStorage.removeItem('holland_current_choices');
+      setHasUnfinished({ dCount: 0, hCount: 0 });
+    }
+  };
+
   const t = (key, params) => getTranslation(lang, key, params);
 
   return (
     <div className="space-y-8 sm:space-y-10 py-4 sm:py-6">
+
+      {/* UNFINISHED TEST RESUME BANNER */}
+      {(hasUnfinished.dCount > 0 || hasUnfinished.hCount > 0) && (
+        <div className="p-4 bg-amber-500/10 border-2 border-amber-400 dark:border-amber-500/50 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md animate-in fade-in slide-in-from-top duration-300">
+          <div className="flex items-center space-x-3 text-center sm:text-left">
+            <div className="p-2.5 rounded-xl bg-amber-500 text-slate-950 shrink-0">
+              <Zap className="w-5 h-5 animate-pulse" />
+            </div>
+            <div>
+              <h4 className="font-black text-sm text-slate-900 dark:text-white flex items-center justify-center sm:justify-start space-x-1.5">
+                <span>{lang === 'vi' ? 'Phát hiện bài test đang làm dở dang!' : 'Unfinished test in progress!'}</span>
+              </h4>
+              <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                {hasUnfinished.dCount > 0 && `• Bài DISC: Đã xong ${hasUnfinished.dCount}/28 câu. `}
+                {hasUnfinished.hCount > 0 && `• Bài Holland: Đã xếp ${hasUnfinished.hCount}/36 thẻ.`}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2 shrink-0">
+            <button
+              onClick={() => onSelectTestMode(hasUnfinished.dCount > 0 ? 'disc' : 'holland')}
+              className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow transition-all flex items-center space-x-1"
+            >
+              <span>{lang === 'vi' ? 'Tiếp tục làm bài' : 'Resume Test'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={handleClearSavedProgress}
+              className="px-3 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition-all"
+            >
+              {lang === 'vi' ? 'Xóa dở dang' : 'Clear'}
+            </button>
+          </div>
+        </div>
+      )}
       
       {/* GUEST NOTICE BANNER FOR FIRST TIME VISITORS */}
       {!user && (
@@ -279,7 +330,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
         </div>
       </div>
 
-      {/* BANNER GIỚI THIỆU KHÓA HỌC DIGITAL MARKETING (P MARCOM ACADEMY) - CHỈ HIỆN Ở TRANG CHỦ */}
+      {/* BANNER GIỚI THIỆU KHÓA HỌC DIGITAL MARKETING (P MARCOM ACADEMY) - CÓ ẢNH MINH HỌA THỰC TẾ */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-indigo-950 to-purple-950 text-white p-6 sm:p-10 shadow-2xl border-2 border-indigo-500/40 group">
         
         {/* Decorative Ambient Lighting */}
@@ -289,14 +340,14 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
           {/* Left Course Information */}
-          <div className="lg:col-span-8 space-y-4 text-center lg:text-left">
+          <div className="lg:col-span-7 space-y-5 text-center lg:text-left">
             
             <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-pink-500/20 border border-amber-400/40 text-amber-300 text-xs font-black uppercase tracking-wider">
               <GraduationCap className="w-4 h-4 text-amber-400 shrink-0" />
               <span>P Marcom Academy • Digital Marketing Professional</span>
             </div>
 
-            <h3 className="text-xl sm:text-3xl font-black tracking-tight leading-snug">
+            <h3 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-snug">
               {lang === 'vi' ? (
                 <>
                   Khóa Học <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-pink-400 to-indigo-300">Digital Marketing Thực Chiến</span> – Kiến Tạo Sự Nghiệp Đột Phá
@@ -315,39 +366,65 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
             </p>
 
             {/* Feature Pills */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-1">
-              <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-xl text-[11px] font-bold text-slate-200 border border-white/10 flex items-center space-x-1">
-                <Rocket className="w-3.5 h-3.5 text-pink-400" />
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 pt-1">
+              <span className="px-3.5 py-1.5 bg-white/10 backdrop-blur-md rounded-xl text-xs font-bold text-slate-200 border border-white/15 flex items-center space-x-1.5 shadow-sm">
+                <Rocket className="w-4 h-4 text-pink-400 shrink-0" />
                 <span>{lang === 'vi' ? 'Thực chiến 100% Dự án thật' : '100% Real-world Projects'}</span>
               </span>
 
-              <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-xl text-[11px] font-bold text-slate-200 border border-white/10 flex items-center space-x-1">
-                <Zap className="w-3.5 h-3.5 text-amber-400" />
+              <span className="px-3.5 py-1.5 bg-white/10 backdrop-blur-md rounded-xl text-xs font-bold text-slate-200 border border-white/15 flex items-center space-x-1.5 shadow-sm">
+                <Zap className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>{lang === 'vi' ? 'Ứng dụng AI Marketing Tool' : 'AI Marketing Workflows'}</span>
               </span>
 
-              <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-xl text-[11px] font-bold text-slate-200 border border-white/10 flex items-center space-x-1">
-                <Award className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="px-3.5 py-1.5 bg-white/10 backdrop-blur-md rounded-xl text-xs font-bold text-slate-200 border border-white/15 flex items-center space-x-1.5 shadow-sm">
+                <Award className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>{lang === 'vi' ? 'Cấp chứng chỉ khóa học' : 'Course Certification Included'}</span>
+              </span>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
+              <a
+                href="https://academy.pmarcom.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-xl transition-all duration-300 transform group-hover:scale-105 flex items-center justify-center space-x-2"
+              >
+                <span>{lang === 'vi' ? 'Khám Phá Khóa Học Ngay' : 'Explore Academy Courses'}</span>
+                <ExternalLink className="w-4 h-4 text-slate-950 stroke-[2.5]" />
+              </a>
+              <span className="text-xs text-slate-400 font-medium">
+                👉 academy.pmarcom.com
               </span>
             </div>
 
           </div>
 
-          {/* Right Action Button */}
-          <div className="lg:col-span-4 flex flex-col items-center lg:items-end justify-center">
-            <a
-              href="https://academy.pmarcom.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-2xl transition-all duration-300 transform group-hover:scale-105 flex items-center justify-center space-x-2"
-            >
-              <span>{lang === 'vi' ? 'Khám Phá Khóa Học Ngay' : 'Explore Academy Courses'}</span>
-              <ExternalLink className="w-4 h-4 text-slate-950 stroke-[2.5]" />
-            </a>
-            <span className="text-[11px] text-slate-400 mt-2 font-medium">
-              👉 academy.pmarcom.com
-            </span>
+          {/* Right Realistic Banner Image */}
+          <div className="lg:col-span-5 relative">
+            <div className="relative mx-auto rounded-3xl overflow-hidden shadow-2xl border-2 border-indigo-400/30 group-hover:border-pink-400/50 transition-all duration-500">
+              <img
+                src="https://images.unsplash.com/photo-1557838923-2985c318be48?q=80&w=800&auto=format&fit=crop"
+                alt="Khóa học Digital Marketing Thực Chiến P Marcom Academy"
+                className="w-full h-56 sm:h-72 object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+
+              {/* Floating Badge on Image */}
+              <div className="absolute bottom-3 left-3 right-3 p-3 bg-slate-950/80 backdrop-blur-md rounded-2xl border border-white/20 text-xs flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <div className="font-extrabold text-amber-300 text-xs flex items-center space-x-1">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Digital Marketing & AI Tools 2026</span>
+                  </div>
+                  <div className="text-[11px] text-slate-300">Facebook • Google • TikTok • SEO & Content</div>
+                </div>
+                <span className="px-2.5 py-1 bg-pink-600 text-white font-extrabold text-[10px] rounded-lg shrink-0">
+                  P MARCOM ACADEMY
+                </span>
+              </div>
+            </div>
           </div>
 
         </div>
