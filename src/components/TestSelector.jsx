@@ -96,33 +96,33 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
         </div>
       )}
 
-      {/* HERO BANNER SECTION - STYLE CŨ CHUYÊN NGHIỆP CÓ ẢNH NGƯỜI THẬT */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 text-white p-6 sm:p-12 shadow-2xl border border-indigo-900/50">
+      {/* HERO BANNER SECTION - GAM MÀU TƯƠI SÁNG RỰC RỠ & THU HÚT */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 text-white p-6 sm:p-12 shadow-2xl border border-pink-400/30">
         
         {/* Glow Background */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-amber-400/25 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-pink-400/25 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
           {/* Left Content */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
             
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-wider">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-amber-200 text-xs font-black uppercase tracking-wider shadow-sm">
               <img src="/logo-pmarcom.png" alt="Logo P Marcom" className="h-5 w-auto object-contain" />
               <span>{lang === 'vi' ? 'Nền Tảng Độc Quyền P Marcom' : 'Exclusive P Marcom Platform'}</span>
             </div>
 
             {/* HEADLINE */}
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight drop-shadow-md">
               {t('heroTitle')} <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-pink-400 to-indigo-300">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-yellow-200 to-pink-200">
                 {t('heroSubtitle')}
               </span>
             </h1>
 
             {/* PARAGRAPH */}
-            <p className="text-slate-300 text-xs sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
+            <p className="text-indigo-100 text-xs sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
               {t('heroDesc')}
             </p>
 
@@ -130,17 +130,17 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
             <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3">
               
               {/* Visit Counter Pill */}
-              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm text-xs font-semibold">
-                <Eye className="w-4 h-4 text-amber-400 shrink-0" />
-                <span className="text-white font-bold">{stats.totalVisits}</span>
-                <span className="text-slate-300">{t('statsVisits')}</span>
+              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30 shadow-md text-xs font-semibold">
+                <Eye className="w-4 h-4 text-amber-300 shrink-0 animate-pulse" />
+                <span className="text-white font-extrabold text-sm">{stats.totalVisits}</span>
+                <span className="text-indigo-100">{t('statsVisits')}</span>
               </div>
 
               {/* Completed Tests Counter Pill */}
-              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 shadow-sm text-xs font-semibold">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-white font-bold">{stats.totalTests}</span>
-                <span className="text-slate-300">{t('statsCompletedTests')}</span>
+              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30 shadow-md text-xs font-semibold">
+                <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
+                <span className="text-white font-extrabold text-sm">{stats.totalTests}</span>
+                <span className="text-indigo-100">{t('statsCompletedTests')}</span>
               </div>
 
             </div>
@@ -149,20 +149,20 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
 
           {/* Right Hero Image - Ảnh Minh Họa Người Thật Chuyên Nghiệp */}
           <div className="lg:col-span-5 relative">
-            <div className="relative mx-auto max-w-md rounded-3xl overflow-hidden shadow-2xl border-2 border-indigo-500/30 group">
+            <div className="relative mx-auto max-w-md rounded-3xl overflow-hidden shadow-2xl border-4 border-white/30 group">
               <img
                 src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop"
                 alt="Định hướng nghề nghiệp P Marcom với hình ảnh người thật"
                 className="w-full h-64 sm:h-80 object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-indigo-950/90 via-indigo-950/20 to-transparent"></div>
               
-              <div className="absolute bottom-4 left-4 right-4 p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-xs">
-                <div className="font-extrabold text-amber-300 flex items-center space-x-1">
-                  <Star className="w-4 h-4 fill-amber-300" />
+              <div className="absolute bottom-4 left-4 right-4 p-3.5 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 text-xs shadow-lg">
+                <div className="font-black text-amber-300 flex items-center space-x-1.5">
+                  <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
                   <span>{lang === 'vi' ? 'Ma Trận Gợi Ý 50+ Ngành Học & Nghề Nghiệp' : 'Matrix of 50+ Recommended Majors & Careers'}</span>
                 </div>
-                <div className="text-[11px] text-slate-200 mt-0.5">{lang === 'vi' ? 'Dành cho Sinh viên/Học sinh và Người đi làm' : 'For Students, Fresh Grads & Working Professionals'}</div>
+                <div className="text-[11px] text-white font-medium mt-0.5">{lang === 'vi' ? 'Dành cho Sinh viên/Học sinh và Người đi làm' : 'For Students, Fresh Grads & Working Professionals'}</div>
               </div>
             </div>
           </div>
@@ -222,7 +222,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
 
             <button
               onClick={() => onSelectTestMode('disc')}
-              className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-2xl shadow-md transition-all flex items-center justify-center space-x-2"
+              className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-black text-xs rounded-2xl shadow-lg transition-all flex items-center justify-center space-x-2 transform hover:scale-[1.02] active:scale-95"
             >
               <span>{t('startDisc')}</span>
               <ArrowRight className="w-4 h-4" />
@@ -231,7 +231,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
           </div>
 
           {/* CARD 2: HOLLAND CARD SORT */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-purple-100 dark:border-purple-950 shadow-xl flex flex-col justify-between space-y-5 hover:border-purple-500 transition-all hover:scale-[1.02]">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-purple-200 dark:border-purple-900 shadow-xl flex flex-col justify-between space-y-5 hover:border-purple-500 hover:shadow-purple-500/20 transition-all hover:scale-[1.02]">
             
             <div className="space-y-4">
               <div className="relative rounded-2xl overflow-hidden h-36">
@@ -240,7 +240,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
                   alt="Holland Card Sort"
                   className="w-full h-full object-cover"
                 />
-                <span className="absolute top-3 left-3 px-3 py-1 bg-purple-600 text-white font-extrabold text-xs rounded-full shadow">
+                <span className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-xs rounded-full shadow-md">
                   Holland Code (RIASEC)
                 </span>
               </div>
@@ -268,7 +268,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
 
             <button
               onClick={() => onSelectTestMode('holland')}
-              className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs rounded-2xl shadow-md transition-all flex items-center justify-center space-x-2"
+              className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-black text-xs rounded-2xl shadow-lg transition-all flex items-center justify-center space-x-2 transform hover:scale-[1.02] active:scale-95"
             >
               <span>{t('startHolland')}</span>
               <ArrowRight className="w-4 h-4" />
@@ -277,7 +277,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
           </div>
 
           {/* CARD 3: MBTI 16 PERSONALITY TYPES (NEW STANDALONE TEST) */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-pink-100 dark:border-pink-950 shadow-xl flex flex-col justify-between space-y-5 hover:border-pink-500 transition-all hover:scale-[1.02]">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-pink-200 dark:border-pink-900 shadow-xl flex flex-col justify-between space-y-5 hover:border-pink-500 hover:shadow-pink-500/20 transition-all hover:scale-[1.02]">
             
             <div className="space-y-4">
               <div className="relative rounded-2xl overflow-hidden h-36">
@@ -286,7 +286,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
                   alt="MBTI 16 Personality Types"
                   className="w-full h-full object-cover"
                 />
-                <span className="absolute top-3 left-3 px-3 py-1 bg-pink-600 text-white font-extrabold text-xs rounded-full shadow">
+                <span className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-pink-500 to-rose-600 text-white font-black text-xs rounded-full shadow-md">
                   MBTI 16 Types
                 </span>
               </div>
@@ -314,7 +314,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
 
             <button
               onClick={() => onSelectTestMode('mbti')}
-              className="w-full py-3 px-4 bg-pink-600 hover:bg-pink-500 text-white font-extrabold text-xs rounded-2xl shadow-md transition-all flex items-center justify-center space-x-2"
+              className="w-full py-3 px-4 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-400 hover:to-rose-500 text-white font-black text-xs rounded-2xl shadow-lg transition-all flex items-center justify-center space-x-2 transform hover:scale-[1.02] active:scale-95"
             >
               <span>{lang === 'vi' ? 'Bắt đầu Test MBTI' : 'Start MBTI Test'}</span>
               <ArrowRight className="w-4 h-4" />

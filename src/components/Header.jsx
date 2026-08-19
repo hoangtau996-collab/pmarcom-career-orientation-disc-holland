@@ -31,29 +31,32 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
   };
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-md bg-white/95 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-800 transition-colors shadow-sm">
+    <header className="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-indigo-100 dark:border-slate-800 transition-colors shadow-sm">
+      {/* Top Colorful Accent Line */}
+      <div className="h-1 w-full bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600"></div>
+
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         {/* P Marcom Logo + Title */}
         <div 
-          onClick={() => navigateTo('selectTest')}
+          onClick={() => onLogoClick ? onLogoClick() : null}
           className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group shrink-0"
         >
-          <div className="h-9 sm:h-10 px-1.5 sm:px-2 bg-gradient-to-r from-amber-500/10 to-yellow-500/10 rounded-xl border border-amber-300/40 dark:border-amber-500/30 flex items-center justify-center group-hover:scale-105 transition-transform">
+          <div className="h-10 px-2 bg-gradient-to-r from-amber-400/20 via-pink-500/20 to-indigo-500/20 rounded-xl border border-amber-400/40 dark:border-amber-500/30 flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
             <img 
               src="/logo-pmarcom.png" 
               alt="P Marcom Logo" 
-              className="h-7 sm:h-8 w-auto object-contain drop-shadow-sm" 
+              className="h-8 w-auto object-contain drop-shadow-sm" 
             />
           </div>
 
           <div>
             <div className="flex items-center space-x-1.5">
-              <span className="font-extrabold text-sm sm:text-base md:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
+              <span className="font-black text-sm sm:text-base md:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-pink-600 to-indigo-600 dark:from-amber-300 dark:via-pink-400 dark:to-indigo-400">
                 {t('heroTitle')}
               </span>
             </div>
-            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 -mt-0.5 hidden xs:block">
+            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 -mt-0.5 hidden xs:block font-medium">
               {t('heroSubtitle')}
             </p>
           </div>
@@ -63,16 +66,16 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
         <div className="hidden lg:flex items-center space-x-2 xl:space-x-3">
           
           {/* Visitor Counter (Đồng bộ Realtime Toàn Cầu) */}
-          <div className="flex items-center space-x-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900/60 rounded-full text-xs font-semibold text-amber-800 dark:text-amber-300">
-            <Eye className="w-3.5 h-3.5 text-amber-600" />
+          <div className="flex items-center space-x-1.5 px-3 py-1 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-950/60 dark:to-orange-950/60 border border-amber-300 dark:border-amber-800 rounded-full text-xs font-bold text-amber-900 dark:text-amber-300 shadow-xs">
+            <Eye className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
             <span>{stats.totalVisits} {lang === 'vi' ? 'lượt xem' : 'visits'}</span>
           </div>
 
           {/* Admin Button */}
           {userIsAdmin && (
             <button
-              onClick={() => navigateTo('admin')}
-              className="flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-black text-xs rounded-xl shadow-md transition-all scale-105"
+              onClick={onOpenAdmin}
+              className="flex items-center space-x-1 px-3.5 py-1.5 bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-slate-950 font-black text-xs rounded-xl shadow-md transition-all scale-105 transform hover:scale-110 active:scale-95"
             >
               <Crown className="w-3.5 h-3.5 fill-slate-950" />
               <span>{t('adminPortal')}</span>
@@ -80,38 +83,18 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
           )}
 
           <button
-            onClick={() => navigateTo('overviewDisc')}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              currentScreen === 'overviewDisc'
-                ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+            onClick={() => onLogoClick()}
+            className="flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 hover:text-indigo-600 transition-all"
           >
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>{t('discOverview')}</span>
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <span>{t('home')}</span>
           </button>
 
           <button
-            onClick={() => navigateTo('overviewHolland')}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              currentScreen === 'overviewHolland'
-                ? 'bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+            onClick={onOpenHistory}
+            className="flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-purple-50 dark:hover:bg-purple-950/60 hover:text-purple-600 transition-all"
           >
-            <Layers className="w-3.5 h-3.5" />
-            <span>{t('hollandOverview')}</span>
-          </button>
-
-          <button
-            onClick={() => navigateTo('history')}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              currentScreen === 'history'
-                ? 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
-          >
-            <History className="w-3.5 h-3.5" />
+            <History className="w-3.5 h-3.5 text-purple-500" />
             <span>{t('history')}</span>
           </button>
 
