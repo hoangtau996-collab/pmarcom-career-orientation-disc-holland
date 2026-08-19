@@ -102,9 +102,9 @@ export default function Header({
         <div className="hidden lg:flex items-center space-x-2 xl:space-x-3">
           
           {/* Visitor Counter */}
-          <div className="flex items-center space-x-1.5 px-3 py-1 bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/60 dark:to-cyan-950/60 border border-teal-200 dark:border-teal-800 rounded-full text-xs font-bold text-teal-900 dark:text-teal-300 shadow-xs">
-            <Eye className="w-3.5 h-3.5 text-teal-600 animate-pulse" />
-            <span>{stats.totalVisits} {lang === 'vi' ? 'lượt xem' : 'visits'}</span>
+          <div className="flex items-center space-x-1.5 px-3 py-1 bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/60 dark:to-cyan-950/60 border border-teal-200 dark:border-teal-800 rounded-full text-xs font-bold text-teal-900 dark:text-teal-300 shadow-xs shrink-0 whitespace-nowrap">
+            <Eye className="w-3.5 h-3.5 text-teal-600 animate-pulse shrink-0" />
+            <span className="whitespace-nowrap">{stats.totalVisits} {lang === 'vi' ? 'lượt xem' : 'visits'}</span>
           </div>
 
           {/* Admin Button */}
@@ -352,9 +352,9 @@ export default function Header({
             </button>
           </div>
 
-          <div className="pt-2 text-center text-[11px] text-teal-700 dark:text-teal-400 font-semibold flex items-center justify-center space-x-1">
-            <Eye className="w-3.5 h-3.5" />
-            <span>{stats.totalVisits} {lang === 'vi' ? 'lượt truy cập hệ thống' : 'system visits'}</span>
+          <div className="pt-2 text-center text-[11px] text-teal-700 dark:text-teal-400 font-semibold flex items-center justify-center space-x-1 shrink-0 whitespace-nowrap">
+            <Eye className="w-3.5 h-3.5 shrink-0" />
+            <span className="whitespace-nowrap">{stats.totalVisits} {lang === 'vi' ? 'lượt truy cập hệ thống' : 'system visits'}</span>
           </div>
 
         </div>

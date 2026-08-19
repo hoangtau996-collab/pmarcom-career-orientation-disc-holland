@@ -130,17 +130,17 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
             <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3">
               
               {/* Visit Counter Pill */}
-              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/20 shadow-md text-xs font-semibold">
+              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/20 shadow-md text-xs font-semibold shrink-0 whitespace-nowrap">
                 <Eye className="w-4 h-4 text-cyan-300 shrink-0 animate-pulse" />
-                <span className="text-white font-extrabold text-sm">{stats.totalVisits}</span>
-                <span className="text-teal-100">{t('statsVisits')}</span>
+                <span className="text-white font-extrabold text-sm whitespace-nowrap">{stats.totalVisits}</span>
+                <span className="text-teal-100 whitespace-nowrap">{t('statsVisits')}</span>
               </div>
 
               {/* Completed Tests Counter Pill */}
-              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/20 shadow-md text-xs font-semibold">
+              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/20 shadow-md text-xs font-semibold shrink-0 whitespace-nowrap">
                 <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
-                <span className="text-white font-extrabold text-sm">{stats.totalTests}</span>
-                <span className="text-teal-100">{t('statsCompletedTests')}</span>
+                <span className="text-white font-extrabold text-sm whitespace-nowrap">{stats.totalTests}</span>
+                <span className="text-teal-100 whitespace-nowrap">{t('statsCompletedTests')}</span>
               </div>
 
             </div>
