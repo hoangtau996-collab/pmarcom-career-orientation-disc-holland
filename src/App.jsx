@@ -358,6 +358,8 @@ export default function App() {
           {currentScreen === 'admin' && (
             <AdminDashboard
               currentUser={user}
+              historyList={historyList}
+              onSelectHistory={handleSelectHistoryItem}
               onClose={() => setCurrentScreen('selectTest')}
             />
           )}

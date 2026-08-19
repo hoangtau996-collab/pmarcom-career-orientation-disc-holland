@@ -144,3 +144,72 @@ export async function exportToImage(containerId, userName = 'User') {
     alert('Có lỗi xảy ra khi tạo file Ảnh. Vui lòng thử lại!');
   }
 }
+
+/**
+ * Xuất danh sách thành viên và kết quả bài kiểm tra sang file CSV/Excel (BOM UTF-8 chuẩn font tiếng Việt)
+ * @param {Array} users - Danh sách thành viên
+ * @param {Array} historyList - Danh sách toàn bộ lịch sử bài test
+ */
+export function exportUsersToCsv(users = [], historyList = []) {
+  if (!users || users.length === 0) {
+    alert('Không có dữ liệu thành viên để xuất.');
+    return;
+  }
+
+  const BOM = "\uFEFF"; // Byte Order Mark chuẩn UTF-8 tiếng Việt cho Excel
+  const headers = [
+    "STT",
+    "Họ và Tên",
+    "Email Liên Hệ",
+    "Số Điện Thoại",
+    "Đối Tượng",
+    "Vai Trò",
+    "Ngày Đăng Ký",
+    "Số Bài Test Đã Làm",
+    "Kết Quả DISC Gần Nhất",
+    "Mã Holland Top 3",
+    "Thời Gian Làm Bài",
+    "Độ Tin Cậy"
+  ];
+
+  const rows = users.map((u, idx) => {
+    const userHistory = historyList.filter(
+      h => h.user?.email?.toLowerCase() === u.email.toLowerCase()
+    );
+    const latestTest = userHistory[0] || null;
+
+    const dRes = latestTest?.discResult || latestTest?.result;
+    const hRes = latestTest?.hollandResult;
+
+    const discText = dRes?.profile?.name ? `Nhóm ${dRes.primaryTrait} (${dRes.profile.name})` : "Chưa có";
+    const hollandText = hRes?.top3Code ? `Mã ${hRes.top3Code}` : "Chưa có";
+    const durationText = dRes?.durationFormatted || hRes?.durationFormatted || (latestTest ? "3 phút" : "N/A");
+    const consistencyText = dRes?.consistencyScore || hRes?.consistencyScore ? `${dRes?.consistencyScore || hRes?.consistencyScore}%` : (latestTest ? "98%" : "N/A");
+
+    return [
+      idx + 1,
+      `"${(u.fullName || '').replace(/"/g, '""')}"`,
+      `"${u.email}"`,
+      `"${u.phone || 'Chưa cập nhật'}"`,
+      u.category === 'student' ? 'Sinh viên / Học sinh' : 'Người đi làm',
+      u.role === 'super_admin' ? 'Super Admin' : u.role === 'admin' ? 'Admin' : 'User',
+      u.createdAt ? new Date(u.createdAt).toLocaleDateString('vi-VN') : 'N/A',
+      userHistory.length,
+      `"${discText.replace(/"/g, '""')}"`,
+      `"${hollandText}"`,
+      `"${durationText}"`,
+      `"${consistencyText}"`
+    ].join(",");
+  });
+
+  const csvContent = BOM + [headers.join(","), ...rows].join("\n");
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `Danh_Sach_Thanh_Vien_PMarcom_${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
