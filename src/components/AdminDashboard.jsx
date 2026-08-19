@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Users, ShieldCheck, Crown, Trash2, Search, Award, Eye, UserPlus, RefreshCw, Mail, Phone, Calendar, CheckCircle, FileSpreadsheet, Download, Layers, X, FileText, ChevronRight } from 'lucide-react';
+import { Users, ShieldCheck, Crown, Trash2, Search, Award, Eye, UserPlus, RefreshCw, Mail, Phone, Calendar, CheckCircle, FileSpreadsheet, Download, Layers, X, FileText, ChevronRight, CheckSquare, Square, Loader2, Sparkles } from 'lucide-react';
 import { getRegisteredUsers, deleteUserByEmail, updateUserRole, isSuperAdmin } from '../utils/userManager';
 import { getVisitorStats, subscribeToVisitorStats } from '../utils/visitorCounter';
-import { exportUsersToCsv, exportToPdf } from '../utils/exporter';
+import { exportUsersToCsv, exportFullTestLogsToCsv, exportToPdf } from '../utils/exporter';
 
 export default function AdminDashboard({ currentUser, historyList = [], onSelectHistory, onClose }) {
   const [users, setUsers] = useState([]);
@@ -10,6 +10,11 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
   const [roleFilter, setRoleFilter] = useState('all');
   const [stats, setStats] = useState(getVisitorStats());
   const [selectedMember, setSelectedMember] = useState(null);
+
+  // States chọn hàng loạt & Tiến trình tải PDF
+  const [selectedUserEmails, setSelectedUserEmails] = useState(new Set());
+  const [batchDownloading, setBatchDownloading] = useState(false);
+  const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0, currentName: '' });
 
   const loadData = () => {
     setUsers(getRegisteredUsers());
@@ -45,6 +50,10 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
     exportUsersToCsv(filteredUsers, historyList);
   };
 
+  const handleExportFullTestLogs = () => {
+    exportFullTestLogsToCsv(historyList);
+  };
+
   const handleViewMemberReport = (member) => {
     const userTests = historyList.filter(
       h => h.user?.email?.toLowerCase() === member.email.toLowerCase()
@@ -67,10 +76,69 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
     return matchesSearch && matchesRole;
   });
 
+  // Selection Handlers
+  const isAllSelected = filteredUsers.length > 0 && filteredUsers.every(u => selectedUserEmails.has(u.email));
+
+  const handleSelectAllToggle = () => {
+    if (isAllSelected) {
+      setSelectedUserEmails(new Set());
+    } else {
+      setSelectedUserEmails(new Set(filteredUsers.map(u => u.email)));
+    }
+  };
+
+  const handleToggleSelectUser = (email) => {
+    const next = new Set(selectedUserEmails);
+    if (next.has(email)) {
+      next.delete(email);
+    } else {
+      next.add(email);
+    }
+    setSelectedUserEmails(next);
+  };
+
+  // Tải Báo Cáo PDF Bài Test Hàng Loạt
+  const handleBatchDownloadPdf = async () => {
+    const targetUsers = filteredUsers.filter(u => selectedUserEmails.has(u.email));
+    const usersWithTests = targetUsers.filter(u => 
+      historyList.some(h => h.user?.email?.toLowerCase() === u.email.toLowerCase())
+    );
+
+    if (usersWithTests.length === 0) {
+      alert('Không tìm thấy bài test nào của các thành viên được chọn.');
+      return;
+    }
+
+    if (!window.confirm(`Bạn có chắc chắn muốn TẢI HÀNG LOẠT ${usersWithTests.length} báo cáo PDF bài test?`)) {
+      return;
+    }
+
+    setBatchDownloading(true);
+    setBatchProgress({ current: 0, total: usersWithTests.length, currentName: '' });
+
+    for (let i = 0; i < usersWithTests.length; i++) {
+      const u = usersWithTests[i];
+      const userTests = historyList.filter(h => h.user?.email?.toLowerCase() === u.email.toLowerCase());
+      const latestTest = userTests[0];
+
+      setBatchProgress({ current: i + 1, total: usersWithTests.length, currentName: u.fullName });
+
+      if (onSelectHistory && latestTest) {
+        onSelectHistory(latestTest);
+        // Delay 800ms để DOM kịp render giao diện kết quả trước khi chụp PDF
+        await new Promise(r => setTimeout(r, 800));
+        await exportToPdf('disc-report-container', u.fullName);
+      }
+    }
+
+    setBatchDownloading(false);
+    alert(`🎉 Đã hoàn tất tải hàng loạt ${usersWithTests.length} báo cáo PDF bài test!`);
+  };
+
   const canManageRoles = isSuperAdmin(currentUser);
 
   return (
-    <div className="space-y-6 py-4 animate-fade-in">
+    <div className="space-y-6 py-4 animate-fade-in relative pb-16">
       
       {/* Header Admin */}
       <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-2xl border border-indigo-900/40 relative overflow-hidden">
@@ -86,19 +154,29 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
               Quản Lý Thành Viên &amp; Lượt Xem Toàn Cầu
             </h2>
             <p className="text-xs text-slate-300">
-              Xuất báo cáo kết quả kiểm tra &amp; theo dõi thống kê người dùng thời gian thực
+              Xuất báo cáo kết quả kiểm tra &amp; tải bài test hàng loạt (Batch Download PDFs)
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            {/* Nút Xuất Chi Tiết Bài Test Excel */}
+            <button
+              onClick={handleExportFullTestLogs}
+              className="px-3.5 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-extrabold transition-all shadow-md flex items-center space-x-1.5 active:scale-95"
+              title="Xuất chi tiết nhật ký điểm số tất cả bài test ra Excel / CSV"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-purple-200" />
+              <span>Xuất Nhật Ký Bài Test</span>
+            </button>
+
             {/* Nút Xuất File Excel/CSV */}
             <button
               onClick={handleExportCsv}
-              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-extrabold transition-all shadow-md flex items-center space-x-1.5 active:scale-95"
+              className="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-extrabold transition-all shadow-md flex items-center space-x-1.5 active:scale-95"
               title="Xuất toàn bộ danh sách thành viên & bài test sang Excel / CSV"
             >
               <FileSpreadsheet className="w-4 h-4 text-emerald-200" />
-              <span>Xuất Báo Cáo Excel/CSV</span>
+              <span>Xuất Danh Sách Excel</span>
             </button>
 
             <button
@@ -199,6 +277,15 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
             
             <thead className="bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-extrabold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
               <tr>
+                <th className="p-4 w-10 text-center">
+                  <input
+                    type="checkbox"
+                    checked={isAllSelected}
+                    onChange={handleSelectAllToggle}
+                    className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                    title="Chọn / Bỏ chọn tất cả thành viên"
+                  />
+                </th>
                 <th className="p-4">STT</th>
                 <th className="p-4">Họ &amp; Tên Thành Viên</th>
                 <th className="p-4">Email Liên Hệ</th>
@@ -213,7 +300,7 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium text-slate-800 dark:text-slate-200">
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="p-8 text-center text-slate-400 font-semibold">
+                  <td colSpan="9" className="p-8 text-center text-slate-400 font-semibold">
                     Không tìm thấy thành viên phù hợp với từ khóa!
                   </td>
                 </tr>
@@ -225,10 +312,20 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
                   const latestTest = userTests[0] || null;
                   const dRes = latestTest?.discResult || latestTest?.result;
                   const hRes = latestTest?.hollandResult;
+                  const isSelected = selectedUserEmails.has(u.email);
 
                   return (
-                    <tr key={u.email} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                    <tr key={u.email} className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors ${isSelected ? 'bg-indigo-50/50 dark:bg-indigo-950/30' : ''}`}>
                       
+                      <td className="p-4 text-center">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleToggleSelectUser(u.email)}
+                          className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                        />
+                      </td>
+
                       <td className="p-4 text-slate-400 font-bold">{idx + 1}</td>
 
                       <td className="p-4 font-bold text-slate-900 dark:text-white">
@@ -371,6 +468,83 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
           </table>
         </div>
       </div>
+
+      {/* THANH THAO TÁC HÀNG LOẠT (FLOATING BATCH ACTION BAR) */}
+      {selectedUserEmails.size > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 dark:bg-slate-950/95 text-white px-6 py-3.5 rounded-2xl shadow-2xl border border-indigo-500/50 backdrop-blur-md flex items-center space-x-4 animate-in slide-in-from-bottom duration-300">
+          <div className="flex items-center space-x-2 border-r border-slate-700 pr-4">
+            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs font-black">
+              Đã chọn <strong className="text-amber-400">{selectedUserEmails.size}</strong> thành viên
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleBatchDownloadPdf}
+              className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-lg flex items-center space-x-1.5 active:scale-95 transition-all"
+            >
+              <Download className="w-3.5 h-3.5 text-amber-300" />
+              <span>Tải PDF Bài Test Hàng Loạt ({selectedUserEmails.size})</span>
+            </button>
+
+            <button
+              onClick={handleExportCsv}
+              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl shadow flex items-center space-x-1.5 transition-all"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-200" />
+              <span>Xuất Excel Đã Chọn</span>
+            </button>
+
+            <button
+              onClick={() => setSelectedUserEmails(new Set())}
+              className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition-all"
+            >
+              Bỏ chọn tất cả
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL TIẾN TRÌNH TẢI BÀI TEST HÀNG LOẠT (BATCH PROGRESS MODAL) */}
+      {batchDownloading && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900 text-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-indigo-500/40 text-center space-y-6 animate-in zoom-in duration-200">
+            <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mx-auto shadow-lg shadow-indigo-500/30">
+              <Loader2 className="w-8 h-8 text-white animate-spin" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-black tracking-tight">Đang Tải Bài Test Hàng Loạt</h3>
+              <p className="text-xs text-slate-300">
+                Vui lòng giữ cửa sổ trình duyệt mở trong khi hệ thống đang tạo file PDF...
+              </p>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+                <span>Tiến trình: {batchProgress.current} / {batchProgress.total}</span>
+                <span className="text-amber-400">{Math.round((batchProgress.current / batchProgress.total) * 100)}%</span>
+              </div>
+              
+              <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600 rounded-full transition-all duration-300"
+                  style={{ width: `${(batchProgress.current / batchProgress.total) * 100}%` }}
+                ></div>
+              </div>
+
+              {batchProgress.currentName && (
+                <p className="text-xs font-bold text-indigo-300 pt-1 truncate">
+                  📄 Đang xuất: <strong>{batchProgress.currentName}</strong>
+                </p>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* MODAL XEM LỊCH SỬ BÀI TEST TỪNG THÀNH VIÊN */}
       {selectedMember && (

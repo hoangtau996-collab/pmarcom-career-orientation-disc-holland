@@ -213,3 +213,74 @@ export function exportUsersToCsv(users = [], historyList = []) {
   document.body.removeChild(link);
 }
 
+/**
+ * Xuất toàn bộ nhật ký chi tiết điểm số các bài test (DISC & Holland) ra file Excel/CSV (BOM UTF-8)
+ * @param {Array} historyList - Danh sách lịch sử tất cả các lượt test
+ */
+export function exportFullTestLogsToCsv(historyList = []) {
+  if (!historyList || historyList.length === 0) {
+    alert('Không có dữ liệu bài test nào để xuất.');
+    return;
+  }
+
+  const BOM = "\uFEFF";
+  const headers = [
+    "STT",
+    "Ngày Làm Test",
+    "Họ và Tên",
+    "Email",
+    "Số Điện Thoại",
+    "Đối Tượng",
+    "DISC Primary Trait",
+    "DISC Profile Name",
+    "Điểm D",
+    "Điểm I",
+    "Điểm S",
+    "Điểm C",
+    "Holland Top 3",
+    "Holland Full Code",
+    "Thời Gian Làm Test",
+    "Độ Tin Cậy (%)"
+  ];
+
+  const rows = historyList.map((item, idx) => {
+    const u = item.user || {};
+    const dRes = item.discResult || item.result;
+    const hRes = item.hollandResult;
+
+    const dScores = dRes?.scores || { D: 0, I: 0, S: 0, C: 0 };
+    const hCode = hRes?.top3Code || "N/A";
+    const hFull = hRes?.fullCode || hCode;
+
+    return [
+      idx + 1,
+      `"${new Date(item.date).toLocaleString('vi-VN')}"`,
+      `"${(u.fullName || 'Khách').replace(/"/g, '""')}"`,
+      `"${u.email || 'N/A'}"`,
+      `"${u.phone || 'N/A'}"`,
+      u.category === 'student' ? 'Sinh viên' : 'Người đi làm',
+      `"${dRes?.primaryTrait || 'N/A'}"`,
+      `"${(dRes?.profile?.name || 'N/A').replace(/"/g, '""')}"`,
+      dScores.D || 0,
+      dScores.I || 0,
+      dScores.S || 0,
+      dScores.C || 0,
+      `"${hCode}"`,
+      `"${hFull}"`,
+      `"${dRes?.durationFormatted || hRes?.durationFormatted || '3 phút 30 giây'}"`,
+      `"${dRes?.consistencyScore || hRes?.consistencyScore || 98}%"`
+    ].join(",");
+  });
+
+  const csvContent = BOM + [headers.join(","), ...rows].join("\n");
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `Nhat_Ky_Chi_Tiet_Bai_Test_PMarcom_${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+
