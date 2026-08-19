@@ -70,6 +70,7 @@ export default function HistoryModal({ historyList, onSelectHistory, onClearHist
             {historyList.map((item, idx) => {
               const dRes = item.discResult || item.result;
               const hRes = item.hollandResult;
+              const mRes = item.mbtiResult;
 
               return (
                 <div
@@ -92,10 +93,17 @@ export default function HistoryModal({ historyList, onSelectHistory, onClearHist
                         <span>{new Date(item.date).toLocaleDateString('vi-VN')}</span>
                       </span>
 
+                      {mRes && (
+                        <span className="font-semibold text-pink-600 dark:text-pink-400 flex items-center space-x-1">
+                          <Award className="w-3.5 h-3.5" />
+                          <span>MBTI: {mRes.code} ({mRes.profile?.name})</span>
+                        </span>
+                      )}
+
                       {dRes && (
                         <span className="font-semibold text-indigo-600 dark:text-indigo-400 flex items-center space-x-1">
                           <Award className="w-3.5 h-3.5" />
-                          <span>DISC: Nhóm {dRes.primaryTrait} ({dRes.profile?.name})</span>
+                          <span>DISC: Nhóm {dRes.primaryTrait}</span>
                         </span>
                       )}
 

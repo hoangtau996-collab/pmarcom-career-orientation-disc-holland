@@ -3,17 +3,18 @@ import ChartsSection from './ChartsSection';
 import CareerGuide from './CareerGuide';
 import AdviceSection from './AdviceSection';
 import { exportToPdf, exportToImage } from '../utils/exporter';
-import { Download, FileImage, Printer, RotateCcw, Award, Calendar, User, Mail, Phone, Sparkles, CheckCircle2, Layers, ShieldCheck, Clock, GraduationCap, ExternalLink, Rocket } from 'lucide-react';
+import { Download, FileImage, Printer, RotateCcw, Award, Calendar, User, Mail, Phone, Sparkles, CheckCircle2, Layers, ShieldCheck, Clock, GraduationCap, ExternalLink, Rocket, Brain } from 'lucide-react';
 
-export default function ResultsDashboard({ user, discResult, hollandResult, onRetakeTest }) {
+export default function ResultsDashboard({ user, discResult, hollandResult, mbtiResult, onRetakeTest }) {
   const hasDisc = !!discResult;
   const hasHolland = !!hollandResult;
+  const hasMbti = !!mbtiResult;
 
   // Mã chứng nhận cố định cho mỗi lần xem báo cáo
   const certId = useMemo(() => Math.floor(100000 + Math.random() * 900000), []);
 
-  const durationText = discResult?.durationFormatted || hollandResult?.durationFormatted || '3 phút 30 giây';
-  const consistency = discResult?.consistencyScore || hollandResult?.consistencyScore || 98;
+  const durationText = discResult?.durationFormatted || hollandResult?.durationFormatted || mbtiResult?.durationFormatted || '3 phút 30 giây';
+  const consistency = discResult?.consistencyScore || hollandResult?.consistencyScore || mbtiResult?.consistencyScore || 98;
 
   const handleDownloadPdf = () => {
     exportToPdf('disc-report-container', user?.fullName || 'User');
@@ -163,6 +164,39 @@ export default function ResultsDashboard({ user, discResult, hollandResult, onRe
             </div>
           </div>
 
+          {/* MBTI Profile Badge */}
+          {hasMbti && (
+            <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-pink-100 dark:bg-pink-950 text-pink-700 dark:text-pink-300 text-xs font-bold uppercase tracking-wider">
+                <Brain className="w-4 h-4 text-pink-600" />
+                <span>Hồ Sơ Nhóm Tính Cách MBTI ({mbtiResult.profile.groupNameVi})</span>
+              </div>
+
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                  <h1 className="text-3xl font-black text-pink-600 dark:text-pink-400 tracking-tight">
+                    MBTI: {mbtiResult.code} - {mbtiResult.profile.name}
+                  </h1>
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    {mbtiResult.profile.tagline}
+                  </p>
+                </div>
+
+                <div className="flex items-center space-x-2 shrink-0">
+                  {mbtiResult.code.split('').map((letter, idx) => (
+                    <div key={idx} className="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 to-indigo-600 text-white font-black text-lg flex items-center justify-center shadow-md">
+                      {letter}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                {mbtiResult.profile.overview}
+              </p>
+            </div>
+          )}
+
           {/* DISC Profile Badge */}
           {hasDisc && (
             <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
@@ -234,7 +268,7 @@ export default function ResultsDashboard({ user, discResult, hollandResult, onRe
 
         {/* SECTION 2: CHARTS */}
         <div className="pdf-section">
-          <ChartsSection discResult={discResult} hollandResult={hollandResult} />
+          <ChartsSection discResult={discResult} hollandResult={hollandResult} mbtiResult={mbtiResult} />
         </div>
 
         {/* SECTION 3: PERSONALITY ANALYSIS */}
@@ -261,7 +295,7 @@ export default function ResultsDashboard({ user, discResult, hollandResult, onRe
                 <span>Gợi Ý Phát Triển Kỹ Năng • P Marcom Academy</span>
               </div>
               <h3 className="text-xl font-extrabold text-white">
-                Khóa Học Đề Xuất Dành Cho Nhóm {discResult?.primaryTrait || 'D'} & Mã Holland {hollandResult?.top3Code || 'RIA'}
+                Khóa Học Đề Xuất Dành Cho Bạn ({mbtiResult ? `MBTI: ${mbtiResult.code}` : discResult ? `Nhóm ${discResult.primaryTrait}` : `Mã Holland: ${hollandResult?.top3Code}`})
               </h3>
             </div>
 
@@ -277,7 +311,7 @@ export default function ResultsDashboard({ user, discResult, hollandResult, onRe
           </div>
 
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
-            Dựa trên thiên hướng tính cách và sở thích công việc của bạn, P Marcom Academy đề xuất bạn nâng cao kỹ năng thực chiến với khóa học <strong>Digital Marketing Thực Chiến 2026 (SEO, Performance Ads, AI Content Strategy)</strong> để rút ngắn lộ trình thăng tiến sự nghiệp từ 2 - 3 năm.
+            {mbtiResult?.profile?.academyRecommendation || 'Dựa trên thiên hướng tính cách và sở thích công việc của bạn, P Marcom Academy đề xuất bạn nâng cao kỹ năng thực chiến với khóa học Digital Marketing Thực Chiến 2026 (SEO, Performance Ads, AI Content Strategy) để rút ngắn lộ trình thăng tiến sự nghiệp từ 2 - 3 năm.'}
           </p>
         </div>
 
@@ -287,7 +321,7 @@ export default function ResultsDashboard({ user, discResult, hollandResult, onRe
             <img src="/logo-pmarcom.png" alt="P Marcom Logo" className="h-5 w-auto object-contain" />
             <span className="font-bold text-slate-600 dark:text-slate-400">P Marcom Career Platform</span>
           </div>
-          <p>Hệ Thống Định Hướng Phát Triển Nghề Nghiệp • Kết hợp DISC & Holland Code (RIASEC)</p>
+          <p>Hệ Thống Định Hướng Phát Triển Nghề Nghiệp • Kết hợp DISC, Holland Code (RIASEC) &amp; MBTI 16 Nhóm Tính Cách</p>
         </div>
 
       </div>
@@ -295,4 +329,5 @@ export default function ResultsDashboard({ user, discResult, hollandResult, onRe
     </div>
   );
 }
+
 

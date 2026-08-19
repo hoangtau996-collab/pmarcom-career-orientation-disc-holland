@@ -12,9 +12,12 @@ import HollandCardSort from './components/HollandCardSort';
 const ResultsDashboard = lazy(() => import('./components/ResultsDashboard'));
 const HistoryModal = lazy(() => import('./components/HistoryModal'));
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
+const MbtiOverview = lazy(() => import('./components/MbtiOverview'));
+const MbtiQuizScreen = lazy(() => import('./components/MbtiQuizScreen'));
 
 import { calculateDiscResult } from './utils/discCalculator';
 import { calculateHollandResult } from './utils/hollandCalculator';
+import { calculateMbtiResult } from './utils/mbtiCalculator';
 import { incrementVisitCount, incrementTestCount } from './utils/visitorCounter';
 import { isAdmin } from './utils/userManager';
 import { getTranslation } from './utils/translations';
@@ -24,8 +27,10 @@ const SCREEN_HASH_MAP = {
   'selectTest': '',
   'overviewDisc': '#/disc-overview',
   'overviewHolland': '#/holland-overview',
+  'overviewMbti': '#/mbti-overview',
   'quizDisc': '#/quiz-disc',
   'quizHolland': '#/quiz-holland',
+  'quizMbti': '#/quiz-mbti',
   'results': '#/results',
   'history': '#/history',
   'admin': '#/admin'
@@ -38,8 +43,10 @@ const HASH_SCREEN_MAP = {
   '#/select-test': 'selectTest',
   '#/disc-overview': 'overviewDisc',
   '#/holland-overview': 'overviewHolland',
+  '#/mbti-overview': 'overviewMbti',
   '#/quiz-disc': 'quizDisc',
   '#/quiz-holland': 'quizHolland',
+  '#/quiz-mbti': 'quizMbti',
   '#/results': 'results',
   '#/history': 'history',
   '#/admin': 'admin'
@@ -56,7 +63,7 @@ export default function App() {
     return localStorage.getItem('disc_lang') || 'vi';
   });
 
-  const [testMode, setTestMode] = useState('combo'); // 'disc' | 'holland' | 'combo'
+  const [testMode, setTestMode] = useState('combo'); // 'disc' | 'holland' | 'mbti' | 'combo'
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authTabMode, setAuthTabMode] = useState('login'); // 'login' | 'register'
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -75,6 +82,7 @@ export default function App() {
   // Current test results
   const [discResult, setDiscResult] = useState(null);
   const [hollandResult, setHollandResult] = useState(null);
+  const [mbtiResult, setMbtiResult] = useState(null);
 
   // History
   const [historyList, setHistoryList] = useState(() => {
@@ -98,7 +106,7 @@ export default function App() {
 
   // ROUTE PROTECTION GUARD: Bắt buộc đăng nhập để vào bài test
   useEffect(() => {
-    if (!user && (currentScreen === 'quizDisc' || currentScreen === 'quizHolland' || currentScreen === 'results')) {
+    if (!user && (currentScreen === 'quizDisc' || currentScreen === 'quizHolland' || currentScreen === 'quizMbti' || currentScreen === 'results')) {
       setCurrentScreen('selectTest');
       setAuthTabMode('login');
       setShowAuthModal(true);
@@ -134,7 +142,7 @@ export default function App() {
       const targetScreen = HASH_SCREEN_MAP[hash] || 'selectTest';
       
       // Strict guard for direct link visitors
-      if (!user && (targetScreen === 'quizDisc' || targetScreen === 'quizHolland' || targetScreen === 'results')) {
+      if (!user && (targetScreen === 'quizDisc' || targetScreen === 'quizHolland' || targetScreen === 'quizMbti' || targetScreen === 'results')) {
         setCurrentScreenState('selectTest');
         setAuthTabMode('login');
         setShowAuthModal(true);
@@ -170,10 +178,15 @@ export default function App() {
   };
 
   const startTest = (mode) => {
-    if (mode === 'disc' || mode === 'combo') {
+    if (mode === 'disc') {
       setCurrentScreen('quizDisc');
-    } else {
+    } else if (mode === 'holland') {
       setCurrentScreen('quizHolland');
+    } else if (mode === 'mbti') {
+      setCurrentScreen('quizMbti');
+    } else {
+      // Combo mode starts with DISC
+      setCurrentScreen('quizDisc');
     }
   };
 
@@ -217,7 +230,7 @@ export default function App() {
       setCurrentScreen('quizHolland');
     } else {
       incrementTestCount();
-      saveAndShowResults(dRes, null);
+      saveAndShowResults(dRes, null, null);
     }
   };
 
@@ -228,16 +241,27 @@ export default function App() {
     setHollandResult(hRes);
 
     incrementTestCount();
-    saveAndShowResults(discResult, hRes);
+    saveAndShowResults(discResult, hRes, null);
   };
 
-  const saveAndShowResults = (dRes, hRes) => {
+  // MBTI completed
+  const handleCompleteMbti = (answers, durationFormatted = '') => {
+    const mRes = calculateMbtiResult(answers);
+    if (durationFormatted) mRes.durationFormatted = durationFormatted;
+    setMbtiResult(mRes);
+
+    incrementTestCount();
+    saveAndShowResults(null, null, mRes);
+  };
+
+  const saveAndShowResults = (dRes, hRes, mRes = null) => {
     const historyItem = {
       id: Date.now(),
       date: new Date().toISOString(),
       user: user,
       discResult: dRes,
-      hollandResult: hRes
+      hollandResult: hRes,
+      mbtiResult: mRes
     };
 
     const updatedHistory = [historyItem, ...historyList];
@@ -250,6 +274,7 @@ export default function App() {
   const handleRetakeTest = () => {
     setDiscResult(null);
     setHollandResult(null);
+    setMbtiResult(null);
     setCurrentScreen('selectTest');
   };
 
@@ -257,11 +282,12 @@ export default function App() {
     setUser(item.user);
     setDiscResult(item.discResult);
     setHollandResult(item.hollandResult);
+    setMbtiResult(item.mbtiResult);
     setCurrentScreen('results');
   };
 
   const handleClearHistory = () => {
-    if (window.confirm(lang === 'vi' ? 'Bạn có chắc chắn muốn xóa toàn bộ lịch sử test?' : 'Are you sure you want to clear test history?')) {
+    if (window.confirm(lang === 'vi' ? 'Bạn có chắc muốn xóa toàn bộ lịch sử test trên thiết bị này?' : 'Clear all test history on this device?')) {
       setHistoryList([]);
       localStorage.removeItem('disc_test_history');
     }
@@ -270,41 +296,31 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
       
+      {/* HEADER */}
       <Header
-        currentScreen={currentScreen}
-        setCurrentScreen={setCurrentScreen}
+        user={user}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
         lang={lang}
         setLang={setLang}
-        user={user}
-        onOpenAuth={handleOpenAuthModal}
+        onOpenLogin={() => handleOpenAuthModal('login')}
+        onOpenRegister={() => handleOpenAuthModal('register')}
         onOpenProfile={() => setShowProfileModal(true)}
+        onOpenHistory={() => setCurrentScreen('history')}
+        onOpenAdmin={() => setCurrentScreen('admin')}
+        onLogoClick={() => setCurrentScreen('selectTest')}
         onLogout={handleLogout}
       />
 
+      {/* MAIN CONTENT AREA */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        {/* AUTH MODAL POPUP WITH SEPARATE TAB MODES */}
-        {showAuthModal && (
-          <AuthModal
-            initialTab={authTabMode}
-            onAuthSuccess={handleAuthSuccess}
-            onClose={() => setShowAuthModal(false)}
-          />
-        )}
-
-        {/* PROFILE EDIT MODAL */}
-        {showProfileModal && user && (
-          <ProfileModal
-            user={user}
-            onSaveProfile={handleSaveProfile}
-            onClose={() => setShowProfileModal(false)}
-          />
-        )}
-
         {currentScreen === 'selectTest' && (
-          <TestSelector onSelectTestMode={handleSelectTestMode} user={user} lang={lang} />
+          <TestSelector
+            onSelectTestMode={handleSelectTestMode}
+            user={user}
+            lang={lang}
+          />
         )}
 
         {currentScreen === 'overviewDisc' && (
@@ -334,14 +350,26 @@ export default function App() {
         <Suspense fallback={
           <div className="py-16 text-center space-y-3">
             <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p className="text-xs font-bold text-slate-500">Đang tải dữ liệu báo cáo...</p>
+            <p className="text-xs font-bold text-slate-500">Đang tải bài test...</p>
           </div>
         }>
+          {currentScreen === 'overviewMbti' && (
+            <MbtiOverview onStartTest={() => handleSelectTestMode('mbti')} />
+          )}
+
+          {currentScreen === 'quizMbti' && user && (
+            <MbtiQuizScreen
+              onComplete={handleCompleteMbti}
+              onBackToOverview={() => setCurrentScreen('selectTest')}
+            />
+          )}
+
           {currentScreen === 'results' && user && (
             <ResultsDashboard
               user={user}
               discResult={discResult}
               hollandResult={hollandResult}
+              mbtiResult={mbtiResult}
               onRetakeTest={handleRetakeTest}
             />
           )}
@@ -372,12 +400,28 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 space-y-3">
           <div className="flex items-center justify-center space-x-3">
             <img src="/logo-pmarcom.png" alt="P Marcom Logo" className="h-7 w-auto object-contain" />
-            <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">P Marcom Career Platform</span>
+            <span className="font-extrabold text-slate-800 dark:text-slate-200 text-sm">P Marcom Career Platform</span>
           </div>
-          <p>{t('footerCopyright')}</p>
-          <p className="text-[11px] text-slate-400">{t('footerRights')}</p>
+          <p>© 2026 P Marcom. Tất cả quyền được bảo lưu. Hệ thống đánh giá định hướng sự nghiệp DISC, Holland &amp; MBTI 16 Nhóm Tính Cách.</p>
         </div>
       </footer>
+
+      {/* MODALS */}
+      {showAuthModal && (
+        <AuthModal
+          initialTab={authTabMode}
+          onSuccess={handleAuthSuccess}
+          onClose={() => setShowAuthModal(false)}
+        />
+      )}
+
+      {showProfileModal && user && (
+        <ProfileModal
+          user={user}
+          onSave={handleSaveProfile}
+          onClose={() => setShowProfileModal(false)}
+        />
+      )}
 
     </div>
   );

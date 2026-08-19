@@ -182,13 +182,13 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
           
           {/* CARD 1: DISC TEST */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-indigo-100 dark:border-indigo-950 shadow-xl flex flex-col justify-between space-y-5 hover:border-indigo-500 transition-all hover:scale-[1.02]">
             
             <div className="space-y-4">
-              <div className="relative rounded-2xl overflow-hidden h-40">
+              <div className="relative rounded-2xl overflow-hidden h-36">
                 <img
                   src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600&auto=format&fit=crop"
                   alt="DISC Assessment"
@@ -215,7 +215,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span>{lang === 'vi' ? 'Phân tích 16 mẫu tính cách' : '16 Personality Profiles'}</span>
+                  <span>{lang === 'vi' ? 'Phân tích phong cách hành vi' : 'Behavioral Style Analysis'}</span>
                 </div>
               </div>
             </div>
@@ -234,7 +234,7 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-purple-100 dark:border-purple-950 shadow-xl flex flex-col justify-between space-y-5 hover:border-purple-500 transition-all hover:scale-[1.02]">
             
             <div className="space-y-4">
-              <div className="relative rounded-2xl overflow-hidden h-40">
+              <div className="relative rounded-2xl overflow-hidden h-36">
                 <img
                   src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=600&auto=format&fit=crop"
                   alt="Holland Card Sort"
@@ -271,6 +271,52 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
               className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs rounded-2xl shadow-md transition-all flex items-center justify-center space-x-2"
             >
               <span>{t('startHolland')}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+          </div>
+
+          {/* CARD 3: MBTI 16 PERSONALITY TYPES (NEW STANDALONE TEST) */}
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-pink-100 dark:border-pink-950 shadow-xl flex flex-col justify-between space-y-5 hover:border-pink-500 transition-all hover:scale-[1.02]">
+            
+            <div className="space-y-4">
+              <div className="relative rounded-2xl overflow-hidden h-36">
+                <img
+                  src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=600&auto=format&fit=crop"
+                  alt="MBTI 16 Personality Types"
+                  className="w-full h-full object-cover"
+                />
+                <span className="absolute top-3 left-3 px-3 py-1 bg-pink-600 text-white font-extrabold text-xs rounded-full shadow">
+                  MBTI 16 Types
+                </span>
+              </div>
+
+              <div>
+                <h4 className="text-lg font-black text-slate-900 dark:text-white">
+                  {lang === 'vi' ? 'Bài Test MBTI 16 Nhóm' : 'MBTI 16 Personality Test'}
+                </h4>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  {lang === 'vi' ? 'Khám phá 4 chiều đo nhân cách cốt lõi (E/I, S/N, T/F, J/P) và định hình mã MBTI 16 loại.' : 'Identify your 4 personality dichotomies and discover your 16 MBTI code.'}
+                </p>
+              </div>
+
+              <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <span>{lang === 'vi' ? '⏱️ 3-5 phút (20 câu)' : '⏱️ 3-5 mins (20 questions)'}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <span>{lang === 'vi' ? 'Bài test độc lập 100%' : '100% Standalone Assessment'}</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => onSelectTestMode('mbti')}
+              className="w-full py-3 px-4 bg-pink-600 hover:bg-pink-500 text-white font-extrabold text-xs rounded-2xl shadow-md transition-all flex items-center justify-center space-x-2"
+            >
+              <span>{lang === 'vi' ? 'Bắt đầu Test MBTI' : 'Start MBTI Test'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
