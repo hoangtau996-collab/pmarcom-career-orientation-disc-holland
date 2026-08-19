@@ -1,10 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, UserCheck, Eye, Crown, LogIn, LogOut, Menu, X, User, Globe, UserPlus } from 'lucide-react';
+import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, UserCheck, Eye, Crown, LogIn, LogOut, Menu, X, User, Globe, UserPlus, Brain } from 'lucide-react';
 import { getVisitorStats, subscribeToVisitorStats } from '../utils/visitorCounter';
 import { isAdmin, isSuperAdmin } from '../utils/userManager';
 import { getTranslation } from '../utils/translations';
 
-export default function Header({ currentScreen, setCurrentScreen, darkMode, setDarkMode, lang = 'vi', setLang, user, onOpenAuth, onLogout, onOpenProfile }) {
+export default function Header({
+  currentScreen = 'selectTest',
+  setCurrentScreen = () => {},
+  darkMode = false,
+  setDarkMode = () => {},
+  lang = 'vi',
+  setLang = () => {},
+  user = null,
+  onOpenLogin,
+  onOpenRegister,
+  onOpenAuth,
+  onLogout = () => {},
+  onOpenProfile = () => {},
+  onOpenHistory,
+  onOpenAdmin,
+  onLogoClick
+}) {
   const [stats, setStats] = useState(getVisitorStats());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -21,7 +37,27 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
   const t = (key, params) => getTranslation(lang, key, params);
 
   const navigateTo = (screen) => {
-    setCurrentScreen(screen);
+    if (screen === 'selectTest' && onLogoClick) {
+      onLogoClick();
+    } else if (screen === 'admin' && onOpenAdmin) {
+      onOpenAdmin();
+    } else if (screen === 'history' && onOpenHistory) {
+      onOpenHistory();
+    } else if (setCurrentScreen) {
+      setCurrentScreen(screen);
+    }
+    setMobileMenuOpen(false);
+  };
+
+  const handleLoginClick = () => {
+    if (onOpenLogin) onOpenLogin();
+    else if (onOpenAuth) onOpenAuth('login');
+    setMobileMenuOpen(false);
+  };
+
+  const handleRegisterClick = () => {
+    if (onOpenRegister) onOpenRegister();
+    else if (onOpenAuth) onOpenAuth('register');
     setMobileMenuOpen(false);
   };
 
@@ -39,7 +75,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
         
         {/* P Marcom Logo + Title */}
         <div 
-          onClick={() => onLogoClick ? onLogoClick() : null}
+          onClick={() => navigateTo('selectTest')}
           className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group shrink-0"
         >
           <div className="h-10 px-2 bg-gradient-to-r from-amber-400/20 via-pink-500/20 to-indigo-500/20 rounded-xl border border-amber-400/40 dark:border-amber-500/30 flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
@@ -74,7 +110,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
           {/* Admin Button */}
           {userIsAdmin && (
             <button
-              onClick={onOpenAdmin}
+              onClick={() => navigateTo('admin')}
               className="flex items-center space-x-1 px-3.5 py-1.5 bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-slate-950 font-black text-xs rounded-xl shadow-md transition-all scale-105 transform hover:scale-110 active:scale-95"
             >
               <Crown className="w-3.5 h-3.5 fill-slate-950" />
@@ -83,18 +119,62 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
           )}
 
           <button
-            onClick={() => onLogoClick()}
-            className="flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 hover:text-indigo-600 transition-all"
+            onClick={() => navigateTo('selectTest')}
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              currentScreen === 'selectTest'
+                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             <span>{t('home')}</span>
           </button>
 
           <button
-            onClick={onOpenHistory}
-            className="flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-purple-50 dark:hover:bg-purple-950/60 hover:text-purple-600 transition-all"
+            onClick={() => navigateTo('overviewDisc')}
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              currentScreen === 'overviewDisc'
+                ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300'
+                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
           >
-            <History className="w-3.5 h-3.5 text-purple-500" />
+            <BookOpen className="w-3.5 h-3.5 text-indigo-500" />
+            <span>{t('discOverview')}</span>
+          </button>
+
+          <button
+            onClick={() => navigateTo('overviewHolland')}
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              currentScreen === 'overviewHolland'
+                ? 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
+                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5 text-purple-500" />
+            <span>{t('hollandOverview')}</span>
+          </button>
+
+          <button
+            onClick={() => navigateTo('overviewMbti')}
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              currentScreen === 'overviewMbti'
+                ? 'bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-300'
+                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <Brain className="w-3.5 h-3.5 text-pink-500" />
+            <span>MBTI</span>
+          </button>
+
+          <button
+            onClick={() => navigateTo('history')}
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              currentScreen === 'history'
+                ? 'bg-slate-200 text-slate-900 dark:bg-slate-800 dark:text-white'
+                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <History className="w-3.5 h-3.5 text-slate-500" />
             <span>{t('history')}</span>
           </button>
 
@@ -123,7 +203,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
             /* 2 DISTINCT SEPARATE BUTTONS FOR LOGIN & REGISTER */
             <div className="flex items-center space-x-2">
               <button
-                onClick={() => onOpenAuth('login')}
+                onClick={handleLoginClick}
                 className="flex items-center space-x-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded-xl transition-colors"
               >
                 <LogIn className="w-3.5 h-3.5" />
@@ -131,7 +211,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               </button>
 
               <button
-                onClick={() => onOpenAuth('register')}
+                onClick={handleRegisterClick}
                 className="flex items-center space-x-1 px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs rounded-xl shadow transition-all hover:scale-105"
               >
                 <UserPlus className="w-3.5 h-3.5" />
@@ -211,7 +291,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
           ) : (
             <div className="grid grid-cols-2 gap-2">
               <button
-                onClick={() => { onOpenAuth('login'); setMobileMenuOpen(false); }}
+                onClick={handleLoginClick}
                 className="py-2.5 bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
               >
                 <LogIn className="w-4 h-4" />
@@ -219,7 +299,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               </button>
 
               <button
-                onClick={() => { onOpenAuth('register'); setMobileMenuOpen(false); }}
+                onClick={handleRegisterClick}
                 className="py-2.5 bg-indigo-600 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
               >
                 <UserPlus className="w-4 h-4" />
@@ -243,7 +323,7 @@ export default function Header({ currentScreen, setCurrentScreen, darkMode, setD
               onClick={() => navigateTo('selectTest')}
               className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
             >
-              <Sparkles className="w-4 h-4 text-pink-500" />
+              <Sparkles className="w-4 h-4 text-amber-500" />
               <span>{t('home')}</span>
             </button>
 

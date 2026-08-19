@@ -298,6 +298,8 @@ export default function App() {
       
       {/* HEADER */}
       <Header
+        currentScreen={currentScreen}
+        setCurrentScreen={setCurrentScreen}
         user={user}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
