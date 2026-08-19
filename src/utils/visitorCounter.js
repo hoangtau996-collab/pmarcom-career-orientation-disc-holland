@@ -1,11 +1,11 @@
-import { doc, getDoc, setDoc, updateDoc, increment, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, increment, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 /**
  * BỘ ĐẾM LƯỢT TRUY CẬP & BÀI TEST TOÀN CẦU (ĐỒNG BỘ REALTIME TỪ FIREBASE FIRESTORE)
- * - Lượt truy cập ban đầu: 1.000 (Hiển thị 1.000 + số lượt xem cộng dồn toàn thế giới)
- * - Bài test hoàn thành ban đầu: 600 (Hiển thị 600 + số bài test cộng dồn toàn thế giới)
- * - Đồng bộ tức thì (Realtime) qua Firebase Firestore cho tất cả người dùng và thiết bị.
+ * - Mốc lượt truy cập ban đầu: 1.000
+ * - Mốc bài test hoàn thành ban đầu: 600
+ * - Đảm bảo cộng dồn chính xác cho tất cả khách vãng lai và đồng bộ tức thì toàn cầu.
  */
 
 const BASE_VISITS = 1000;
@@ -13,21 +13,44 @@ const BASE_TESTS = 600;
 
 const STATS_DOC_REF = doc(db, 'system', 'stats');
 
-// Local cached values
-let cachedVisits = parseInt(localStorage.getItem('pmarcom_global_visits') || BASE_VISITS.toString(), 10);
-let cachedTests = parseInt(localStorage.getItem('pmarcom_global_tests') || BASE_TESTS.toString(), 10);
+// Local offsets to guarantee guest visit increments are never overwritten
+let localVisitOffset = parseInt(localStorage.getItem('pmarcom_local_visit_offset') || '0', 10);
+let localTestOffset = parseInt(localStorage.getItem('pmarcom_local_test_offset') || '0', 10);
 
-if (isNaN(cachedVisits) || cachedVisits < BASE_VISITS) cachedVisits = BASE_VISITS;
-if (isNaN(cachedTests) || cachedTests < BASE_TESTS) cachedTests = BASE_TESTS;
+if (isNaN(localVisitOffset) || localVisitOffset < 0) localVisitOffset = 0;
+if (isNaN(localTestOffset) || localTestOffset < 0) localTestOffset = 0;
+
+let rawFirestoreVisits = BASE_VISITS;
+let rawFirestoreTests = BASE_TESTS;
+
+let cachedVisits = Math.max(BASE_VISITS + localVisitOffset, parseInt(localStorage.getItem('pmarcom_global_visits') || '1000', 10));
+let cachedTests = Math.max(BASE_TESTS + localTestOffset, parseInt(localStorage.getItem('pmarcom_global_tests') || '600', 10));
 
 const listeners = new Set();
 
+function computeTotalStats() {
+  const visits = Math.max(BASE_VISITS + localVisitOffset, rawFirestoreVisits + localVisitOffset, cachedVisits);
+  const tests = Math.max(BASE_TESTS + localTestOffset, rawFirestoreTests + localTestOffset, cachedTests);
+
+  cachedVisits = visits;
+  cachedTests = tests;
+
+  localStorage.setItem('pmarcom_global_visits', visits.toString());
+  localStorage.setItem('pmarcom_global_tests', tests.toString());
+
+  return {
+    totalVisits: visits.toLocaleString('vi-VN'),
+    totalTests: tests.toLocaleString('vi-VN'),
+    rawVisits: visits,
+    rawTests: tests
+  };
+}
+
 function notifyListeners() {
-  const statsData = getVisitorStats();
+  const statsData = computeTotalStats();
   listeners.forEach(cb => cb(statsData));
 }
 
-// Khởi tạo và đăng ký lắng nghe Firestore Realtime
 let firestoreInitialized = false;
 
 function initFirestoreSync() {
@@ -38,29 +61,17 @@ function initFirestoreSync() {
     onSnapshot(STATS_DOC_REF, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data() || {};
-        const firestoreVisits = parseInt(data.totalVisits, 10) || 0;
-        const firestoreTests = parseInt(data.totalTests, 10) || 0;
-
-        // Firestore là NGUỒN SỰ THẬT (Source of Truth) cho tổng lượt toàn cầu.
-        // Đảm bảo không bị đếm đè/reset về 1000 khi thiết bị mới truy cập
-        const visits = Math.max(BASE_VISITS, firestoreVisits);
-        const tests = Math.max(BASE_TESTS, firestoreTests);
-
-        cachedVisits = visits;
-        cachedTests = tests;
-
-        localStorage.setItem('pmarcom_global_visits', visits.toString());
-        localStorage.setItem('pmarcom_global_tests', tests.toString());
-
+        rawFirestoreVisits = parseInt(data.totalVisits, 10) || BASE_VISITS;
+        rawFirestoreTests = parseInt(data.totalTests, 10) || BASE_TESTS;
         notifyListeners();
       } else {
-        // Tạo document ban đầu trên Firestore với mốc ban đầu (1000 / 600)
+        // Doc doesn't exist yet on Firestore, seed initial values
         setDoc(STATS_DOC_REF, {
-          totalVisits: BASE_VISITS,
-          totalTests: BASE_TESTS,
+          totalVisits: Math.max(BASE_VISITS, cachedVisits),
+          totalTests: Math.max(BASE_TESTS, cachedTests),
           createdAt: new Date().toISOString(),
           lastUpdated: new Date().toISOString()
-        }, { merge: true }).catch(err => console.warn('Firestore setDoc stats error:', err));
+        }, { merge: true }).catch(err => console.warn('Firestore setDoc stats init error:', err));
       }
     }, (err) => {
       console.warn('Firestore onSnapshot stats error:', err);
@@ -70,43 +81,36 @@ function initFirestoreSync() {
   }
 }
 
-// Tự động bật đồng bộ khi module được nạp
+// Automatically start Firestore realtime sync
 initFirestoreSync();
 
 /**
- * Lấy số liệu đếm hiện tại (Đồng bộ toàn cầu)
+ * Get current visitor statistics (formatted for locale)
  */
 export function getVisitorStats() {
-  return {
-    totalVisits: cachedVisits.toLocaleString('vi-VN'),
-    totalTests: cachedTests.toLocaleString('vi-VN'),
-    rawVisits: cachedVisits,
-    rawTests: cachedTests
-  };
+  return computeTotalStats();
 }
 
 /**
- * Đăng ký nghe biến động thời gian thực (Realtime subscriber)
+ * Subscribe to realtime visitor counter changes
  */
 export function subscribeToVisitorStats(callback) {
   listeners.add(callback);
-  // Trả về số liệu hiện tại ngay cho callback
-  callback(getVisitorStats());
+  callback(computeTotalStats());
   return () => {
     listeners.delete(callback);
   };
 }
 
 /**
- * Tăng lượt truy cập hệ thống (Cộng dồn toàn cầu)
+ * Increment global visit counter (+1)
  */
 export async function incrementVisitCount() {
-  cachedVisits += 1;
-  localStorage.setItem('pmarcom_global_visits', cachedVisits.toString());
+  localVisitOffset += 1;
+  localStorage.setItem('pmarcom_local_visit_offset', localVisitOffset.toString());
   notifyListeners();
 
   try {
-    // Tăng nguyên tử (+1) trên Firestore mà không bao giờ ghi đè lại giá trị local (1000)
     await setDoc(STATS_DOC_REF, {
       totalVisits: increment(1),
       lastUpdated: new Date().toISOString()
@@ -115,19 +119,18 @@ export async function incrementVisitCount() {
     console.warn('Increment visit count error:', err);
   }
 
-  return cachedVisits.toLocaleString('vi-VN');
+  return computeTotalStats().totalVisits;
 }
 
 /**
- * Tăng số bài test đã hoàn thành (Cộng dồn toàn cầu)
+ * Increment global completed test counter (+1)
  */
 export async function incrementTestCount() {
-  cachedTests += 1;
-  localStorage.setItem('pmarcom_global_tests', cachedTests.toString());
+  localTestOffset += 1;
+  localStorage.setItem('pmarcom_local_test_offset', localTestOffset.toString());
   notifyListeners();
 
   try {
-    // Tăng nguyên tử (+1) trên Firestore
     await setDoc(STATS_DOC_REF, {
       totalTests: increment(1),
       lastUpdated: new Date().toISOString()
@@ -136,5 +139,5 @@ export async function incrementTestCount() {
     console.warn('Increment test count error:', err);
   }
 
-  return cachedTests.toLocaleString('vi-VN');
+  return computeTotalStats().totalTests;
 }
