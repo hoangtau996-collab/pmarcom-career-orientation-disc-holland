@@ -94,22 +94,22 @@ export default function HistoryModal({ historyList, onSelectHistory, onClearHist
                       </span>
 
                       {mRes && (
-                        <span className="font-semibold text-pink-600 dark:text-pink-400 flex items-center space-x-1">
-                          <Award className="w-3.5 h-3.5" />
+                        <span className="font-semibold text-teal-600 dark:text-teal-400 flex items-center space-x-1">
+                          <Award className="w-3.5 h-3.5 text-teal-500" />
                           <span>MBTI: {mRes.code} ({mRes.profile?.name})</span>
                         </span>
                       )}
 
                       {dRes && (
-                        <span className="font-semibold text-indigo-600 dark:text-indigo-400 flex items-center space-x-1">
-                          <Award className="w-3.5 h-3.5" />
+                        <span className="font-semibold text-cyan-600 dark:text-cyan-400 flex items-center space-x-1">
+                          <Award className="w-3.5 h-3.5 text-cyan-500" />
                           <span>DISC: Nhóm {dRes.primaryTrait}</span>
                         </span>
                       )}
 
                       {hRes && (
-                        <span className="font-semibold text-purple-600 dark:text-purple-400 flex items-center space-x-1">
-                          <Layers className="w-3.5 h-3.5" />
+                        <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center space-x-1">
+                          <Layers className="w-3.5 h-3.5 text-emerald-500" />
                           <span>Holland: {hRes.top3Code}</span>
                         </span>
                       )}

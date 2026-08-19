@@ -174,8 +174,8 @@ export default function MbtiQuizScreen({ onComplete, onBackToOverview, lang = 'v
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
         
         <div className="space-y-2">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300 text-xs font-bold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5 text-teal-600" />
             <span>Câu {currentQ.id} • Chiều đo {currentQ.dimension}</span>
           </div>
 
@@ -195,20 +195,20 @@ export default function MbtiQuizScreen({ onComplete, onBackToOverview, lang = 'v
                 onClick={() => handleSelectOption(opt.trait)}
                 className={`w-full p-4 rounded-2xl border-2 text-left transition-all flex items-start space-x-3 group ${
                   isSelected
-                    ? 'border-indigo-600 bg-indigo-50/60 dark:bg-indigo-950/40 shadow-md'
-                    : 'border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700 bg-slate-50/50 dark:bg-slate-950/40'
+                    ? 'border-teal-600 bg-teal-50/70 dark:bg-teal-950/40 shadow-md'
+                    : 'border-slate-200 dark:border-slate-800 hover:border-teal-300 dark:hover:border-teal-700 bg-slate-50/50 dark:bg-slate-950/40'
                 }`}
               >
                 <div className={`w-6 h-6 rounded-full font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
                   isSelected
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:bg-indigo-200'
+                    ? 'bg-teal-600 text-white'
+                    : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:bg-teal-200'
                 }`}>
                   {idx === 0 ? 'A' : 'B'}
                 </div>
 
                 <p className={`text-xs sm:text-sm font-semibold leading-relaxed ${
-                  isSelected ? 'text-indigo-950 dark:text-indigo-100 font-extrabold' : 'text-slate-700 dark:text-slate-300'
+                  isSelected ? 'text-teal-950 dark:text-teal-100 font-extrabold' : 'text-slate-700 dark:text-slate-300'
                 }`}>
                   {lang === 'vi' ? opt.textVi : opt.textEn}
                 </p>
@@ -231,7 +231,7 @@ export default function MbtiQuizScreen({ onComplete, onBackToOverview, lang = 'v
           {currentIndex < MBTI_QUESTIONS.length - 1 ? (
             <button
               onClick={handleNext}
-              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs rounded-xl shadow-md transition-all flex items-center space-x-1"
+              className="px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-black text-xs rounded-xl shadow-md transition-all flex items-center space-x-1"
             >
               <span>Câu tiếp</span>
               <ArrowRight className="w-4 h-4" />
@@ -239,7 +239,7 @@ export default function MbtiQuizScreen({ onComplete, onBackToOverview, lang = 'v
           ) : (
             <button
               onClick={handleCompleteSubmit}
-              className="px-6 py-3 bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-xl transition-all transform hover:scale-105 active:scale-95"
+              className="px-6 py-3 bg-gradient-to-r from-teal-500 via-cyan-600 to-slate-900 hover:from-teal-600 hover:to-slate-950 text-white font-black text-xs sm:text-sm rounded-xl shadow-xl transition-all transform hover:scale-105 active:scale-95"
             >
               Hoàn Thành Bài Test MBTI
             </button>

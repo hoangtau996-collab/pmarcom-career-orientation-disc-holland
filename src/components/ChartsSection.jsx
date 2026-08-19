@@ -25,7 +25,7 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
       {/* MBTI CHARTS */}
       {hasMbti && (
         <div className="space-y-6">
-          <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-pink-600 dark:text-pink-400 border-b pb-2">
+          <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 border-b pb-2">
             🧠 Phân Tích 4 Chiều Đo MBTI ({mbtiResult.code} - {mbtiResult.profile.name})
           </h4>
 
@@ -38,8 +38,8 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
                 <span>I (Hướng nội): {mbtiResult.percentages.I}%</span>
               </div>
               <div className="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex">
-                <div className="h-full bg-indigo-600" style={{ width: `${mbtiResult.percentages.E}%` }}></div>
-                <div className="h-full bg-purple-600" style={{ width: `${mbtiResult.percentages.I}%` }}></div>
+                <div className="h-full bg-teal-600" style={{ width: `${mbtiResult.percentages.E}%` }}></div>
+                <div className="h-full bg-cyan-600" style={{ width: `${mbtiResult.percentages.I}%` }}></div>
               </div>
             </div>
 
@@ -51,7 +51,7 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
               </div>
               <div className="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex">
                 <div className="h-full bg-emerald-600" style={{ width: `${mbtiResult.percentages.S}%` }}></div>
-                <div className="h-full bg-pink-600" style={{ width: `${mbtiResult.percentages.N}%` }}></div>
+                <div className="h-full bg-teal-500" style={{ width: `${mbtiResult.percentages.N}%` }}></div>
               </div>
             </div>
 
@@ -62,8 +62,8 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
                 <span>F (Cảm xúc): {mbtiResult.percentages.F}%</span>
               </div>
               <div className="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex">
-                <div className="h-full bg-blue-600" style={{ width: `${mbtiResult.percentages.T}%` }}></div>
-                <div className="h-full bg-rose-500" style={{ width: `${mbtiResult.percentages.F}%` }}></div>
+                <div className="h-full bg-slate-900 dark:bg-slate-200" style={{ width: `${mbtiResult.percentages.T}%` }}></div>
+                <div className="h-full bg-cyan-500" style={{ width: `${mbtiResult.percentages.F}%` }}></div>
               </div>
             </div>
 
@@ -74,8 +74,8 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
                 <span>P (Linh hoạt): {mbtiResult.percentages.P}%</span>
               </div>
               <div className="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex">
-                <div className="h-full bg-amber-500" style={{ width: `${mbtiResult.percentages.J}%` }}></div>
-                <div className="h-full bg-teal-500" style={{ width: `${mbtiResult.percentages.P}%` }}></div>
+                <div className="h-full bg-teal-700" style={{ width: `${mbtiResult.percentages.J}%` }}></div>
+                <div className="h-full bg-emerald-500" style={{ width: `${mbtiResult.percentages.P}%` }}></div>
               </div>
             </div>
 
@@ -86,7 +86,7 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
       {/* DISC CHARTS */}
       {hasDisc && (
         <div className="space-y-6">
-          <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 border-b pb-2">
+          <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 border-b pb-2">
             📊 Phân Tích Mô Hình DISC (William Marston)
           </h4>
 
@@ -100,7 +100,7 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
                     <PolarGrid stroke="#94a3b8" strokeDasharray="3 3" />
                     <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }} />
                     <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#cbd5e1" />
-                    <Radar name="DISC %" dataKey="A" stroke="#6366f1" fill="#818cf8" fillOpacity={0.5} />
+                    <Radar name="DISC %" dataKey="A" stroke="#0d9488" fill="#14b8a6" fillOpacity={0.5} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
@@ -112,19 +112,19 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
               <div className="w-full h-[220px] sm:h-[260px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={[
-                    { name: 'D', score: discResult.percentages.D, color: '#EF4444' },
-                    { name: 'I', score: discResult.percentages.I, color: '#F59E0B' },
+                    { name: 'D', score: discResult.percentages.D, color: '#0f766e' },
+                    { name: 'I', score: discResult.percentages.I, color: '#06b6d4' },
                     { name: 'S', score: discResult.percentages.S, color: '#10B981' },
-                    { name: 'C', score: discResult.percentages.C, color: '#3B82F6' },
+                    { name: 'C', score: discResult.percentages.C, color: '#0f172a' },
                   ]}>
                     <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 11, fontWeight: 700 }} />
                     <YAxis domain={[0, 100]} unit="%" tick={{ fill: '#64748b', fontSize: 10 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderRadius: '12px', color: '#fff', fontSize: '11px' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', color: '#fff', fontSize: '11px' }} />
                     <Bar dataKey="score" radius={[8, 8, 0, 0]}>
-                      <Cell fill="#EF4444" />
-                      <Cell fill="#F59E0B" />
+                      <Cell fill="#0f766e" />
+                      <Cell fill="#06b6d4" />
                       <Cell fill="#10B981" />
-                      <Cell fill="#3B82F6" />
+                      <Cell fill="#0f172a" />
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
@@ -137,7 +137,7 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
       {/* HOLLAND CHARTS */}
       {hasHolland && (
         <div className="space-y-6 pt-4">
-          <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 border-b pb-2">
+          <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 border-b pb-2">
             🃏 Phân Tích Mã Holland RIASEC (John Holland)
           </h4>
 
@@ -151,7 +151,7 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
                     <PolarGrid stroke="#94a3b8" strokeDasharray="3 3" />
                     <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 9, fontWeight: 600 }} />
                     <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#cbd5e1" />
-                    <Radar name="Holland %" dataKey="A" stroke="#a855f7" fill="#c084fc" fillOpacity={0.5} />
+                    <Radar name="Holland %" dataKey="A" stroke="#06b6d4" fill="#22d3ee" fillOpacity={0.5} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
@@ -165,10 +165,10 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
                   <BarChart data={hollandResult.chartData}>
                     <XAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 8, fontWeight: 600 }} />
                     <YAxis domain={[0, 100]} unit="%" tick={{ fill: '#64748b', fontSize: 10 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderRadius: '12px', color: '#fff', fontSize: '11px' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', color: '#fff', fontSize: '11px' }} />
                     <Bar dataKey="A" radius={[8, 8, 0, 0]}>
                       {hollandResult.chartData.map((entry, idx) => (
-                        <Cell key={idx} fill={entry.fill} />
+                        <Cell key={idx} fill={entry.fill || '#0d9488'} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -182,4 +182,3 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
     </div>
   );
 }
-

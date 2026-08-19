@@ -67,9 +67,9 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-indigo-100 dark:border-slate-800 transition-colors shadow-sm">
-      {/* Top Colorful Accent Line */}
-      <div className="h-1 w-full bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600"></div>
+    <header className="sticky top-0 z-40 backdrop-blur-md bg-white/95 dark:bg-slate-950/95 border-b border-teal-100 dark:border-slate-800 transition-colors shadow-sm">
+      {/* Top Colorful Accent Line: Xanh ngọc - Cyan - Xanh Navi */}
+      <div className="h-1 w-full bg-gradient-to-r from-teal-400 via-cyan-500 to-slate-900"></div>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
@@ -78,7 +78,7 @@ export default function Header({
           onClick={() => navigateTo('selectTest')}
           className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group shrink-0"
         >
-          <div className="h-10 px-2 bg-gradient-to-r from-amber-400/20 via-pink-500/20 to-indigo-500/20 rounded-xl border border-amber-400/40 dark:border-amber-500/30 flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
+          <div className="h-10 px-2 bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-slate-900/10 rounded-xl border border-teal-300/40 dark:border-teal-500/30 flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
             <img 
               src="/logo-pmarcom.png" 
               alt="P Marcom Logo" 
@@ -88,7 +88,7 @@ export default function Header({
 
           <div>
             <div className="flex items-center space-x-1.5">
-              <span className="font-black text-sm sm:text-base md:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-pink-600 to-indigo-600 dark:from-amber-300 dark:via-pink-400 dark:to-indigo-400">
+              <span className="font-black text-sm sm:text-base md:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-teal-600 via-cyan-600 to-slate-900 dark:from-teal-300 dark:via-cyan-300 dark:to-white">
                 {t('heroTitle')}
               </span>
             </div>
@@ -101,9 +101,9 @@ export default function Header({
         {/* Desktop & iPad Navigation */}
         <div className="hidden lg:flex items-center space-x-2 xl:space-x-3">
           
-          {/* Visitor Counter (Đồng bộ Realtime Toàn Cầu) */}
-          <div className="flex items-center space-x-1.5 px-3 py-1 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-950/60 dark:to-orange-950/60 border border-amber-300 dark:border-amber-800 rounded-full text-xs font-bold text-amber-900 dark:text-amber-300 shadow-xs">
-            <Eye className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+          {/* Visitor Counter */}
+          <div className="flex items-center space-x-1.5 px-3 py-1 bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/60 dark:to-cyan-950/60 border border-teal-200 dark:border-teal-800 rounded-full text-xs font-bold text-teal-900 dark:text-teal-300 shadow-xs">
+            <Eye className="w-3.5 h-3.5 text-teal-600 animate-pulse" />
             <span>{stats.totalVisits} {lang === 'vi' ? 'lượt xem' : 'visits'}</span>
           </div>
 
@@ -111,9 +111,9 @@ export default function Header({
           {userIsAdmin && (
             <button
               onClick={() => navigateTo('admin')}
-              className="flex items-center space-x-1 px-3.5 py-1.5 bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-slate-950 font-black text-xs rounded-xl shadow-md transition-all scale-105 transform hover:scale-110 active:scale-95"
+              className="flex items-center space-x-1 px-3.5 py-1.5 bg-gradient-to-r from-teal-500 via-cyan-600 to-slate-900 hover:from-teal-600 hover:to-slate-950 text-white font-black text-xs rounded-xl shadow-md transition-all scale-105 transform hover:scale-110 active:scale-95"
             >
-              <Crown className="w-3.5 h-3.5 fill-slate-950" />
+              <Crown className="w-3.5 h-3.5 fill-teal-300" />
               <span>{t('adminPortal')}</span>
             </button>
           )}
@@ -122,11 +122,11 @@ export default function Header({
             onClick={() => navigateTo('selectTest')}
             className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
               currentScreen === 'selectTest'
-                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                ? 'bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-300'
                 : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <Sparkles className="w-3.5 h-3.5 text-teal-500" />
             <span>{t('home')}</span>
           </button>
 
@@ -134,11 +134,11 @@ export default function Header({
             onClick={() => navigateTo('overviewDisc')}
             className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
               currentScreen === 'overviewDisc'
-                ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300'
+                ? 'bg-cyan-100 text-cyan-900 dark:bg-cyan-950 dark:text-cyan-300'
                 : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
-            <BookOpen className="w-3.5 h-3.5 text-indigo-500" />
+            <BookOpen className="w-3.5 h-3.5 text-cyan-600" />
             <span>{t('discOverview')}</span>
           </button>
 
@@ -146,11 +146,11 @@ export default function Header({
             onClick={() => navigateTo('overviewHolland')}
             className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
               currentScreen === 'overviewHolland'
-                ? 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
+                ? 'bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-300'
                 : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
-            <Layers className="w-3.5 h-3.5 text-purple-500" />
+            <Layers className="w-3.5 h-3.5 text-teal-600" />
             <span>{t('hollandOverview')}</span>
           </button>
 
@@ -158,11 +158,11 @@ export default function Header({
             onClick={() => navigateTo('overviewMbti')}
             className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
               currentScreen === 'overviewMbti'
-                ? 'bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-300'
+                ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300'
                 : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
-            <Brain className="w-3.5 h-3.5 text-pink-500" />
+            <Brain className="w-3.5 h-3.5 text-emerald-600" />
             <span>MBTI</span>
           </button>
 
@@ -174,7 +174,7 @@ export default function Header({
                 : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
-            <History className="w-3.5 h-3.5 text-slate-500" />
+            <History className="w-3.5 h-3.5 text-slate-600" />
             <span>{t('history')}</span>
           </button>
 
@@ -183,17 +183,17 @@ export default function Header({
             <div className="flex items-center space-x-2">
               <button
                 onClick={onOpenProfile}
-                className="flex items-center space-x-1.5 px-3 py-1 bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-full border border-indigo-200 dark:border-slate-700 transition-all"
+                className="flex items-center space-x-1.5 px-3 py-1 bg-teal-50 hover:bg-teal-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-full border border-teal-200 dark:border-slate-700 transition-all"
                 title="Bấm để chỉnh sửa hồ sơ cá nhân"
               >
-                <UserCheck className="w-3.5 h-3.5 text-indigo-600" />
+                <UserCheck className="w-3.5 h-3.5 text-teal-600" />
                 <span className="max-w-[100px] truncate">{user.fullName}</span>
                 {userIsSuperAdmin && <span className="text-[10px] text-amber-500 font-bold">👑</span>}
               </button>
 
               <button
                 onClick={onLogout}
-                className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-xl transition-colors"
+                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-xl transition-colors"
                 title={t('logout')}
               >
                 <LogOut className="w-4 h-4" />
@@ -204,7 +204,7 @@ export default function Header({
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleLoginClick}
-                className="flex items-center space-x-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded-xl transition-colors"
+                className="flex items-center space-x-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-teal-700 dark:text-teal-300 text-xs font-bold rounded-xl transition-colors"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 <span>{t('login')}</span>
@@ -212,7 +212,7 @@ export default function Header({
 
               <button
                 onClick={handleRegisterClick}
-                className="flex items-center space-x-1 px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs rounded-xl shadow transition-all hover:scale-105"
+                className="flex items-center space-x-1 px-3.5 py-1.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-bold text-xs rounded-xl shadow transition-all hover:scale-105"
               >
                 <UserPlus className="w-3.5 h-3.5" />
                 <span>{t('register')}</span>
@@ -226,7 +226,7 @@ export default function Header({
             className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-sm"
             title="Chuyển đổi Ngôn ngữ / Switch Language"
           >
-            <Globe className="w-3.5 h-3.5 text-indigo-500" />
+            <Globe className="w-3.5 h-3.5 text-teal-600" />
             <span>{lang === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}</span>
           </button>
 
@@ -274,17 +274,17 @@ export default function Header({
           {user ? (
             <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
               <button onClick={() => { onOpenProfile(); setMobileMenuOpen(false); }} className="flex items-center space-x-2 text-left">
-                <UserCheck className="w-4 h-4 text-indigo-500 shrink-0" />
+                <UserCheck className="w-4 h-4 text-teal-600 shrink-0" />
                 <div>
                   <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center space-x-1">
                     <span>{user.fullName}</span>
                     {userIsSuperAdmin && <span>👑</span>}
                   </div>
-                  <div className="text-[10px] text-indigo-600 dark:text-indigo-400">SĐT: {user.phone || 'Bấm để sửa'}</div>
+                  <div className="text-[10px] text-teal-600 dark:text-teal-400">SĐT: {user.phone || 'Bấm để sửa'}</div>
                 </div>
               </button>
 
-              <button onClick={onLogout} className="text-xs text-rose-500 font-bold">
+              <button onClick={onLogout} className="text-xs text-red-500 font-bold">
                 {t('logout')}
               </button>
             </div>
@@ -292,7 +292,7 @@ export default function Header({
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={handleLoginClick}
-                className="py-2.5 bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
+                className="py-2.5 bg-slate-100 dark:bg-slate-800 text-teal-600 dark:text-teal-400 font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
               >
                 <LogIn className="w-4 h-4" />
                 <span>{t('login')}</span>
@@ -300,7 +300,7 @@ export default function Header({
 
               <button
                 onClick={handleRegisterClick}
-                className="py-2.5 bg-indigo-600 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
+                className="py-2.5 bg-teal-600 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
               >
                 <UserPlus className="w-4 h-4" />
                 <span>{t('register')}</span>
@@ -311,7 +311,7 @@ export default function Header({
           {userIsAdmin && (
             <button
               onClick={() => navigateTo('admin')}
-              className="w-full py-2.5 bg-amber-500 text-slate-950 font-black text-xs rounded-xl flex items-center justify-center space-x-2 shadow-sm"
+              className="w-full py-2.5 bg-gradient-to-r from-teal-500 to-slate-900 text-white font-black text-xs rounded-xl flex items-center justify-center space-x-2 shadow-sm"
             >
               <Crown className="w-4 h-4" />
               <span>{t('adminPortal')}</span>
@@ -323,7 +323,7 @@ export default function Header({
               onClick={() => navigateTo('selectTest')}
               className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
             >
-              <Sparkles className="w-4 h-4 text-amber-500" />
+              <Sparkles className="w-4 h-4 text-teal-500" />
               <span>{t('home')}</span>
             </button>
 
@@ -331,7 +331,7 @@ export default function Header({
               onClick={() => navigateTo('history')}
               className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
             >
-              <History className="w-4 h-4 text-purple-500" />
+              <History className="w-4 h-4 text-slate-600" />
               <span>{t('history')}</span>
             </button>
 
@@ -339,7 +339,7 @@ export default function Header({
               onClick={() => navigateTo('overviewDisc')}
               className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
             >
-              <BookOpen className="w-4 h-4 text-indigo-500" />
+              <BookOpen className="w-4 h-4 text-cyan-600" />
               <span>{t('discOverview')}</span>
             </button>
 
@@ -347,12 +347,12 @@ export default function Header({
               onClick={() => navigateTo('overviewHolland')}
               className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
             >
-              <Layers className="w-4 h-4 text-purple-500" />
+              <Layers className="w-4 h-4 text-teal-600" />
               <span>{t('hollandOverview')}</span>
             </button>
           </div>
 
-          <div className="pt-2 text-center text-[11px] text-amber-700 dark:text-amber-400 font-semibold flex items-center justify-center space-x-1">
+          <div className="pt-2 text-center text-[11px] text-teal-700 dark:text-teal-400 font-semibold flex items-center justify-center space-x-1">
             <Eye className="w-3.5 h-3.5" />
             <span>{stats.totalVisits} {lang === 'vi' ? 'lượt truy cập hệ thống' : 'system visits'}</span>
           </div>

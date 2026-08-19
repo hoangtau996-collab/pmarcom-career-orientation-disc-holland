@@ -167,14 +167,14 @@ export default function ResultsDashboard({ user, discResult, hollandResult, mbti
           {/* MBTI Profile Badge */}
           {hasMbti && (
             <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-pink-100 dark:bg-pink-950 text-pink-700 dark:text-pink-300 text-xs font-bold uppercase tracking-wider">
-                <Brain className="w-4 h-4 text-pink-600" />
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300 text-xs font-bold uppercase tracking-wider">
+                <Brain className="w-4 h-4 text-teal-600" />
                 <span>Hồ Sơ Nhóm Tính Cách MBTI ({mbtiResult.profile.groupNameVi})</span>
               </div>
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                  <h1 className="text-3xl font-black text-pink-600 dark:text-pink-400 tracking-tight">
+                  <h1 className="text-3xl font-black text-teal-600 dark:text-teal-400 tracking-tight">
                     MBTI: {mbtiResult.code} - {mbtiResult.profile.name}
                   </h1>
                   <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -184,7 +184,7 @@ export default function ResultsDashboard({ user, discResult, hollandResult, mbti
 
                 <div className="flex items-center space-x-2 shrink-0">
                   {mbtiResult.code.split('').map((letter, idx) => (
-                    <div key={idx} className="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 to-indigo-600 text-white font-black text-lg flex items-center justify-center shadow-md">
+                    <div key={idx} className="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-600 to-slate-900 text-white font-black text-lg flex items-center justify-center shadow-md">
                       {letter}
                     </div>
                   ))}
@@ -200,7 +200,7 @@ export default function ResultsDashboard({ user, discResult, hollandResult, mbti
           {/* DISC Profile Badge */}
           {hasDisc && (
             <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider">
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 text-xs font-bold uppercase tracking-wider">
                 <Award className="w-4 h-4" />
                 <span>Hồ Sơ Nhóm Tính Cách DISC</span>
               </div>
@@ -210,16 +210,16 @@ export default function ResultsDashboard({ user, discResult, hollandResult, mbti
                   <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                     {discResult.profile.name}
                   </h1>
-                  <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">
+                  <p className="text-sm font-semibold text-cyan-600 dark:text-cyan-400">
                     {discResult.profile.tagline}
                   </p>
                 </div>
 
                 <div className="flex items-center space-x-2 shrink-0">
-                  <div className="w-14 h-14 rounded-2xl bg-indigo-600 text-white font-black text-2xl flex items-center justify-center shadow-lg">
+                  <div className="w-14 h-14 rounded-2xl bg-teal-600 text-white font-black text-2xl flex items-center justify-center shadow-lg">
                     {discResult.primaryTrait}
                   </div>
-                  <div className="w-10 h-10 rounded-xl bg-purple-600 text-white font-bold text-lg flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-slate-900 text-white font-bold text-lg flex items-center justify-center">
                     {discResult.secondaryTrait}
                   </div>
                 </div>
@@ -234,14 +234,14 @@ export default function ResultsDashboard({ user, discResult, hollandResult, mbti
           {/* Holland Top 3 Badge */}
           {hasHolland && (
             <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 text-xs font-bold uppercase tracking-wider">
-                <Layers className="w-4 h-4 text-purple-600" />
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300 text-xs font-bold uppercase tracking-wider">
+                <Layers className="w-4 h-4 text-teal-600" />
                 <span>Mã Sở Thích Nghề Nghiệp Holland Top 3</span>
               </div>
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                  <h2 className="text-3xl font-black text-purple-600 dark:text-purple-400 tracking-tight">
+                  <h2 className="text-3xl font-black text-teal-600 dark:text-teal-400 tracking-tight">
                     Top 3 Mã Holland: {hollandResult.top3Code}
                   </h2>
                   <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -251,7 +251,7 @@ export default function ResultsDashboard({ user, discResult, hollandResult, mbti
                 
                 <div className="flex items-center space-x-2">
                   {hollandResult.top3Code.split('').map((letter, idx) => (
-                    <div key={idx} className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 text-white font-black text-lg flex items-center justify-center shadow-md">
+                    <div key={idx} className="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-600 to-cyan-600 text-white font-black text-lg flex items-center justify-center shadow-md">
                       {letter}
                     </div>
                   ))}
@@ -287,11 +287,11 @@ export default function ResultsDashboard({ user, discResult, hollandResult, mbti
         </div>
 
         {/* SECTION 5: PERSONALIZED ACADEMY COURSE RECOMMENDATION */}
-        <div className="pdf-section bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 text-white rounded-3xl p-6 sm:p-8 border border-indigo-500/40 shadow-xl space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-indigo-900/60 pb-4">
+        <div className="pdf-section bg-gradient-to-r from-slate-950 via-blue-950 to-teal-950 text-white rounded-3xl p-6 sm:p-8 border border-teal-500/40 shadow-xl space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-teal-900/60 pb-4">
             <div className="space-y-1">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-wider">
-                <GraduationCap className="w-4 h-4 text-amber-400" />
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-400/40 text-teal-300 text-xs font-bold uppercase tracking-wider">
+                <GraduationCap className="w-4 h-4 text-teal-300" />
                 <span>Gợi Ý Phát Triển Kỹ Năng • P Marcom Academy</span>
               </div>
               <h3 className="text-xl font-extrabold text-white">
@@ -303,10 +303,10 @@ export default function ResultsDashboard({ user, discResult, hollandResult, mbti
               href="https://academy.pmarcom.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-600 hover:from-amber-500 hover:to-indigo-500 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2 shrink-0"
+              className="px-6 py-3 bg-gradient-to-r from-teal-500 via-cyan-500 to-slate-900 hover:from-teal-600 hover:to-slate-950 text-white font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2 shrink-0"
             >
               <span>Đăng Ký Tư Vấn Khóa Học</span>
-              <ExternalLink className="w-4 h-4 text-slate-950 stroke-[2.5]" />
+              <ExternalLink className="w-4 h-4 text-white stroke-[2.5]" />
             </a>
           </div>
 
