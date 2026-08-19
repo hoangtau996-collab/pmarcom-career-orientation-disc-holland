@@ -83,7 +83,9 @@ export default function ResultsDashboard({ user, discResult, hollandResult, mbti
           {/* Header Branding P Marcom */}
           <div className="flex flex-wrap items-center justify-between pb-6 border-b border-slate-100 dark:border-slate-800 gap-4">
             <div className="flex items-center space-x-3">
-              <img src="/logo-pmarcom.png" alt="P Marcom Logo" className="h-10 w-auto object-contain" />
+              <div className="p-1.5 px-2.5 bg-gradient-to-r from-teal-600 to-cyan-700 rounded-xl border border-teal-300 shadow-sm flex items-center justify-center">
+                <img src="/logo-pmarcom.png" alt="P Marcom Logo" className="h-7 w-auto object-contain filter brightness-110" />
+              </div>
               <div>
                 <h2 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight">P Marcom Career Platform</h2>
                 <p className="text-xs text-amber-600 dark:text-amber-400 font-semibold">Báo Cáo Phân Tích Định Hướng Phát Triển Nghề Nghiệp</p>

@@ -78,11 +78,11 @@ export default function Header({
           onClick={() => navigateTo('selectTest')}
           className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group shrink-0"
         >
-          <div className="h-10 px-2 bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-slate-900/10 rounded-xl border border-teal-300/40 dark:border-teal-500/30 flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
+          <div className="h-10 px-3 bg-gradient-to-r from-teal-600 to-cyan-700 rounded-2xl border-2 border-teal-300 dark:border-teal-400 shadow-md flex items-center justify-center group-hover:scale-105 transition-transform">
             <img 
               src="/logo-pmarcom.png" 
               alt="P Marcom Logo" 
-              className="h-8 w-auto object-contain drop-shadow-sm" 
+              className="h-7 w-auto object-contain filter brightness-110 drop-shadow" 
             />
           </div>
 
