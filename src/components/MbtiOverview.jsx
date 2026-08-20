@@ -40,7 +40,7 @@ export default function MbtiOverview({ onStartTest, lang = 'vi' }) {
 
           <span className="text-xs text-teal-200 font-semibold flex items-center space-x-1.5">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>20 câu hỏi tình huống thực tế • Hoàn thành trong 3-5 phút</span>
+            <span>28 câu hỏi tình huống tâm lý chuyên sâu • Hoàn thành trong 4-6 phút</span>
           </span>
         </div>
       </div>

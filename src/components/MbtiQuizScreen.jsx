@@ -261,7 +261,7 @@ export default function MbtiQuizScreen({ onComplete, onBackToOverview, lang = 'v
                 <h4 className="font-extrabold text-base text-slate-900 dark:text-white">
                   Bạn Còn {missingCount} Câu Chưa Trả Lời!
                 </h4>
-                <p className="text-xs text-slate-500">Vui lòng hoàn thành đủ 20 câu để có kết quả MBTI chính xác nhất</p>
+                <p className="text-xs text-slate-500">Vui lòng hoàn thành đủ {MBTI_QUESTIONS.length} câu để có kết quả MBTI chính xác nhất</p>
               </div>
             </div>
 
