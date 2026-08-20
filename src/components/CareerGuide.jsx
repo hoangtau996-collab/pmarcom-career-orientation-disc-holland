@@ -1,13 +1,47 @@
-import React, { useState } from 'react';
-import { CAREER_MAPPINGS } from '../data/careerMappings';
-import { GraduationCap, Briefcase, Award, CheckCircle2, Star, Sparkles, BookMarked, Compass, Search, Filter, X } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { CAREER_MAPPINGS, getHollandCareerMapping } from '../data/careerMappings';
+import { GraduationCap, Briefcase, Award, CheckCircle2, Star, Sparkles, BookMarked, Compass, Search, Filter, X, Layers, Brain } from 'lucide-react';
 
-export default function CareerGuide({ primaryTrait, userCategory = 'student' }) {
+export default function CareerGuide({
+  primaryTrait = 'D',
+  hollandResult = null,
+  mbtiResult = null,
+  discResult = null,
+  userCategory = 'student'
+}) {
+  const hasHolland = !!hollandResult;
+  const hasDisc = !!discResult || (!hasHolland && !mbtiResult);
+  const hasMbti = !!mbtiResult;
+
+  // Quyết định tab mặc định ưu tiên (Holland -> DISC -> MBTI)
+  const [activePerspective, setActivePerspective] = useState(() => {
+    if (hasHolland) return 'holland';
+    if (hasDisc) return 'disc';
+    if (hasMbti) return 'mbti';
+    return 'holland';
+  });
+
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
 
-  const mapping = CAREER_MAPPINGS[primaryTrait] || CAREER_MAPPINGS['D'];
   const isStudent = userCategory === 'student';
+
+  // Lấy dữ liệu mapping dựa trên tab đang chọn
+  const mapping = useMemo(() => {
+    if (activePerspective === 'holland') {
+      const top3Code = hollandResult?.top3Code || 'RIA';
+      return getHollandCareerMapping(top3Code);
+    }
+    
+    if (activePerspective === 'disc') {
+      const trait = discResult?.primaryTrait || primaryTrait || 'D';
+      return CAREER_MAPPINGS[trait] || CAREER_MAPPINGS['D'];
+    }
+
+    // MBTI Mode Fallback hoặc map qua DISC/Holland tương đương
+    const discTrait = discResult?.primaryTrait || primaryTrait || 'D';
+    return CAREER_MAPPINGS[discTrait] || CAREER_MAPPINGS['D'];
+  }, [activePerspective, hollandResult, discResult, primaryTrait]);
 
   const categoryTags = [
     { id: 'all', name: 'Tất cả' },
@@ -19,6 +53,8 @@ export default function CareerGuide({ primaryTrait, userCategory = 'student' }) 
   ];
 
   const filterItems = (items, isStudentMode) => {
+    if (!items || !Array.isArray(items)) return [];
+    
     return items.filter((item) => {
       const name = isStudentMode ? item.name : item.title;
       const desc = isStudentMode ? item.reason : item.desc;
@@ -27,11 +63,11 @@ export default function CareerGuide({ primaryTrait, userCategory = 'student' }) 
       if (activeFilter === 'all') return matchSearch;
       
       const textLower = (name + ' ' + desc).toLowerCase();
-      if (activeFilter === 'tech' && (textLower.includes('công nghệ') || textLower.includes('it') || textLower.includes('phần mềm') || textLower.includes('kỹ thuật') || textLower.includes('dữ liệu'))) return matchSearch;
-      if (activeFilter === 'marketing' && (textLower.includes('marketing') || textLower.includes('truyền thông') || textLower.includes('quảng cáo') || textLower.includes('content') || textLower.includes('thương hiệu'))) return matchSearch;
-      if (activeFilter === 'business' && (textLower.includes('kinh doanh') || textLower.includes('quản trị') || textLower.includes('tài chính') || textLower.includes('lãnh đạo') || textLower.includes('nhân sự') || textLower.includes('sales'))) return matchSearch;
-      if (activeFilter === 'design' && (textLower.includes('thiết kế') || textLower.includes('nghệ thuật') || textLower.includes('sáng tạo') || textLower.includes('đồ họa') || textLower.includes('kiến trúc'))) return matchSearch;
-      if (activeFilter === 'ai' && (textLower.includes('ai') || textLower.includes('dữ liệu') || textLower.includes('tự động') || textLower.includes('phân tích') || textLower.includes('đổi mới'))) return matchSearch;
+      if (activeFilter === 'tech' && (textLower.includes('công nghệ') || textLower.includes('it') || textLower.includes('phần mềm') || textLower.includes('kỹ thuật') || textLower.includes('dữ liệu') || textLower.includes('mạng') || textLower.includes('hệ thống'))) return matchSearch;
+      if (activeFilter === 'marketing' && (textLower.includes('marketing') || textLower.includes('truyền thông') || textLower.includes('quảng cáo') || textLower.includes('content') || textLower.includes('thương hiệu') || textLower.includes('pr'))) return matchSearch;
+      if (activeFilter === 'business' && (textLower.includes('kinh doanh') || textLower.includes('quản trị') || textLower.includes('tài chính') || textLower.includes('lãnh đạo') || textLower.includes('nhân sự') || textLower.includes('sales') || textLower.includes('đầu tư'))) return matchSearch;
+      if (activeFilter === 'design' && (textLower.includes('thiết kế') || textLower.includes('nghệ thuật') || textLower.includes('sáng tạo') || textLower.includes('đồ họa') || textLower.includes('kiến trúc') || textLower.includes('ui/ux') || textLower.includes('3d'))) return matchSearch;
+      if (activeFilter === 'ai' && (textLower.includes('ai') || textLower.includes('dữ liệu') || textLower.includes('tự động') || textLower.includes('phân tích') || textLower.includes('đổi mới') || textLower.includes('robotics'))) return matchSearch;
       
       return matchSearch;
     });
@@ -43,45 +79,106 @@ export default function CareerGuide({ primaryTrait, userCategory = 'student' }) 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-8">
       
-      {/* Title */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="p-3 rounded-2xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 shrink-0">
-            {isStudent ? <GraduationCap className="w-6 h-6" /> : <Briefcase className="w-6 h-6" />}
+      {/* HEADER & PERSPECTIVE SWITCHER */}
+      <div className="space-y-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="p-3 rounded-2xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 shrink-0">
+              {isStudent ? <GraduationCap className="w-6 h-6" /> : <Briefcase className="w-6 h-6" />}
+            </div>
+            <div>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                {isStudent ? '🎯 Định Hướng Ngành Nghề & Lĩnh Vực Phù Hợp' : '💼 Gợi Ý Sự Nghiệp & Vị Trí Công Việc'}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                {activePerspective === 'holland' && hollandResult && (
+                  <span>Gợi ý theo bộ ba <strong className="text-teal-600 dark:text-teal-400 font-bold">Top 3 Mã Holland ({hollandResult.top3Code})</strong></span>
+                )}
+                {activePerspective === 'disc' && (
+                  <span>Dựa trên thiên hướng tự nhiên nhóm tính cách DISC <strong className="text-indigo-600 dark:text-indigo-400 font-bold">({discResult?.primaryTrait || primaryTrait})</strong></span>
+                )}
+                {activePerspective === 'mbti' && mbtiResult && (
+                  <span>Dựa trên mô hình tính cách MBTI <strong className="text-purple-600 dark:text-purple-400 font-bold">({mbtiResult.code})</strong></span>
+                )}
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-              {isStudent ? '🎯 Định Hướng Ngành Nghề & Lĩnh Vực Phù Hợp' : '💼 Gợi Ý Sự Nghiệp & Vị Trí Công Việc'}
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Dựa trên thiên hướng tự nhiên của nhóm tính cách <strong className="text-indigo-600 dark:text-indigo-400">{primaryTrait}</strong>
-            </p>
+
+          {/* Interactive Search Bar */}
+          <div className="relative w-full lg:w-72">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Tìm ngành nghề (VD: AI, Marketing, Kỹ thuật)..."
+              className="w-full pl-10 pr-8 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Interactive Search Bar */}
-        <div className="relative w-full md:w-72">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tìm ngành nghề (VD: Marketing, IT)..."
-            className="w-full pl-10 pr-8 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-              <X className="w-3.5 h-3.5" />
+        {/* TAB PERSPECTIVE SELECTOR */}
+        <div className="flex flex-wrap items-center gap-2 pt-2">
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">
+            Góc nhìn đánh giá:
+          </span>
+
+          {hasHolland && (
+            <button
+              onClick={() => setActivePerspective('holland')}
+              className={`px-3.5 py-1.5 rounded-xl font-extrabold text-xs transition-all flex items-center space-x-1.5 ${
+                activePerspective === 'holland'
+                  ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-500/20 scale-105'
+                  : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>Theo Holland Code ({hollandResult?.top3Code})</span>
+            </button>
+          )}
+
+          {hasDisc && (
+            <button
+              onClick={() => setActivePerspective('disc')}
+              className={`px-3.5 py-1.5 rounded-xl font-extrabold text-xs transition-all flex items-center space-x-1.5 ${
+                activePerspective === 'disc'
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/20 scale-105'
+                  : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300'
+              }`}
+            >
+              <Award className="w-3.5 h-3.5" />
+              <span>Theo DISC ({discResult?.primaryTrait || primaryTrait})</span>
+            </button>
+          )}
+
+          {hasMbti && (
+            <button
+              onClick={() => setActivePerspective('mbti')}
+              className={`px-3.5 py-1.5 rounded-xl font-extrabold text-xs transition-all flex items-center space-x-1.5 ${
+                activePerspective === 'mbti'
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md shadow-purple-500/20 scale-105'
+                  : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300'
+              }`}
+            >
+              <Brain className="w-3.5 h-3.5" />
+              <span>Theo MBTI ({mbtiResult?.code})</span>
             </button>
           )}
         </div>
+
       </div>
 
       {/* Category Filter Pills */}
       <div className="flex items-center space-x-2 overflow-x-auto pb-1 text-xs">
         <span className="text-xs font-bold text-slate-400 uppercase shrink-0 flex items-center space-x-1">
           <Filter className="w-3.5 h-3.5" />
-          <span>Lọc nhanh:</span>
+          <span>Lọc lĩnh vực:</span>
         </span>
         {categoryTags.map((tag) => (
           <button
@@ -107,7 +204,7 @@ export default function CareerGuide({ primaryTrait, userCategory = 'student' }) 
             <div className="flex items-center justify-between">
               <h4 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
                 <BookMarked className="w-5 h-5 text-indigo-600" />
-                <span>Top Ngành Nghề & Lĩnh Vực Chuyên Môn Phù Hợp Nhất</span>
+                <span>Top Ngành Nghề & Lĩnh Vực Chuyên Môn Trùng Khớp Nhất</span>
               </h4>
               <span className="text-xs font-bold text-slate-400">
                 Hiển thị {displayedStudentItems.length} kết quả
@@ -127,7 +224,7 @@ export default function CareerGuide({ primaryTrait, userCategory = 'student' }) 
                   >
                     <div className="flex items-center justify-between">
                       <h5 className="font-bold text-slate-900 dark:text-white text-base">{item.name}</h5>
-                      <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-xs font-bold rounded-full flex items-center space-x-1">
+                      <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-xs font-bold rounded-full flex items-center space-x-1 shrink-0 ml-2">
                         <Star className="w-3 h-3 fill-emerald-600 text-emerald-600" />
                         <span>{item.match}% Phù hợp</span>
                       </span>
@@ -220,7 +317,7 @@ export default function CareerGuide({ primaryTrait, userCategory = 'student' }) 
                   >
                     <div className="flex items-center justify-between">
                       <h5 className="font-bold text-slate-900 dark:text-white text-base">{item.title}</h5>
-                      <span className="px-2.5 py-1 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 text-xs font-bold rounded-full flex items-center space-x-1">
+                      <span className="px-2.5 py-1 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 text-xs font-bold rounded-full flex items-center space-x-1 shrink-0 ml-2">
                         <Star className="w-3 h-3 fill-purple-600 text-purple-600" />
                         <span>{item.match}% Đề xuất</span>
                       </span>
@@ -275,3 +372,4 @@ export default function CareerGuide({ primaryTrait, userCategory = 'student' }) 
     </div>
   );
 }
+

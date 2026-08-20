@@ -284,6 +284,9 @@ export default function ResultsDashboard({ user, discResult, hollandResult, mbti
         <div className="pdf-section">
           <CareerGuide
             primaryTrait={discResult ? discResult.primaryTrait : 'D'}
+            hollandResult={hollandResult}
+            discResult={discResult}
+            mbtiResult={mbtiResult}
             userCategory={user?.category || 'student'}
           />
         </div>

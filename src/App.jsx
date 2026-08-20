@@ -5,6 +5,7 @@ import DiscOverview from './components/DiscOverview';
 import HollandOverview from './components/HollandOverview';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
+import CategoryNoticeModal from './components/CategoryNoticeModal';
 import QuizScreen from './components/QuizScreen';
 import HollandCardSort from './components/HollandCardSort';
 
@@ -14,6 +15,7 @@ const HistoryModal = lazy(() => import('./components/HistoryModal'));
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const MbtiOverview = lazy(() => import('./components/MbtiOverview'));
 const MbtiQuizScreen = lazy(() => import('./components/MbtiQuizScreen'));
+const CareerLibrary = lazy(() => import('./components/CareerLibrary'));
 
 import { calculateDiscResult } from './utils/discCalculator';
 import { calculateHollandResult } from './utils/hollandCalculator';
@@ -28,6 +30,7 @@ const SCREEN_HASH_MAP = {
   'overviewDisc': '#/disc-overview',
   'overviewHolland': '#/holland-overview',
   'overviewMbti': '#/mbti-overview',
+  'careerLibrary': '#/career-library',
   'quizDisc': '#/quiz-disc',
   'quizHolland': '#/quiz-holland',
   'quizMbti': '#/quiz-mbti',
@@ -44,6 +47,7 @@ const HASH_SCREEN_MAP = {
   '#/disc-overview': 'overviewDisc',
   '#/holland-overview': 'overviewHolland',
   '#/mbti-overview': 'overviewMbti',
+  '#/career-library': 'careerLibrary',
   '#/quiz-disc': 'quizDisc',
   '#/quiz-holland': 'quizHolland',
   '#/quiz-mbti': 'quizMbti',
@@ -64,9 +68,11 @@ export default function App() {
   });
 
   const [testMode, setTestMode] = useState('combo'); // 'disc' | 'holland' | 'mbti' | 'combo'
+  const [pendingTestMode, setPendingTestMode] = useState('combo');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authTabMode, setAuthTabMode] = useState('login'); // 'login' | 'register'
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showCategoryNoticeModal, setShowCategoryNoticeModal] = useState(false);
 
   // Dark mode
   const [darkMode, setDarkMode] = useState(() => {
@@ -169,12 +175,21 @@ export default function App() {
   // Request authentication before test
   const handleSelectTestMode = (mode) => {
     setTestMode(mode);
+    setPendingTestMode(mode);
     if (!user) {
       setAuthTabMode('login');
       setShowAuthModal(true);
     } else {
-      startTest(mode);
+      setShowCategoryNoticeModal(true);
     }
+  };
+
+  const handleConfirmCategoryAndStart = (mode, updatedUserData) => {
+    if (updatedUserData) {
+      setUser(updatedUserData);
+    }
+    setShowCategoryNoticeModal(false);
+    startTest(mode);
   };
 
   const startTest = (mode) => {
@@ -202,7 +217,8 @@ export default function App() {
       }
     }
 
-    setCurrentScreen('selectTest');
+    // Sau khi login xong, mở popup xác nhận category trước khi làm test
+    setShowCategoryNoticeModal(true);
   };
 
   // Save Profile Update
@@ -359,6 +375,13 @@ export default function App() {
             <MbtiOverview onStartTest={() => handleSelectTestMode('mbti')} />
           )}
 
+          {currentScreen === 'careerLibrary' && (
+            <CareerLibrary
+              onStartTest={handleSelectTestMode}
+              userCategory={user?.category || 'student'}
+            />
+          )}
+
           {currentScreen === 'quizMbti' && user && (
             <MbtiQuizScreen
               onComplete={handleCompleteMbti}
@@ -422,6 +445,15 @@ export default function App() {
           user={user}
           onSave={handleSaveProfile}
           onClose={() => setShowProfileModal(false)}
+        />
+      )}
+
+      {showCategoryNoticeModal && user && (
+        <CategoryNoticeModal
+          user={user}
+          pendingTestMode={pendingTestMode}
+          onConfirmStart={handleConfirmCategoryAndStart}
+          onClose={() => setShowCategoryNoticeModal(false)}
         />
       )}
 

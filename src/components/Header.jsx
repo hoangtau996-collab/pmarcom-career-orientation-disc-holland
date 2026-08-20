@@ -167,6 +167,18 @@ export default function Header({
           </button>
 
           <button
+            onClick={() => navigateTo('careerLibrary')}
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              currentScreen === 'careerLibrary'
+                ? 'bg-gradient-to-r from-teal-500 to-indigo-600 text-white shadow-md'
+                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <Compass className="w-3.5 h-3.5 text-indigo-500" />
+            <span>Thư Viện Ngành Nghề</span>
+          </button>
+
+          <button
             onClick={() => navigateTo('history')}
             className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
               currentScreen === 'history'
@@ -349,6 +361,14 @@ export default function Header({
             >
               <Layers className="w-4 h-4 text-teal-600" />
               <span>{t('hollandOverview')}</span>
+            </button>
+
+            <button
+              onClick={() => navigateTo('careerLibrary')}
+              className="col-span-2 p-2.5 bg-gradient-to-r from-teal-600 to-indigo-600 text-white rounded-xl font-bold flex items-center justify-center space-x-1.5 shadow-sm"
+            >
+              <Compass className="w-4 h-4" />
+              <span>Thư Viện Ngành Nghề</span>
             </button>
           </div>
 
