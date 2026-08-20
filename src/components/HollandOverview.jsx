@@ -56,15 +56,28 @@ export default function HollandOverview({ onStartTest }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div className="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+          <div className="lg:col-span-2 space-y-4 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
             <p>
-              Mô hình <strong>Holland Code</strong> được phát triển bởi **Giáo sư Tâm lý học John L. Holland** (Đại học Johns Hopkins, Mỹ) bắt đầu từ những năm 1950 và chuẩn hóa liên tục trong hơn 4 thập kỷ.
+              Mô hình <strong>Holland Code</strong> được nghiên cứu bởi <strong>Giáo sư Tâm lý học John L. Holland</strong> (Đại học Johns Hopkins, Mỹ) bắt đầu từ những năm 1950 và chuẩn hóa liên tục trong hơn 4 thập kỷ.
             </p>
+            
+            {/* Visual Image Banner for Holland Career Counseling */}
+            <div className="my-4 rounded-2xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800">
+              <img
+                src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1000&q=80"
+                alt="Định hướng nghề nghiệp Holland Code"
+                className="w-full h-48 sm:h-56 object-cover transform hover:scale-105 transition-transform duration-500"
+              />
+              <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2 text-xs text-slate-500 font-medium">
+                📷 Ảnh minh họa: Định hướng sự nghiệp và lựa chọn môi trường làm việc lý tưởng
+              </div>
+            </div>
+
             <p>
               Triết lý cốt lõi của Holland được phát biểu đơn giản nhưng vô cùng mạnh mẽ: 
               <br />
-              <em className="text-purple-700 dark:text-purple-300 font-serif font-bold">
+              <em className="text-purple-700 dark:text-purple-300 font-serif font-bold text-sm sm:text-base">
                 "Sự hài lòng trong công việc và thành công sự nghiệp bền vững phụ thuộc vào mức độ tương thích giữa loại hình tính cách cá nhân và môi trường làm việc thực tế."
               </em>
             </p>
@@ -74,12 +87,12 @@ export default function HollandOverview({ onStartTest }) {
           </div>
 
           <div className="p-6 rounded-3xl bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 dark:from-purple-950/40 dark:via-indigo-950/40 dark:to-pink-950/40 border border-purple-100 dark:border-purple-900/50 space-y-4">
-            <h3 className="font-extrabold text-slate-900 dark:text-white text-base flex items-center space-x-2">
+            <h3 className="font-extrabold text-slate-900 dark:text-white text-base sm:text-lg flex items-center space-x-2">
               <Hexagon className="w-5 h-5 text-purple-600" />
               <span>Nguyên Lý Lục Giác Holland (RIASEC Hexagon)</span>
             </h3>
 
-            <div className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+            <div className="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
               <p>
                 • <strong>Mối quan hệ kề nhau (Adjacent):</strong> Các nhóm nằm cạnh nhau trên lục giác (VD: <em>R và I</em>, hoặc <em>A và S</em>) có mức độ tương đồng sở thích rất cao, dễ dàng hòa hợp trong môi trường công việc.
               </p>

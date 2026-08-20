@@ -61,13 +61,26 @@ export default function MbtiOverview({ onStartTest, lang = 'vi' }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div className="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+          <div className="lg:col-span-2 space-y-4 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
             <p>
-              Mô hình <strong>MBTI (Myers-Briggs Type Indicator)</strong> khởi nguồn từ công trình lý thuyết vĩ đại <em>"Psychological Types"</em> (Các loại hình tâm lý - 1921) của Nhà tâm lý học phân tâm học lỗi lạc **Carl Gustav Jung**.
+              Mô hình <strong>MBTI (Myers-Briggs Type Indicator)</strong> khởi nguồn từ công trình lý thuyết vĩ đại <em>"Psychological Types"</em> (Các loại hình tâm lý - 1921) của Nhà tâm lý học phân tâm học lỗi lạc <strong>Carl Gustav Jung</strong>.
             </p>
+            
+            {/* Visual Image Banner for MBTI Psychology */}
+            <div className="my-4 rounded-2xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800">
+              <img
+                src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=1000&q=80"
+                alt="Tâm lý học 16 nhóm tính cách MBTI"
+                className="w-full h-48 sm:h-56 object-cover transform hover:scale-105 transition-transform duration-500"
+              />
+              <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2 text-xs text-slate-500 font-medium">
+                📷 Ảnh minh họa: Giải mã chiều sâu tư duy và khuôn mẫu nhận thức tâm lý con người
+              </div>
+            </div>
+
             <p>
-              Vào thập niên 1940, hai nhà nghiên cứu là **Katharine Cook Briggs** và con gái của bà là **Isabel Briggs Myers** đã tiếp tục phát triển công trình của Carl Jung thành một công cụ trắc nghiệm thực chứng có tính ứng dụng cao.
+              Vào thập niên 1940, hai nhà nghiên cứu là <strong>Katharine Cook Briggs</strong> và con gái của bà là <strong>Isabel Briggs Myers</strong> đã tiếp tục phát triển công trình của Carl Jung thành một công cụ trắc nghiệm thực chứng có tính ứng dụng cao.
             </p>
             <p>
               MBTI khẳng định rằng sự khác biệt trong hành vi con người không phải là ngẫu nhiên, mà tuân theo những <strong>khuôn mẫu nhận thức nội tâm (Cognitive Functions)</strong> vô cùng nhất quán về cách nạp năng lượng, xử lý thông tin và ra quyết định trong cuộc sống.
@@ -75,23 +88,23 @@ export default function MbtiOverview({ onStartTest, lang = 'vi' }) {
           </div>
 
           <div className="p-6 rounded-3xl bg-gradient-to-br from-teal-50 via-cyan-50 to-indigo-50 dark:from-teal-950/40 dark:via-cyan-950/40 dark:to-indigo-950/40 border border-teal-100 dark:border-teal-900/50 space-y-4">
-            <h3 className="font-extrabold text-slate-900 dark:text-white text-base flex items-center space-x-2">
+            <h3 className="font-extrabold text-slate-900 dark:text-white text-base sm:text-lg flex items-center space-x-2">
               <Compass className="w-5 h-5 text-teal-600" />
               <span>4 Chiều Đo Nhân Cách Trong MBTI</span>
             </h3>
 
-            <div className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+            <div className="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
               <p>
-                • <strong>E (Hướng ngoại) vs I (Hướng nội):</strong> Xác định cách bạn nạp năng lượng (từ tương tác xã hội bên ngoài hay từ không gian yên tĩnh nội tâm).
+                • <strong>E (Hướng ngoại) vs I (Hướng nội):</strong> Nạp năng lượng từ tương tác xã hội hay không gian nội tâm.
               </p>
               <p>
-                • <strong>S (Thực tế) vs N (Trực giác):</strong> Xác định cách bạn thu thập &amp; tin tưởng thông tin (dữ liệu chi tiết thực tế hay bức tranh tổng thể tương lai).
+                • <strong>S (Thực tế) vs N (Trực giác):</strong> Cách thu thập thông tin dựa trên dữ liệu hiện tại hay tầm nhìn tương lai.
               </p>
               <p>
-                • <strong>T (Tư duy) vs F (Cảm xúc):</strong> Xác định cơ chế ra quyết định (dựa trên logic khách quan hay giá trị cảm xúc con người).
+                • <strong>T (Tư duy) vs F (Cảm xúc):</strong> Ra quyết định theo logic khách quan hay giá trị thấu cảm.
               </p>
               <p>
-                • <strong>J (Nguyên tắc) vs P (Linh hoạt):</strong> Xác định phương thức tổ chức cuộc sống (theo kế hoạch chuẩn chỉnh hay linh hoạt ứng biến).
+                • <strong>J (Nguyên tắc) vs P (Linh hoạt):</strong> Tổ chức cuộc sống theo kế hoạch rõ ràng hay ứng biến tự do.
               </p>
             </div>
           </div>

@@ -57,15 +57,28 @@ export default function DiscOverview({ onStartTest }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div className="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+          <div className="lg:col-span-2 space-y-4 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
             <p>
-              Mô hình <strong>DISC</strong> được nghiên cứu và khởi xướng vào năm 1928 bởi Nhà tâm lý học nổi tiếng người Mỹ **Dr. William Moulton Marston** (người tốt nghiệp tiến sĩ tâm lý tại Đại học Harvard) trong cuốn sách kinh điển <em>"Emotions of Normal People"</em>.
+              Mô hình <strong>DISC</strong> được nghiên cứu và khởi xướng vào năm 1928 bởi Nhà tâm lý học nổi tiếng người Mỹ <strong>Dr. William Moulton Marston</strong> (người tốt nghiệp tiến sĩ tâm lý tại Đại học Harvard) trong cuốn sách kinh điển <em>"Emotions of Normal People"</em>.
             </p>
+            
+            {/* Visual Image Banner for History */}
+            <div className="my-4 rounded-2xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800">
+              <img
+                src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=1000&q=80"
+                alt="Nghiên cứu khoa học tâm lý học DISC"
+                className="w-full h-48 sm:h-56 object-cover transform hover:scale-105 transition-transform duration-500"
+              />
+              <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2 text-xs text-slate-500 font-medium">
+                📷 Ảnh minh họa: Nghiên cứu khoa học tâm lý hành vi con người thế kỷ 20
+              </div>
+            </div>
+
             <p>
               Khác với các bài kiểm tra tâm thần học đo lường rối loạn cảm xúc, Tiến sĩ Marston tập trung phân tích <strong>những phản ứng hành vi bình thường của con người</strong> trước môi trường xung quanh. Ông phát hiện ra rằng biểu hiện hành vi của mỗi cá nhân phụ thuộc vào hai yếu tố chính:
             </p>
-            <ul className="list-disc pl-5 space-y-2 text-slate-700 dark:text-slate-200 font-medium">
+            <ul className="list-disc pl-5 space-y-2 text-slate-700 dark:text-slate-200 font-medium text-sm sm:text-base">
               <li><strong>Góc nhìn về môi trường:</strong> Cá nhân nhìn nhận môi trường xung quanh là <em>Thuận lợi (Favorable)</em> hay <em>Thách thức/Bất lợi (Unfavorable)</em>.</li>
               <li><strong>Cơ chế phản ứng:</strong> Cá nhân cảm thấy bản thân <em>Mạnh mẽ hơn môi trường (Chủ động kiểm soát)</em> hay <em>Yếu hơn môi trường (Thụ động thích nghi)</em>.</li>
             </ul>
@@ -75,40 +88,40 @@ export default function DiscOverview({ onStartTest }) {
           </div>
 
           <div className="p-6 rounded-3xl bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-950/40 dark:via-purple-950/40 dark:to-pink-950/40 border border-indigo-100 dark:border-indigo-900/50 space-y-4">
-            <h3 className="font-extrabold text-slate-900 dark:text-white text-base flex items-center space-x-2">
+            <h3 className="font-extrabold text-slate-900 dark:text-white text-base sm:text-lg flex items-center space-x-2">
               <Compass className="w-5 h-5 text-indigo-600" />
               <span>Sơ Đồ 2 Trục Cốt Lõi Tạo Nên 4 Nhóm DISC</span>
             </h3>
 
-            <div className="space-y-3 text-xs">
-              <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
-                <span className="px-2 py-1 bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 font-extrabold rounded">D</span>
+            <div className="space-y-3 text-xs sm:text-sm">
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+                <span className="px-2.5 py-1 bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 font-extrabold rounded text-sm">D</span>
                 <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white">Dominance (Chủ động + Môi trường thách thức)</h4>
+                  <h4 className="font-bold text-slate-900 dark:text-white">Dominance (Chủ động + Thách thức)</h4>
                   <p className="text-slate-500 dark:text-slate-400">Quyết đoán, vượt qua trở ngại để đạt mục tiêu.</p>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
-                <span className="px-2 py-1 bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-extrabold rounded">I</span>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+                <span className="px-2.5 py-1 bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 font-extrabold rounded text-sm">I</span>
                 <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white">Influence (Chủ động + Môi trường thuận lợi)</h4>
+                  <h4 className="font-bold text-slate-900 dark:text-white">Influence (Chủ động + Thuận lợi)</h4>
                   <p className="text-slate-500 dark:text-slate-400">Thuyết phục, xây dựng mối quan hệ và truyền cảm hứng.</p>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
-                <span className="px-2 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-extrabold rounded">S</span>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+                <span className="px-2.5 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-extrabold rounded text-sm">S</span>
                 <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white">Steadiness (Thụ động + Môi trường thuận lợi)</h4>
+                  <h4 className="font-bold text-slate-900 dark:text-white">Steadiness (Thụ động + Thuận lợi)</h4>
                   <p className="text-slate-500 dark:text-slate-400">Kiên định, kiên nhẫn, hợp tác và duy trì sự ổn định.</p>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
-                <span className="px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-extrabold rounded">C</span>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+                <span className="px-2.5 py-1 bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-extrabold rounded text-sm">C</span>
                 <div>
-                  <h4 className="font-bold text-slate-900 dark:text-white">Conscientiousness (Thụ động + Môi trường thách thức)</h4>
+                  <h4 className="font-bold text-slate-900 dark:text-white">Conscientiousness (Thụ động + Thách thức)</h4>
                   <p className="text-slate-500 dark:text-slate-400">Tuân thủ, cẩn trọng, phân tích và tôn trọng quy trình chuẩn.</p>
                 </div>
               </div>
