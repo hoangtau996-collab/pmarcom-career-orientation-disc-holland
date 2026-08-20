@@ -1,7 +1,10 @@
-// Bộ 36 Thẻ Bài Đánh Giá Sở Thích Nghề Nghiệp Holland Code (RIASEC) chuẩn quốc tế
+// Bộ 48 Thẻ Bài Đánh Giá Sở Thích Nghề Nghiệp Holland Code (RIASEC) chuẩn quốc tế 2026
+// Phân bổ đều đặn 8 thẻ cho mỗi nhóm: R, I, A, S, E, C
 
 export const HOLLAND_CARDS = [
-  // --- R: REALISTIC (Kỹ Thuật / Thực Tế) ---
+  // ==========================================
+  // --- R: REALISTIC (Kỹ Thuật / Thực Tế - 8 Cards) ---
+  // ==========================================
   {
     id: 'r1',
     category: 'R',
@@ -15,7 +18,7 @@ export const HOLLAND_CARDS = [
     id: 'r2',
     category: 'R',
     categoryName: 'Realistic - Kỹ Thuật / Thực Tế',
-    title: 'Lắp ráp & Chế tạo Sản phẩm',
+    title: 'Lắp ráp & Chế tạo Sản phẩm Physical',
     description: 'Yêu thích các hoạt động làm việc bằng tay, lắp ráp linh kiện, mô hình hoặc sản phẩm vật lý.',
     icon: 'Hammer',
     tags: ['Lắp ráp', 'Chế tạo', 'Cơ khí']
@@ -25,15 +28,15 @@ export const HOLLAND_CARDS = [
     category: 'R',
     categoryName: 'Realistic - Kỹ Thuật / Thực Tế',
     title: 'Làm việc Ngoài trời & Tự nhiên',
-    description: 'Thích các công việc gắn liền với thiên nhiên, nông nghiệp, chăm sóc cây cối hoặc động vật.',
+    description: 'Thích các công việc gắn liền với thiên nhiên, nông nghiệp AgriTech, chăm sóc cây cối hoặc động vật.',
     icon: 'Trees',
-    tags: ['Thiên nhiên', 'Ngoài trời', 'Môi trường']
+    tags: ['Thiên nhiên', 'Ngoài trời', 'Nông nghiệp']
   },
   {
     id: 'r4',
     category: 'R',
     categoryName: 'Realistic - Kỹ Thuật / Thực Tế',
-    title: 'Xây dựng & Kiến trúc Công trình',
+    title: 'Xây dựng & Thi công Công trình',
     description: 'Hứng thú với việc thi công công trình, đọc bản vẽ kỹ thuật và giải quyết các bài toán không gian.',
     icon: 'Building',
     tags: ['Thi công', 'Kiến trúc', 'Không gian']
@@ -42,8 +45,8 @@ export const HOLLAND_CARDS = [
     id: 'r5',
     category: 'R',
     categoryName: 'Realistic - Kỹ Thuật / Thực Tế',
-    title: 'Lái xe & Vận tải Kỹ thuật',
-    description: 'Thích điều khiển phương tiện giao thông, thiết bị vận tải hoặc các hệ thống điều khiển tự động.',
+    title: 'Lái xe & Vận tải Tự động hóa',
+    description: 'Thích điều khiển phương tiện giao thông, thiết bị vận tải hoặc các hệ thống robot điều khiển.',
     icon: 'Truck',
     tags: ['Vận tải', 'Điều khiển', 'Thực hành']
   },
@@ -51,13 +54,33 @@ export const HOLLAND_CARDS = [
     id: 'r6',
     category: 'R',
     categoryName: 'Realistic - Kỹ Thuật / Thực Tế',
-    title: 'Giải quyết Sự cố Kỹ thuật Phần cứng',
-    description: 'Thích tháo ráp thiết bị máy tính, điện thoại, hệ thống mạng cứng và các thiết bị số.',
+    title: 'Sửa chữa Phần cứng & Hệ thống Mạng',
+    description: 'Thích tháo ráp thiết bị máy tính, điện thoại, vi mạch cứng và hạ tầng kỹ thuật số.',
     icon: 'Cpu',
-    tags: ['Phần cứng', 'Sửa chữa', 'Thiết bị']
+    tags: ['Phần cứng', 'Vi mạch', 'Thiết bị']
+  },
+  {
+    id: 'r7',
+    category: 'R',
+    categoryName: 'Realistic - Kỹ Thuật / Thực Tế',
+    title: 'Vận hành Robot & Thiết bị Drone',
+    description: 'Hứng thú điều khiển thiết bị bay không người lái, tay máy robot và hệ thống tự động hóa công nghiệp.',
+    icon: 'Bot',
+    tags: ['Robot', 'Drone', 'Tự động hóa']
+  },
+  {
+    id: 'r8',
+    category: 'R',
+    categoryName: 'Realistic - Kỹ Thuật / Thực Tế',
+    title: 'Đo đạc Địa chất & Khảo sát Thực địa',
+    description: 'Thích trực tiếp đi khảo sát địa hình, sử dụng máy đo đạc trắc địa và khai thác tài nguyên thiên nhiên.',
+    icon: 'Compass',
+    tags: ['Địa chất', 'Khảo sát', 'Thực địa']
   },
 
-  // --- I: INVESTIGATIVE (Nghiên Cứu / Phân Tích) ---
+  // ==========================================
+  // --- I: INVESTIGATIVE (Nghiên Cứu / Phân Tích - 8 Cards) ---
+  // ==========================================
   {
     id: 'i1',
     category: 'I',
@@ -71,7 +94,7 @@ export const HOLLAND_CARDS = [
     id: 'i2',
     category: 'I',
     categoryName: 'Investigative - Nghiên Cứu / Phân Tích',
-    title: 'Phân tích Dữ liệu & Toán học',
+    title: 'Phân tích Dữ liệu & Mô hình Toán học',
     description: 'Thích đào sâu vào các con số, biểu đồ, phát hiện quy luật ẩn đằng sau dữ liệu phức tạp.',
     icon: 'LineChart',
     tags: ['Dữ liệu', 'Toán học', 'Logic']
@@ -80,8 +103,8 @@ export const HOLLAND_CARDS = [
     id: 'i3',
     category: 'I',
     categoryName: 'Investigative - Nghiên Cứu / Phân Tích',
-    title: 'Giải đố & Tư duy Trinh thám',
-    description: 'Đam mê bóc tách các bài toán khó, truy tìm nguyên nhân cốt lõi của vấn đề.',
+    title: 'Giải đố & Bóc tách Nguyên nhân Cốt lõi',
+    description: 'Đam mê giải quyết các bài toán khó, truy tìm nguồn gốc lý do phát sinh sự cố phức tạp.',
     icon: 'Search',
     tags: ['Giải đố', 'Tư duy', 'Bóc tách']
   },
@@ -89,17 +112,17 @@ export const HOLLAND_CARDS = [
     id: 'i4',
     category: 'I',
     categoryName: 'Investigative - Nghiên Cứu / Phân Tích',
-    title: 'Lập trình Algorithmic & AI',
-    description: 'Thích suy nghĩ cấu trúc thuật toán, viết code giải quyết các bài toán công nghệ thông minh.',
+    title: 'Lập trình Algorithmic & Mô hình AI',
+    description: 'Thích suy nghĩ cấu trúc thuật toán, viết mã code và phát triển các mô hình trí tuệ nhân tạo.',
     icon: 'Code',
-    tags: ['Lập trình', 'Thuật toán', 'AI']
+    tags: ['Lập trình', 'Thuật toán', 'Machine Learning']
   },
   {
     id: 'i5',
     category: 'I',
     categoryName: 'Investigative - Nghiên Cứu / Phân Tích',
-    title: 'Đọc sách Chuyên khảo & Lý thuyết',
-    description: 'Dành nhiều thời gian tự học, đọc sách nghiên cứu chuyên sâu và tích lũy tri thức hàn lâm.',
+    title: 'Nghiên cứu Triết học & Lý thuyết Chuyên sâu',
+    description: 'Dành nhiều thời gian tự học, đọc tài liệu hàn lâm và nghiên cứu các hệ thống lý thuyết tư tưởng.',
     icon: 'BookOpen',
     tags: ['Tri thức', 'Đọc sách', 'Hàn lâm']
   },
@@ -107,13 +130,33 @@ export const HOLLAND_CARDS = [
     id: 'i6',
     category: 'I',
     categoryName: 'Investigative - Nghiên Cứu / Phân Tích',
-    title: 'Nghiên cứu Y sinh & Sức khỏe',
-    description: 'Thích tìm hiểu cấu trúc cơ thể người, bệnh lý, dược phẩm và công nghệ y tế tiên tiến.',
+    title: 'Nghiên cứu Y sinh & Công nghệ Gen',
+    description: 'Thích tìm hiểu cấu trúc cơ thể người, tế bào y học, dược phẩm và sinh học hiện đại.',
     icon: 'Activity',
-    tags: ['Y học', 'Dược phẩm', 'Sức khỏe']
+    tags: ['Y học', 'Dược phẩm', 'Công nghệ Gen']
+  },
+  {
+    id: 'i7',
+    category: 'I',
+    categoryName: 'Investigative - Nghiên Cứu / Phân Tích',
+    title: 'Phân tích An ninh Mạng & Cybersecurity',
+    description: 'Hứng thú với việc dò tìm lỗ hổng bảo mật, phân tích mã độc và bảo vệ dữ liệu trước nguy cơ tấn công.',
+    icon: 'Shield',
+    tags: ['Bảo mật', 'An ninh mạng', 'Mã độc']
+  },
+  {
+    id: 'i8',
+    category: 'I',
+    categoryName: 'Investigative - Nghiên Cứu / Phân Tích',
+    title: 'Phân tích Kinh tế Vi mô & Dự báo Thị trường',
+    description: 'Thích nghiên cứu biến động kinh tế thế giới, mô hình hóa xu hướng tài chính và phân tích vĩ mô.',
+    icon: 'TrendingUp',
+    tags: ['Kinh tế', 'Vĩ mô', 'Dự báo']
   },
 
-  // --- A: ARTISTIC (Nghệ Thuật / Sáng Tạo) ---
+  // ==========================================
+  // --- A: ARTISTIC (Nghệ Thuật / Sáng Tạo - 8 Cards) ---
+  // ==========================================
   {
     id: 'a1',
     category: 'A',
@@ -121,23 +164,23 @@ export const HOLLAND_CARDS = [
     title: 'Hội họa & Thiết kế Đồ họa (Design)',
     description: 'Đam mê vẽ, phối màu, sáng tạo nhận diện thương hiệu, hình ảnh và giao diện người dùng (UI/UX).',
     icon: 'Palette',
-    tags: ['Hội họa', 'Thiết kế', 'Màu sắc']
+    tags: ['Hội họa', 'Thiết kế', 'UI/UX']
   },
   {
     id: 'a2',
     category: 'A',
     categoryName: 'Artistic - Nghệ Thuật / Sáng Tạo',
-    title: 'Sáng tác Viết lách & Kịch bản',
+    title: 'Sáng tác Văn học & Kịch bản Phim truyền thông',
     description: 'Thích dùng ngôn từ để sáng tác câu chuyện, bài viết cảm xúc, kịch bản phim hoặc thơ văn.',
     icon: 'PenTool',
-    tags: ['Viết lách', 'Kịch bản', 'Ngôn từ']
+    tags: ['Viết lách', 'Kịch bản', 'Content']
   },
   {
     id: 'a3',
     category: 'A',
     categoryName: 'Artistic - Nghệ Thuật / Sáng Tạo',
     title: 'Âm nhạc & Trình diễn Sân khấu',
-    description: 'Thích chơi nhạc cụ, ca hát, sáng tác nhạc hoặc tham gia các hoạt động biểu diễn kịch nghệ.',
+    description: 'Thích chơi nhạc cụ, ca hát, sáng tác giai điệu hoặc tham gia các hoạt động biểu diễn kịch nghệ.',
     icon: 'Music',
     tags: ['Âm nhạc', 'Trình diễn', 'Sân khấu']
   },
@@ -145,7 +188,7 @@ export const HOLLAND_CARDS = [
     id: 'a4',
     category: 'A',
     categoryName: 'Artistic - Nghệ Thuật / Sáng Tạo',
-    title: 'Nhiếp ảnh & Quay phim Sáng tạo',
+    title: 'Nhiếp ảnh & Quay dựng Phim Điện ảnh',
     description: 'Hứng thú với việc ghi lại góc nhìn nghệ thuật qua ống kính camera, dựng phim và màu sắc điện ảnh.',
     icon: 'Camera',
     tags: ['Nhiếp ảnh', 'Quay phim', 'Điện ảnh']
@@ -154,8 +197,8 @@ export const HOLLAND_CARDS = [
     id: 'a5',
     category: 'A',
     categoryName: 'Artistic - Nghệ Thuật / Sáng Tạo',
-    title: 'Thời trang & Lối sống Sáng tạo',
-    description: 'Đam mê phối đồ thời trang, làm mới không gian sống, phong cách cá nhân đầy khác biệt.',
+    title: 'Thời trang & Thẩm mỹ Lối sống',
+    description: 'Đam mê phối đồ thời trang, làm mới không gian sống, phong cách cá nhân đầy ấn tượng.',
     icon: 'Sparkles',
     tags: ['Thời trang', 'Phong cách', 'Thẩm mỹ']
   },
@@ -168,14 +211,34 @@ export const HOLLAND_CARDS = [
     icon: 'Feather',
     tags: ['Tự do', 'Độc đáo', 'Cái tôi']
   },
+  {
+    id: 'a7',
+    category: 'A',
+    categoryName: 'Artistic - Nghệ Thuật / Sáng Tạo',
+    title: 'Thiết kế Đồ họa 3D & Animation Game',
+    description: 'Thích tạo hình nhân vật 3D, dựng chuyển động đồ họa và phát triển hiệu ứng hình ảnh game.',
+    icon: 'Layers',
+    tags: ['3D Art', 'Animation', 'Game']
+  },
+  {
+    id: 'a8',
+    category: 'A',
+    categoryName: 'Artistic - Nghệ Thuật / Sáng Tạo',
+    title: 'Sáng tạo Nội dung Số (Digital Creator)',
+    description: 'Thích sản xuất video ngắn TikTok/YouTube, thiết kế nội dung viral và xây dựng thương hiệu cá nhân.',
+    icon: 'Video',
+    tags: ['Creator', 'Viral', 'Truyền thông']
+  },
 
-  // --- S: SOCIAL (Xã Hội / Giúp Đỡ) ---
+  // ==========================================
+  // --- S: SOCIAL (Xã Hội / Giúp Đỡ - 8 Cards) ---
+  // ==========================================
   {
     id: 's1',
     category: 'S',
     categoryName: 'Social - Xã Hội / Giúp Đỡ',
-    title: 'Giảng dạy & Truyền đạt Tri thức',
-    description: 'Yêu thích việc hướng dẫn, giảng dạy và giúp đỡ học sinh / đồng nghiệp nâng cao kỹ năng.',
+    title: 'Giảng dạy & Đào tạo Kỹ năng',
+    description: 'Yêu thích việc hướng dẫn, giảng dạy và giúp đỡ học sinh / đồng nghiệp nâng cao trình độ.',
     icon: 'GraduationCap',
     tags: ['Giảng dạy', 'Đào tạo', 'Hướng dẫn']
   },
@@ -183,16 +246,16 @@ export const HOLLAND_CARDS = [
     id: 's2',
     category: 'S',
     categoryName: 'Social - Xã Hội / Giúp Đỡ',
-    title: 'Tư vấn Tâm lý & Chia sẻ Cảm xúc',
+    title: 'Tư vấn Tâm lý & Khai vấn Sự nghiệp',
     description: 'Lắng nghe chân thành, thấu hiểu khó khăn và đưa ra lời khuyên động viên tinh thần cho người khác.',
     icon: 'HeartHandshake',
-    tags: ['Tâm lý', 'Lắng nghe', 'Tư vấn']
+    tags: ['Tâm lý', 'Coaching', 'Tư vấn']
   },
   {
     id: 's3',
     category: 'S',
     categoryName: 'Social - Xã Hội / Giúp Đỡ',
-    title: 'Hoạt động Tình nguyện & Cộng đồng',
+    title: 'Hoạt động Tình nguyện & Dự án Cộng đồng',
     description: 'Tích cực tham gia các chương trình thiện nguyện, dự án phi lợi nhuận vì sự phát triển xã hội.',
     icon: 'Users',
     tags: ['Tình nguyện', 'Cộng đồng', 'Cống hiến']
@@ -201,16 +264,16 @@ export const HOLLAND_CARDS = [
     id: 's4',
     category: 'S',
     categoryName: 'Social - Xã Hội / Giúp Đỡ',
-    title: 'Chăm sóc Sức khỏe & Y tế',
+    title: 'Chăm sóc Sức khỏe & Y tế Tận tụy',
     description: 'Tận tụy chăm sóc bệnh nhân, người già hoặc trẻ em với tấm lòng bao dung và kiên nhẫn.',
-    icon: 'ShieldHeader',
+    icon: 'Heart',
     tags: ['Chăm sóc', 'Y tế', 'Tận tụy']
   },
   {
     id: 's5',
     category: 'S',
     categoryName: 'Social - Xã Hội / Giúp Đỡ',
-    title: 'Hòa giải & Kết nối Nhân sự',
+    title: 'Hòa giải Xung đột & Gắn kết Đồng đội',
     description: 'Giỏi lắng nghe hai phía, hòa giải tranh chấp và xây dựng môi trường tập thể gắn kết.',
     icon: 'Smile',
     tags: ['Hòa giải', 'Gắn kết', 'Nhân văn']
@@ -219,19 +282,39 @@ export const HOLLAND_CARDS = [
     id: 's6',
     category: 'S',
     categoryName: 'Social - Xã Hội / Giúp Đỡ',
-    title: 'Đón tiếp & Dịch vụ Khách hàng',
-    description: 'Hòa nhã, chu đáo trong việc tiếp đón, mang lại sự hài lòng tối đa cho khách hàng.',
+    title: 'Đón tiếp & Dịch vụ Trải nghiệm Khách hàng',
+    description: 'Hòa nhã, chu đáo trong việc tiếp đón, mang lại sự hài lòng tối đa cho người sử dụng dịch vụ.',
     icon: 'UserCheck',
     tags: ['Dịch vụ', 'Chu đáo', 'Tiếp đón']
   },
+  {
+    id: 's7',
+    category: 'S',
+    categoryName: 'Social - Xã Hội / Giúp Đỡ',
+    title: 'Quản trị Cộng đồng & Tổ chức Sự kiện Trẻ',
+    description: 'Thích quy tụ mọi người, tổ chức hoạt động giao lưu và duy trì môi trường trao đổi tích cực.',
+    icon: 'Globe',
+    tags: ['Cộng đồng', 'Sự kiện', 'Kết nối']
+  },
+  {
+    id: 's8',
+    category: 'S',
+    categoryName: 'Social - Xã Hội / Giúp Đỡ',
+    title: 'Hỗ trợ Học sinh Nhu cầu Đặc biệt',
+    description: 'Kiên nhẫn hỗ trợ trẻ em học hòa nhập, giúp đỡ các cá nhân vượt qua rào cản tâm lý xã hội.',
+    icon: 'Sun',
+    tags: ['Hòa nhập', 'Kiên nhẫn', 'Nhân ái']
+  },
 
-  // --- E: ENTERPRISING (Dẫn Dắt / Thuyết Phục) ---
+  // ==========================================
+  // --- E: ENTERPRISING (Dẫn Dắt / Thuyết Phục - 8 Cards) ---
+  // ==========================================
   {
     id: 'e1',
     category: 'E',
     categoryName: 'Enterprising - Dẫn Dắt / Thuyết Phục',
-    title: 'Khởi nghiệp & Kinh doanh (Entrepreneur)',
-    description: 'Khao khát thành lập công ty, làm chủ dự án và tự tay xây dựng đế chế kinh doanh.',
+    title: 'Khởi nghiệp & Xây dựng Doanh nghiệp',
+    description: 'Khao khát thành lập công ty, làm chủ dự án và tự tay xây dựng đế chế kinh doanh riêng.',
     icon: 'Rocket',
     tags: ['Khởi nghiệp', 'Kinh doanh', 'Thách thức']
   },
@@ -239,8 +322,8 @@ export const HOLLAND_CARDS = [
     id: 'e2',
     category: 'E',
     categoryName: 'Enterprising - Dẫn Dắt / Thuyết Phục',
-    title: 'Bán hàng & Đàm phán Thương mại',
-    description: 'Đam mê thuyết phục khách hàng, chốt hợp đồng và đàm phán mang lại lợi nhuận cao.',
+    title: 'Bán hàng B2B & Đàm phán Thương mại',
+    description: 'Đam mê thuyết phục khách hàng, chốt hợp đồng lớn và đàm phán mang lại lợi nhuận vượt trội.',
     icon: 'DollarSign',
     tags: ['Bán hàng', 'Đàm phán', 'Chốt deal']
   },
@@ -248,7 +331,7 @@ export const HOLLAND_CARDS = [
     id: 'e3',
     category: 'E',
     categoryName: 'Enterprising - Dẫn Dắt / Thuyết Phục',
-    title: 'Lãnh đạo & Quản lý Đội ngũ',
+    title: 'Lãnh đạo & Quản lý Đội ngũ Dự án',
     description: 'Thích đứng đầu tổ chức, phân công nhiệm vụ và chỉ đạo nhóm đạt chỉ tiêu kinh doanh.',
     icon: 'Crown',
     tags: ['Lãnh đạo', 'Quản lý', 'Dẫn dắt']
@@ -266,8 +349,8 @@ export const HOLLAND_CARDS = [
     id: 'e5',
     category: 'E',
     categoryName: 'Enterprising - Dẫn Dắt / Thuyết Phục',
-    title: 'Đầu tư & Chinh phục Thị trường',
-    description: 'Chấp nhận mạo hiểm có tính toán để đầu tư tài chính, chứng khoán hoặc bất động sản.',
+    title: 'Đầu tư Tài chính & Chinh phục Thị trường',
+    description: 'Chấp nhận mạo hiểm có tính toán để đầu tư tài chính, chứng khoán hoặc kinh doanh bất động sản.',
     icon: 'TrendingUp',
     tags: ['Đầu tư', 'Thị trường', 'Mạo hiểm']
   },
@@ -275,13 +358,33 @@ export const HOLLAND_CARDS = [
     id: 'e6',
     category: 'E',
     categoryName: 'Enterprising - Dẫn Dắt / Thuyết Phục',
-    title: 'Thương lượng & Bảo vệ Dự án',
-    description: 'Mạnh mẽ tranh luận, thuyết phục các đối tác và nhà đầu tư rót vốn cho ý tưởng.',
+    title: 'Gọi vốn Đầu tư & Thương lượng Đối tác (Pitching)',
+    description: 'Mạnh mẽ thuyết phục các nhà đầu tư rót vốn và xây dựng liên minh chiến lược.',
     icon: 'Target',
-    tags: ['Thương lượng', 'Rót vốn', 'Đối tác']
+    tags: ['Gọi vốn', 'Pitching', 'Đối tác']
+  },
+  {
+    id: 'e7',
+    category: 'E',
+    categoryName: 'Enterprising - Dẫn Dắt / Thuyết Phục',
+    title: 'Quản trị Sản phẩm & Product Ownership',
+    description: 'Dẫn dắt lộ trình phát triển sản phẩm công nghệ, định hướng thị trường và quyết định tính năng cốt lõi.',
+    icon: 'Briefcase',
+    tags: ['Product Owner', 'Chiến lược', 'Sản phẩm']
+  },
+  {
+    id: 'e8',
+    category: 'E',
+    categoryName: 'Enterprising - Dẫn Dắt / Thuyết Phục',
+    title: 'Phát triển Thương hiệu E-Commerce & Growth',
+    description: 'Đam mê mở rộng doanh số bán hàng online, tối ưu kênh tăng trưởng E-Commerce tốc độ cao.',
+    icon: 'ShoppingBag',
+    tags: ['E-Commerce', 'Growth', 'Tăng trưởng']
   },
 
-  // --- C: CONVENTIONAL (Nghiệp Vụ / Mẫu Mực) ---
+  // ==========================================
+  // --- C: CONVENTIONAL (Nghiệp Vụ / Mẫu Mực - 8 Cards) ---
+  // ==========================================
   {
     id: 'c1',
     category: 'C',
@@ -296,7 +399,7 @@ export const HOLLAND_CARDS = [
     category: 'C',
     categoryName: 'Conventional - Nghiệp Vụ / Mẫu Mực',
     title: 'Kiểm soát Quy trình & Soát lỗi (QA/QC)',
-    description: 'Thích kiểm tra từng chi tiết nhỏ, đảm bảo công việc tuân thủ 100% đúng quy định.',
+    description: 'Thích kiểm tra từng chi tiết nhỏ, đảm bảo công việc tuân thủ 100% đúng quy định chất lượng.',
     icon: 'CheckSquare',
     tags: ['Kiểm soát', 'Soát lỗi', 'Quy trình']
   },
@@ -313,7 +416,7 @@ export const HOLLAND_CARDS = [
     id: 'c4',
     category: 'C',
     categoryName: 'Conventional - Nghiệp Vụ / Mẫu Mực',
-    title: 'Nhập liệu & Quản lý Cơ sở Dữ liệu',
+    title: 'Nhập liệu & Quản lý Cơ sở Dữ liệu ERP',
     description: 'Làm việc tỉ mỉ với các bảng tính Excel, hệ thống ERP và nhập liệu chính xác cao.',
     icon: 'Database',
     tags: ['Nhập liệu', 'Bảng tính', 'Dữ liệu']
@@ -323,7 +426,7 @@ export const HOLLAND_CARDS = [
     category: 'C',
     categoryName: 'Conventional - Nghiệp Vụ / Mẫu Mực',
     title: 'Thực thi Pháp lý & Tuân thủ Luật pháp',
-    description: 'Nghiêm túc áp dụng các điều khoản pháp lý, hợp đồng và tiêu chuẩn quy định.',
+    description: 'Nghiêm túc áp dụng các điều khoản pháp lý, hợp đồng và tiêu chuẩn quy định nhà nước.',
     icon: 'Scale',
     tags: ['Pháp lý', 'Quy định', 'Tuân thủ']
   },
@@ -335,5 +438,23 @@ export const HOLLAND_CARDS = [
     description: 'Lên thời khóa biểu chi tiết, danh sách việc cần làm (To-do list) và thực hiện kỷ luật.',
     icon: 'ListTodo',
     tags: ['Kế hoạch', 'Checklist', 'Kỷ luật']
+  },
+  {
+    id: 'c7',
+    category: 'C',
+    categoryName: 'Conventional - Nghiệp Vụ / Mẫu Mực',
+    title: 'Kiểm toán Tài chính & Thuế Doanh nghiệp',
+    description: 'Rà soát chứng từ sổ sách, đối chiếu hóa đơn tài chính và phát hiện các rủi ro tuân thủ thuế.',
+    icon: 'FileText',
+    tags: ['Kiểm toán', 'Thuế', 'Rà soát']
+  },
+  {
+    id: 'c8',
+    category: 'C',
+    categoryName: 'Conventional - Nghiệp Vụ / Mẫu Mực',
+    title: 'Quản lý Hồ sơ Nhân sự & Lương thưởng (C&B)',
+    description: 'Tính toán chính xác bảng lương, chính sách bảo hiểm và lưu trữ hồ sơ nhân viên chỉn chu.',
+    icon: 'ClipboardList',
+    tags: ['C&B', 'Bảo hiểm', 'Bảng lương']
   }
 ];

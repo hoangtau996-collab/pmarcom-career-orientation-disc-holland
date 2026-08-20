@@ -46,7 +46,7 @@ export function calculateHollandResult(cardChoices) {
   const profile = getHollandTop3Profile(top3Code);
 
   const answeredCount = Object.keys(cardChoices).length;
-  const consistencyScore = Math.min(99, Math.max(90, 88 + Math.round((answeredCount / 36) * 11)));
+  const consistencyScore = Math.min(99, Math.max(90, 88 + Math.round((answeredCount / (HOLLAND_CARDS.length || 48)) * 11)));
 
   return {
     rawScores,
