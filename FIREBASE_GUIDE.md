@@ -37,28 +37,57 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Quy tắc cho tập thành viên: Người dùng có thể xem/sửa thông tin chính mình
-    // Super Admin (pmarcomvn@gmail.com) có toàn quyền quản trị
+    // 1. Kiểm tra tài khoản có phải Super Admin pmarcomvn@gmail.com không
+    function isSuperAdmin() {
+      return request.auth != null && (
+        request.auth.token.email == 'pmarcomvn@gmail.com' || 
+        request.auth.token.email_verified == true && request.auth.token.email == 'pmarcomvn@gmail.com'
+      );
+    }
+
+    // 2. Tập dữ liệu Thành Viên (users): 
+    // - Bắt buộc ĐĂNG KÝ/ĐĂNG NHẬP mới được đọc thông tin
+    // - Người dùng chỉ được sửa thông tin chính mình
+    // - Super Admin có TOÀN QUYỀN (xem, sửa, nâng quyền admin, xóa tài khoản khác)
     match /users/{userId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null && (request.auth.uid == userId || request.auth.token.email == 'pmarcomvn@gmail.com');
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && (request.auth.uid == userId || isSuperAdmin());
     }
 
-    // Bộ đếm lượt truy cập / bài test: ai cũng xem được, khách vãng lai chỉ được +1
+    // 3. Tập dữ liệu Kết Quả Test (test_results):
+    // - Bắt buộc ĐĂNG KÝ/ĐĂNG NHẬP mới được xem và gửi bài test
+    // - Super Admin có quyền xem toàn bộ và xóa lịch sử test
+    match /test_results/{resultId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // 4. Bộ đếm lượt truy cập / bài test (system/stats):
+    // - Ai cũng XEM được (kể cả khách chưa đăng nhập)
+    // - Khách và thành viên chỉ được CỘNG +1, không sửa/xóa tùy ý
+    // - Super Admin có toàn quyền (reset số liệu khi cần)
     match /system/stats {
       allow read: if true;
-      allow create: if request.resource.data.keys().hasOnly(['realVisits', 'totalTests', 'lastUpdated'])
-                    && request.resource.data.get('realVisits', 0) in [0, 1]
-                    && request.resource.data.get('totalTests', 0) <= 601;
-      allow update: if request.resource.data.diff(resource.data).affectedKeys()
-                         .hasOnly(['realVisits', 'totalTests', 'lastUpdated'])
-                    && request.resource.data.get('realVisits', 0) - resource.data.get('realVisits', 0) in [0, 1]
-                    && request.resource.data.get('totalTests', 0) - resource.data.get('totalTests', 0) in [0, 1];
+      allow create: if isSuperAdmin() || (
+        request.resource.data.keys().hasOnly(['realVisits', 'totalTests', 'lastUpdated'])
+        && request.resource.data.get('realVisits', 0) in [0, 1]
+        && request.resource.data.get('totalTests', 0) <= 601
+      );
+      allow update: if isSuperAdmin() || (
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['realVisits', 'totalTests', 'lastUpdated'])
+        && request.resource.data.get('realVisits', 0) - resource.data.get('realVisits', 0) in [0, 1]
+        && request.resource.data.get('totalTests', 0) - resource.data.get('totalTests', 0) in [0, 1]
+      );
+      allow delete: if isSuperAdmin();
     }
 
-    // Quy tắc chung cho toàn bộ tập tài liệu
-    match /{document=**} {
-      allow read, write: if request.auth != null;
+    // 5. Cho phép đọc ghi chung khi ĐÃ XÁC THỰC
+    // (trừ thư mục 'system' — bộ đếm chỉ được xử lý theo mục 4)
+    match /{collection}/{document=**} {
+      allow read, write: if isSuperAdmin() || (request.auth != null && collection != 'system');
     }
   }
 }
