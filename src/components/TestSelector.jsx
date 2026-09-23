@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, CheckCircle2, Eye, Clock, GraduationCap, ExternalLink, ListChecks, MousePointerClick, FileBarChart, BookOpen, Layers, Brain, Sparkles, PlayCircle, X, Compass } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Eye, Clock, GraduationCap, ExternalLink, ListChecks, MousePointerClick, FileBarChart, BookOpen, Layers, Brain, Sparkles, PlayCircle, X, Search } from 'lucide-react';
 import { getVisitorStats, subscribeToVisitorStats } from '../utils/visitorCounter';
 import { getTranslation } from '../utils/translations';
 import { DISC_QUESTIONS } from '../data/discQuestions';
@@ -323,7 +323,7 @@ export default function TestSelector({ onSelectTestMode, onOpenCareerLibrary = (
             onClick={() => onOpenCareerLibrary('ALL')}
             className="shrink-0 px-5 py-3 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-900 hover:text-white hover:border-slate-900 dark:hover:bg-white dark:hover:text-slate-900 transition-colors flex items-center justify-center gap-2"
           >
-            <Compass className="w-4 h-4" /> {vi ? 'Mở toàn bộ thư viện' : 'Open full library'}
+            <Search className="w-4 h-4" /> {vi ? 'Tìm kiếm thêm' : 'Search more'}
           </button>
         </div>
 
