@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, Lock, LogIn, UserPlus, GraduationCap, Briefcase, ShieldCheck, AlertCircle, CheckCircle2, ArrowRight, Bell, Sparkles, Chrome } from 'lucide-react';
 import { auth, googleProvider } from '../config/firebase';
-import { signInWithPopup } from 'firebase/auth';
-import { saveOrUpdateUser, findRegisteredUserByEmail } from '../utils/userManager';
+import { signInWithPopup, signInWithRedirect, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { fetchUserProfile, saveUserProfile, cacheActiveUser, isSuperAdminEmail, authErrorMessage } from '../utils/userManager';
+
+const ADMIN_GOOGLE_ONLY_MSG = 'Tài khoản quản trị chỉ được đăng nhập bằng nút Google để xác thực chính chủ.';
 
 // Icon Google "G" 4 màu chuẩn thương hiệu Google
 function GoogleGIcon({ className = "w-5 h-5 shrink-0" }) {
@@ -29,17 +31,21 @@ function GoogleGIcon({ className = "w-5 h-5 shrink-0" }) {
 }
 
 export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose }) {
-  const [activeTab, setActiveTab] = useState(initialTab); // 'login' | 'register' | 'confirm_google' | 'select_gmail_manual'
-  
+  // initialTab = 'confirm_google': đã đăng nhập Firebase (vd. quay về từ redirect Google) nhưng chưa có hồ sơ
+  const pendingUser = initialTab === 'confirm_google' ? auth.currentUser : null;
+
+  const [activeTab, setActiveTab] = useState(initialTab); // 'login' | 'register' | 'confirm_google'
+
   // Form fields
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(pendingUser?.email || '');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [fullName, setFullName] = useState(pendingUser?.displayName || '');
   const [phone, setPhone] = useState('');
   const [category, setCategory] = useState('student'); // 'student' | 'professional'
 
-  const [googleUser, setGoogleUser] = useState(null);
+  const [googleUser, setGoogleUser] = useState(pendingUser ? { email: pendingUser.email, displayName: pendingUser.displayName } : null);
   const [errors, setErrors] = useState({});
+  const [notice, setNotice] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Validate required fields (BẮT BUỘC ĐIỀN ĐẦY ĐỦ TẤT CẢ THÔNG TIN MỚI ĐƯỢC ĐĂNG KÝ)
@@ -73,53 +79,49 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
     return Object.keys(newErrors).length === 0;
   };
 
-  // Trigger Google Gmail Popup (Phân định rõ ràng Đăng Nhập vs Đăng Ký)
+  // Sau khi Firebase Auth thành công: tải hồ sơ từ Firestore, chưa có hồ sơ thì yêu cầu bổ sung
+  const finishSignIn = async (fbUser) => {
+    const profile = await fetchUserProfile(fbUser.uid);
+    if (profile) {
+      cacheActiveUser(profile);
+      onAuthSuccess(profile);
+      return;
+    }
+    setGoogleUser({ email: fbUser.email, displayName: fbUser.displayName || '' });
+    setEmail(fbUser.email || '');
+    setFullName((prev) => prev || fbUser.displayName || '');
+    setErrors({});
+    setActiveTab('confirm_google');
+  };
+
+  // Đăng nhập / Đăng ký bằng Google (tài khoản mới sẽ được yêu cầu bổ sung Họ tên & SĐT)
   const handleGoogleAuthClick = async () => {
     setLoading(true);
     setErrors({});
+    setNotice('');
 
     try {
-      googleProvider.setCustomParameters({
-        prompt: 'select_account'
-      });
-
       const result = await signInWithPopup(auth, googleProvider);
-      
-      if (result && result.user) {
-        const gEmail = result.user.email || '';
-        const gName = result.user.displayName || '';
-
-        // KIỂM TRA TÀI KHOẢN ĐÃ ĐĂNG KÝ TRƯỚC ĐÓ HAY CHƯA
-        const existingUser = findRegisteredUserByEmail(gEmail);
-        
-        if (existingUser) {
-          // TỰ ĐỘNG ĐĂNG NHẬP NGAY & GHI NHỚ HỒ SƠ CŨ
-          localStorage.setItem('disc_active_user', JSON.stringify(existingUser));
-          setLoading(false);
-          onAuthSuccess(existingUser);
-          return;
-        }
-
-        // LẦN ĐẦU ĐĂNG KÝ MỚI: YÊU CẦU ĐIỀN ĐẦY ĐỦ HỌ TÊN VÀ SỐ ĐIỆN THOẠI
-        setGoogleUser({ email: gEmail, displayName: gName });
-        setEmail(gEmail);
-        setFullName(gName);
-        
-        setActiveTab('confirm_google');
-        setLoading(false);
-        return;
-      }
+      await finishSignIn(result.user);
     } catch (error) {
-      console.warn('Firebase Popup error code:', error.code, error.message);
-      
-      // Nếu popup bị trình duyệt chặn, chuyển sang chế độ Nhập Gmail thủ công
-      setActiveTab('select_gmail_manual');
+      console.warn('Google sign-in error:', error.code, error.message);
+
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+        // Người dùng tự đóng popup: giữ nguyên form
+      } else if (error.code === 'auth/popup-blocked') {
+        // Trình duyệt chặn popup: chuyển sang đăng nhập bằng chuyển trang, App xử lý khi quay lại
+        await signInWithRedirect(auth, googleProvider);
+        return;
+      } else {
+        setErrors({ general: authErrorMessage(error.code) });
+      }
+    } finally {
       setLoading(false);
     }
   };
 
-  // Complete Google Registration / Sign In Confirmation (BẮT BUỘC ĐIỀN ĐẦY ĐỦ)
-  const handleConfirmGoogleAuth = (e) => {
+  // Hoàn tất hồ sơ lần đầu sau khi đăng nhập Google (BẮT BUỘC ĐIỀN ĐẦY ĐỦ)
+  const handleConfirmGoogleAuth = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
@@ -138,58 +140,74 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
       return;
     }
 
-    const userData = saveOrUpdateUser({
-      fullName: fullName.trim(),
-      email: googleUser?.email || email.trim(),
-      phone: phone.trim(),
-      category: category
-    });
-
-    onAuthSuccess(userData);
+    setLoading(true);
+    try {
+      const profile = await saveUserProfile({ fullName, phone, category });
+      onAuthSuccess(profile);
+    } catch (error) {
+      console.error('Save profile error:', error);
+      setErrors({ general: authErrorMessage(error.code) });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Submit Form (Standard Email/Password Auth)
+  // Submit Form (Email & Mật khẩu qua Firebase Auth)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setNotice('');
     if (!validateForm()) return;
+
+    if (isSuperAdminEmail(email)) {
+      setErrors({ general: ADMIN_GOOGLE_ONLY_MSG });
+      return;
+    }
 
     setLoading(true);
 
     try {
       if (activeTab === 'login') {
-        const existingUser = findRegisteredUserByEmail(email);
-
-        if (existingUser) {
-          localStorage.setItem('disc_active_user', JSON.stringify(existingUser));
-          setLoading(false);
-          onAuthSuccess(existingUser);
-          return;
-        }
-
-        // Nếu đăng nhập với email chưa từng tồn tại, yêu cầu chuyển sang tab Đăng Ký
-        setErrors({ general: 'Email này chưa được đăng ký trong hệ thống. Vui lòng chọn tab "2. Đăng Ký Mới" để tạo tài khoản!' });
-        setLoading(false);
-
+        const cred = await signInWithEmailAndPassword(auth, email.trim(), password);
+        await finishSignIn(cred.user);
       } else {
-        // ĐĂNG KÝ MỚI: BẮT BUỘC ĐIỀN ĐẦY ĐỦ
-        const userData = saveOrUpdateUser({
-          fullName: fullName.trim(),
-          email: email.trim(),
-          phone: phone.trim(),
-          category: category
-        });
-
-        setLoading(false);
-        onAuthSuccess(userData);
+        await createUserWithEmailAndPassword(auth, email.trim(), password);
+        const profile = await saveUserProfile({ fullName, phone, category });
+        onAuthSuccess(profile);
       }
     } catch (error) {
-      console.error('Auth Error:', error);
-      setErrors({ general: 'Đăng nhập/Đăng ký không thành công. Vui lòng kiểm tra lại thông tin!' });
+      console.error('Auth Error:', error.code, error.message);
+      setErrors({ general: authErrorMessage(error.code) });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Gửi email đặt lại mật khẩu tới địa chỉ đang nhập
+  const handleForgotPassword = async () => {
+    setNotice('');
+    if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
+      setErrors({ email: 'Nhập email đã đăng ký vào ô Email trước, rồi bấm "Quên mật khẩu?"' });
+      return;
+    }
+    setLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email.trim());
+      setErrors({});
+      setNotice(`Nếu ${email.trim()} đã đăng ký, bạn sẽ nhận được email hướng dẫn đặt lại mật khẩu trong vài phút (kiểm tra cả mục Spam).`);
+    } catch (error) {
+      setErrors({ general: authErrorMessage(error.code) });
+    } finally {
       setLoading(false);
     }
   };
 
   return (
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm p-3 sm:p-4 animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      onKeyDown={(e) => { if (e.key === 'Escape' && onClose) onClose(); }}
+    >
     <div className="max-w-md mx-auto py-6 sm:py-8">
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5">
         
@@ -215,8 +233,6 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
             {activeTab === 'confirm_google' 
               ? 'Xác Nhận Thông Tin Lần Đầu' 
-              : activeTab === 'select_gmail_manual'
-              ? 'Nhập Tài Khoản Gmail Đăng Nhập'
               : activeTab === 'login' 
               ? 'Đăng Nhập Tài Khoản' 
               : 'Đăng Ký Thành Viên Mới'}
@@ -224,74 +240,13 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
           <p className="text-xs text-slate-500">
             {activeTab === 'confirm_google'
               ? 'Yêu cầu nhập đầy đủ Họ tên và Số điện thoại để hoàn tất kích hoạt'
-              : activeTab === 'select_gmail_manual'
-              ? 'Điền địa chỉ Gmail cá nhân của bạn để tiếp tục'
               : activeTab === 'login' 
               ? 'Sử dụng tài khoản Google hoặc Gmail đã đăng ký' 
               : 'Yêu cầu điền đầy đủ thông tin bên dưới để tạo tài khoản mới'}
           </p>
         </div>
 
-        {/* MANUAL GMAIL SELECTION FORM IF POPUP IS BLOCKED */}
-        {activeTab === 'select_gmail_manual' ? (
-          <div className="space-y-4">
-            <div className="p-3 bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-2xl flex items-center space-x-3 text-xs text-slate-700 dark:text-slate-200 font-medium">
-              <GoogleGIcon className="w-5 h-5 shrink-0" />
-              <span>Vui lòng điền địa chỉ Gmail bạn muốn sử dụng:</span>
-            </div>
-
-            <div className="space-y-1">
-              <label className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">
-                Địa chỉ Gmail Của Bạn (Bắt buộc)
-              </label>
-              <div className="relative">
-                <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="email"
-                  placeholder="Ví dụ: nguyenvanan@gmail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs font-bold"
-                />
-              </div>
-            </div>
-
-            <div className="pt-2 flex items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => setActiveTab('login')}
-                className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold"
-              >
-                Quay lại
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (!email || !/\S+@\S+\.\S+/.test(email)) {
-                    setErrors({ general: 'Vui lòng nhập định dạng Gmail hợp lệ (ví dụ: nguyenvanan@gmail.com)' });
-                    return;
-                  }
-                  
-                  const existingUser = findRegisteredUserByEmail(email);
-                  if (existingUser) {
-                    localStorage.setItem('disc_active_user', JSON.stringify(existingUser));
-                    onAuthSuccess(existingUser);
-                    return;
-                  }
-
-                  setGoogleUser({ email: email, displayName: email.split('@')[0] });
-                  if (!fullName) setFullName(email.split('@')[0]);
-                  setActiveTab('confirm_google');
-                }}
-                className="flex-1 py-3.5 px-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
-              >
-                <span>Tiếp Tục Đăng Nhập</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        ) : activeTab === 'confirm_google' ? (
+        {activeTab === 'confirm_google' ? (
           /* GOOGLE CONFIRMATION STEP (BẮT BUỘC ĐIỀN ĐẦY ĐỦ THÔNG TIN) */
           <form onSubmit={handleConfirmGoogleAuth} className="space-y-4">
             
@@ -305,7 +260,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
             <div className="p-3.5 bg-blue-50/80 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-2xl flex items-center space-x-3">
               <GoogleGIcon className="w-6 h-6 shrink-0" />
               <div className="text-xs">
-                <div className="font-bold text-slate-900 dark:text-white">Tài khoản Google / Gmail mới:</div>
+                <div className="font-bold text-slate-900 dark:text-white">Tài khoản đăng nhập:</div>
                 <div className="font-semibold text-blue-600 dark:text-blue-400 truncate">{googleUser?.email}</div>
               </div>
             </div>
@@ -380,17 +335,18 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
             <div className="pt-2 flex items-center justify-between gap-3">
               <button
                 type="button"
-                onClick={() => setActiveTab('login')}
+                onClick={onClose}
                 className="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold"
               >
-                Quay lại
+                Hủy
               </button>
 
               <button
                 type="submit"
-                className="flex-1 py-3.5 px-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
+                disabled={loading}
+                className="flex-1 py-3.5 px-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2 disabled:opacity-60"
               >
-                <span>Xác Nhận &amp; Quay Về Trang Chủ</span>
+                <span>{loading ? 'Đang lưu hồ sơ...' : 'Xác Nhận & Hoàn Tất'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -468,6 +424,13 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                 </div>
               )}
 
+              {notice && (
+                <div className="p-3 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-xl border border-emerald-200 dark:border-emerald-900 flex items-center space-x-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>{notice}</span>
+                </div>
+              )}
+
               {/* Full Name (Required on Register) */}
               {activeTab === 'register' && (
                 <div className="space-y-1">
@@ -535,13 +498,24 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                   <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="password"
-                    placeholder="••••••••"
+                    autoComplete={activeTab === 'login' ? 'current-password' : 'new-password'}
+                    placeholder={activeTab === 'register' ? 'Tối thiểu 6 ký tự' : '••••••••'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                   />
                 </div>
                 {errors.password && <p className="text-[11px] text-red-500 font-bold">{errors.password}</p>}
+                {activeTab === 'login' && (
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    disabled={loading}
+                    className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+                  >
+                    Quên mật khẩu?
+                  </button>
+                )}
               </div>
 
               {/* Category selection */}
@@ -603,6 +577,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
         )}
 
       </div>
+    </div>
     </div>
   );
 }

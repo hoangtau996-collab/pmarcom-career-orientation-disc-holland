@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Super Admin: đúng email quản trị VÀ email đã được xác minh (đăng nhập Google)
+    function isSuperAdmin() {
+      return signedIn()
+        && request.auth.token.email == 'pmarcomvn@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    // Admin: Super Admin hoặc tài khoản được Super Admin cấp quyền 'admin' trong hồ sơ
+    function isAdmin() {
+      return isSuperAdmin() || (
+        signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+
+    // 1. Hồ sơ thành viên users/{uid}
+    // - Mỗi người chỉ đọc/sửa hồ sơ của chính mình; Admin đọc được tất cả
+    // - Không ai tự nâng quyền (role), đổi email hay ngày tạo; chỉ Super Admin được đổi quyền và xóa
+    match /users/{userId} {
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.email == request.auth.token.email.lower()
+        && (request.resource.data.role == 'user'
+            || (request.resource.data.role == 'super_admin' && isSuperAdmin()));
+      allow update: if isSuperAdmin() || (
+        signedIn()
+        && request.auth.uid == userId
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email', 'createdAt'])
+      );
+      allow delete: if isSuperAdmin();
+    }
+
+    // 2. Kết quả bài test test_results/{id}
+    // - Người dùng chỉ ghi/đọc kết quả của chính mình; Admin đọc được tất cả
+    // - Kết quả đã nộp không sửa được; chỉ Super Admin được xóa
+    match /test_results/{resultId} {
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow update: if false;
+      allow delete: if isSuperAdmin();
+    }
+
+    // 3. Bộ đếm lượt truy cập / bài test system/stats
+    // - Ai cũng XEM được; khách và thành viên chỉ được CỘNG +1; Super Admin toàn quyền
+    match /system/stats {
+      allow read: if true;
+      allow create: if isSuperAdmin() || (
+        request.resource.data.keys().hasOnly(['realVisits', 'totalTests', 'lastUpdated'])
+        && request.resource.data.get('realVisits', 0) in [0, 1]
+        && request.resource.data.get('totalTests', 0) <= 601
+      );
+      allow update: if isSuperAdmin() || (
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['realVisits', 'totalTests', 'lastUpdated'])
+        && request.resource.data.get('realVisits', 0) - resource.data.get('realVisits', 0) in [0, 1]
+        && request.resource.data.get('totalTests', 0) - resource.data.get('totalTests', 0) in [0, 1]
+      );
+      allow delete: if isSuperAdmin();
+    }
+
+    // Mọi collection khác: chặn mặc định (không còn quy tắc "đọc ghi chung khi đã đăng nhập")
+  }
+}

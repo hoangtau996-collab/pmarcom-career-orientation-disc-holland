@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ShieldAlert, GraduationCap, Briefcase, CheckCircle2, ArrowRight, X, UserCheck } from 'lucide-react';
-import { saveOrUpdateUser } from '../utils/userManager';
+import { saveUserProfile } from '../utils/userManager';
 
 export default function CategoryNoticeModal({ user, pendingTestMode, onConfirmStart, onClose }) {
   const [selectedCategory, setSelectedCategory] = useState(user?.category || 'student');
@@ -12,13 +12,15 @@ export default function CategoryNoticeModal({ user, pendingTestMode, onConfirmSt
     'combo': 'Combo Toàn Diện (DISC + Holland + MBTI)'
   }[pendingTestMode] || 'Bài Đánh Giá';
 
-  const handleConfirm = () => {
-    // Nếu người dùng thay đổi category so với user ban đầu, cập nhật lại trong userManager
+  const handleConfirm = async () => {
+    // Nếu người dùng đổi nhóm đối tượng, cập nhật hồ sơ trên Firestore (lỗi mạng vẫn cho làm bài)
     if (user && selectedCategory !== user.category) {
-      const updatedUser = saveOrUpdateUser({
-        ...user,
-        category: selectedCategory
-      });
+      let updatedUser = { ...user, category: selectedCategory };
+      try {
+        updatedUser = await saveUserProfile({ fullName: user.fullName, phone: user.phone, category: selectedCategory });
+      } catch (error) {
+        console.warn('Không cập nhật được nhóm đối tượng lên Firestore:', error);
+      }
       onConfirmStart(pendingTestMode, updatedUser);
     } else {
       onConfirmStart(pendingTestMode, user);

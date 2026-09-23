@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, GraduationCap, Briefcase, Save, X, ShieldCheck, CheckCircle } from 'lucide-react';
-import { saveOrUpdateUser } from '../utils/userManager';
+import { saveUserProfile, authErrorMessage } from '../utils/userManager';
 
 export default function ProfileModal({ user, onSaveProfile, onClose }) {
   const [fullName, setFullName] = useState(user?.fullName || '');
@@ -8,8 +8,9 @@ export default function ProfileModal({ user, onSaveProfile, onClose }) {
   const [category, setCategory] = useState(user?.category || 'student');
   const [errors, setErrors] = useState({});
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
@@ -26,12 +27,16 @@ export default function ProfileModal({ user, onSaveProfile, onClose }) {
       return;
     }
 
-    const updatedData = saveOrUpdateUser({
-      ...user,
-      fullName: fullName.trim(),
-      phone: phone.trim(),
-      category: category
-    });
+    setSaving(true);
+    let updatedData;
+    try {
+      updatedData = await saveUserProfile({ fullName, phone, category });
+    } catch (error) {
+      console.error('Save profile error:', error);
+      setErrors({ general: authErrorMessage(error.code) });
+      setSaving(false);
+      return;
+    }
 
     setSavedSuccess(true);
     setTimeout(() => {
@@ -40,6 +45,7 @@ export default function ProfileModal({ user, onSaveProfile, onClose }) {
   };
 
   return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm p-3 sm:p-4 animate-fade-in" role="dialog" aria-modal="true">
     <div className="max-w-md mx-auto py-8">
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-6">
         
@@ -70,6 +76,12 @@ export default function ProfileModal({ user, onSaveProfile, onClose }) {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
+
+            {errors.general && (
+              <p className="p-3 bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-300 text-xs font-bold rounded-xl border border-red-200 dark:border-red-900">
+                {errors.general}
+              </p>
+            )}
             
             {/* Email (Read only) */}
             <div className="space-y-1">
@@ -163,10 +175,11 @@ export default function ProfileModal({ user, onSaveProfile, onClose }) {
               </button>
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center space-x-1.5"
+                disabled={saving}
+                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center space-x-1.5 disabled:opacity-60"
               >
                 <Save className="w-4 h-4" />
-                <span>Lưu Thay Đổi</span>
+                <span>{saving ? 'Đang lưu...' : 'Lưu Thay Đổi'}</span>
               </button>
             </div>
 
@@ -174,6 +187,7 @@ export default function ProfileModal({ user, onSaveProfile, onClose }) {
         )}
 
       </div>
+    </div>
     </div>
   );
 }

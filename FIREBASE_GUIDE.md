@@ -30,44 +30,63 @@ Nếu bạn sử dụng **Firestore Database** để lưu trữ thông tin ngư�
 
 ### 3.1. Quy Tắc Bảo Mật Cho Firestore Database
 1. Vào menu **Build** -> **Firestore Database** -> Chọn tab **"Rules"**.
-2. Xóa toàn bộ nội dung cũ và dán đoạn mã Rules chuẩn bảo mật dưới đây vào:
+2. Xóa toàn bộ nội dung cũ và dán nội dung file [`firestore.rules`](firestore.rules) (bản đầy đủ bên dưới):
 
 ```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // 1. Kiểm tra tài khoản có phải Super Admin pmarcomvn@gmail.com không
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Super Admin: đúng email quản trị VÀ email đã được xác minh (đăng nhập Google)
     function isSuperAdmin() {
-      return request.auth != null && (
-        request.auth.token.email == 'pmarcomvn@gmail.com' || 
-        request.auth.token.email_verified == true && request.auth.token.email == 'pmarcomvn@gmail.com'
+      return signedIn()
+        && request.auth.token.email == 'pmarcomvn@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    // Admin: Super Admin hoặc tài khoản được Super Admin cấp quyền 'admin' trong hồ sơ
+    function isAdmin() {
+      return isSuperAdmin() || (
+        signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
       );
     }
 
-    // 2. Tập dữ liệu Thành Viên (users): 
-    // - Bắt buộc ĐĂNG KÝ/ĐĂNG NHẬP mới được đọc thông tin
-    // - Người dùng chỉ được sửa thông tin chính mình
-    // - Super Admin có TOÀN QUYỀN (xem, sửa, nâng quyền admin, xóa tài khoản khác)
+    // 1. Hồ sơ thành viên users/{uid}
+    // - Mỗi người chỉ đọc/sửa hồ sơ của chính mình; Admin đọc được tất cả
+    // - Không ai tự nâng quyền (role), đổi email hay ngày tạo; chỉ Super Admin được đổi quyền và xóa
     match /users/{userId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null && (request.auth.uid == userId || isSuperAdmin());
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.email == request.auth.token.email.lower()
+        && (request.resource.data.role == 'user'
+            || (request.resource.data.role == 'super_admin' && isSuperAdmin()));
+      allow update: if isSuperAdmin() || (
+        signedIn()
+        && request.auth.uid == userId
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email', 'createdAt'])
+      );
+      allow delete: if isSuperAdmin();
     }
 
-    // 3. Tập dữ liệu Kết Quả Test (test_results):
-    // - Bắt buộc ĐĂNG KÝ/ĐĂNG NHẬP mới được xem và gửi bài test
-    // - Super Admin có quyền xem toàn bộ và xóa lịch sử test
+    // 2. Kết quả bài test test_results/{id}
+    // - Người dùng chỉ ghi/đọc kết quả của chính mình; Admin đọc được tất cả
+    // - Kết quả đã nộp không sửa được; chỉ Super Admin được xóa
     match /test_results/{resultId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if isSuperAdmin();
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow update: if false;
+      allow delete: if isSuperAdmin();
     }
 
-    // 4. Bộ đếm lượt truy cập / bài test (system/stats):
-    // - Ai cũng XEM được (kể cả khách chưa đăng nhập)
-    // - Khách và thành viên chỉ được CỘNG +1, không sửa/xóa tùy ý
-    // - Super Admin có toàn quyền (reset số liệu khi cần)
+    // 3. Bộ đếm lượt truy cập / bài test system/stats
+    // - Ai cũng XEM được; khách và thành viên chỉ được CỘNG +1; Super Admin toàn quyền
     match /system/stats {
       allow read: if true;
       allow create: if isSuperAdmin() || (
@@ -84,26 +103,13 @@ service cloud.firestore {
       allow delete: if isSuperAdmin();
     }
 
-    // 5. Cho phép đọc ghi chung khi ĐÃ XÁC THỰC
-    // (trừ thư mục 'system' — bộ đếm chỉ được xử lý theo mục 4)
-    match /{collection}/{document=**} {
-      allow read, write: if isSuperAdmin() || (request.auth != null && collection != 'system');
-    }
+    // Mọi collection khác: chặn mặc định (không còn quy tắc "đọc ghi chung khi đã đăng nhập")
   }
 }
 ```
 
-*Lưu ý cho giai đoạn chạy thử nghiệm (Test Mode nhanh):* Bạn cũng có thể mở quyền thử nghiệm bằng cách dùng rule:
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if true;
-    }
-  }
-}
-```
+> **Không dùng** rule mở toàn quyền (`allow read, write: if true`), kể cả khi chạy thử: bất kỳ ai cũng đọc được họ tên, email, SĐT của toàn bộ thành viên.
+
 3. Bấm **"Publish"** để lưu quy tắc.
 
 ---

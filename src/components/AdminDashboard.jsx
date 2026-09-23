@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Users, ShieldCheck, Crown, Trash2, Search, Award, Eye, UserPlus, RefreshCw, Mail, Phone, Calendar, CheckCircle, FileSpreadsheet, Download, Layers, X, FileText, ChevronRight, CheckSquare, Square, Loader2, Sparkles } from 'lucide-react';
-import { getRegisteredUsers, deleteUserByEmail, updateUserRole, isSuperAdmin } from '../utils/userManager';
+import { listAllUsers, deleteUserProfile, updateUserRole, isSuperAdmin } from '../utils/userManager';
+import { fetchAllResults } from '../utils/resultStore';
 import { getVisitorStats, subscribeToVisitorStats } from '../utils/visitorCounter';
 import { exportUsersToCsv, exportFullTestLogsToCsv, exportToPdf } from '../utils/exporter';
 
-export default function AdminDashboard({ currentUser, historyList = [], onSelectHistory, onClose }) {
+export default function AdminDashboard({ currentUser, onSelectHistory, onClose }) {
   const [users, setUsers] = useState([]);
+  const [historyList, setHistoryList] = useState([]);
+  const [loadingData, setLoadingData] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [stats, setStats] = useState(getVisitorStats());
@@ -16,8 +20,20 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
   const [batchDownloading, setBatchDownloading] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0, currentName: '' });
 
-  const loadData = () => {
-    setUsers(getRegisteredUsers());
+  // Tải thành viên & kết quả test của toàn hệ thống từ Firestore
+  const loadData = async () => {
+    setLoadingData(true);
+    setLoadError('');
+    try {
+      const [userList, results] = await Promise.all([listAllUsers(), fetchAllResults()]);
+      setUsers(userList);
+      setHistoryList(results);
+    } catch (err) {
+      console.error('Admin load error:', err);
+      setLoadError('Không tải được dữ liệu từ Firestore. Kiểm tra Security Rules đã được Publish theo FIREBASE_GUIDE.md chưa.');
+    } finally {
+      setLoadingData(false);
+    }
   };
 
   useEffect(() => {
@@ -28,20 +44,25 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
     return () => unsubscribe();
   }, []);
 
-  const handleDeleteUser = (email, name) => {
-    if (window.confirm(`Bạn có chắc chắn muốn XÓA thành viên "${name}" (${email}) khỏi hệ thống?`)) {
-      if (deleteUserByEmail(email)) {
-        loadData();
+  const handleDeleteUser = async (member) => {
+    if (window.confirm(`Bạn có chắc chắn muốn XÓA hồ sơ thành viên "${member.fullName}" (${member.email}) khỏi hệ thống?`)) {
+      try {
+        if (await deleteUserProfile(member)) loadData();
+      } catch (err) {
+        alert('Xóa không thành công: ' + (err.code || err.message));
       }
     }
   };
 
-  const handleToggleRole = (email, currentRole) => {
-    const nextRole = currentRole === 'admin' ? 'user' : 'admin';
+  const handleToggleRole = async (member) => {
+    const email = member.email;
+    const nextRole = member.role === 'admin' ? 'user' : 'admin';
     const roleName = nextRole === 'admin' ? 'Quản Trị Viên (Admin)' : 'Thành Viên Thường (User)';
     if (window.confirm(`Bạn có chắc muốn thay đổi quyền của tài khoản ${email} thành "${roleName}"?`)) {
-      if (updateUserRole(email, nextRole)) {
-        loadData();
+      try {
+        if (await updateUserRole(member, nextRole)) loadData();
+      } catch (err) {
+        alert('Đổi quyền không thành công: ' + (err.code || err.message));
       }
     }
   };
@@ -69,9 +90,9 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
   };
 
   const filteredUsers = users.filter(u => {
-    const matchesSearch = u.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          u.phone.includes(searchTerm);
+    const matchesSearch = (u.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (u.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (u.phone || '').includes(searchTerm);
     const matchesRole = roleFilter === 'all' || u.role === roleFilter;
     return matchesSearch && matchesRole;
   });
@@ -222,6 +243,16 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
         </div>
       </div>
 
+      {(loadingData || loadError) && (
+        <div className={`p-4 rounded-2xl border text-xs font-bold ${
+          loadError
+            ? 'bg-red-50 dark:bg-red-950/60 border-red-200 dark:border-red-900 text-red-600 dark:text-red-300'
+            : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500'
+        }`}>
+          {loadError || 'Đang tải dữ liệu thành viên từ máy chủ...'}
+        </div>
+      )}
+
       {/* Filter and Search Bar */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
         
@@ -315,7 +346,7 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
                   const isSelected = selectedUserEmails.has(u.email);
 
                   return (
-                    <tr key={u.email} className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors ${isSelected ? 'bg-indigo-50/50 dark:bg-indigo-950/30' : ''}`}>
+                    <tr key={u.uid || u.email} className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors ${isSelected ? 'bg-indigo-50/50 dark:bg-indigo-950/30' : ''}`}>
                       
                       <td className="p-4 text-center">
                         <input
@@ -331,7 +362,7 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
                       <td className="p-4 font-bold text-slate-900 dark:text-white">
                         <div className="flex items-center space-x-2">
                           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-black flex items-center justify-center text-xs shrink-0">
-                            {u.fullName.charAt(0).toUpperCase()}
+                            {(u.fullName || '?').charAt(0).toUpperCase()}
                           </div>
                           <span className="truncate max-w-[140px]">{u.fullName}</span>
                         </div>
@@ -434,7 +465,7 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
                             <>
                               {canManageRoles && (
                                 <button
-                                  onClick={() => handleToggleRole(u.email, u.role)}
+                                  onClick={() => handleToggleRole(u)}
                                   className={`px-2 py-1 rounded-lg font-bold text-[10px] transition-all border ${
                                     u.role === 'admin'
                                       ? 'border-slate-300 text-slate-600 hover:bg-slate-100'
@@ -447,7 +478,7 @@ export default function AdminDashboard({ currentUser, historyList = [], onSelect
                               )}
 
                               <button
-                                onClick={() => handleDeleteUser(u.email, u.fullName)}
+                                onClick={() => handleDeleteUser(u)}
                                 className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-lg transition-colors"
                                 title="Xóa tài khoản"
                               >

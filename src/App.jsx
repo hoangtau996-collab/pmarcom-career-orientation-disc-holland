@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import Header from './components/Header';
 import TestSelector from './components/TestSelector';
 import DiscOverview from './components/DiscOverview';
@@ -21,7 +21,10 @@ import { calculateDiscResult } from './utils/discCalculator';
 import { calculateHollandResult } from './utils/hollandCalculator';
 import { calculateMbtiResult } from './utils/mbtiCalculator';
 import { trackVisit, incrementTestCount } from './utils/visitorCounter';
-import { isAdmin } from './utils/userManager';
+import { isAdmin, isSuperAdmin, getCachedActiveUser, cacheActiveUser, fetchUserProfile } from './utils/userManager';
+import { saveTestResult, fetchMyHistory, clearLocalHistory } from './utils/resultStore';
+import { auth } from './config/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { getTranslation } from './utils/translations';
 
 // Static URL Hash mapping
@@ -80,10 +83,65 @@ export default function App() {
   });
 
   // Active user info
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('disc_active_user');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [user, setUser] = useState(() => getCachedActiveUser());
+
+  // Người đứng tên trên báo cáo đang xem (khác user khi Admin mở báo cáo của thành viên)
+  const [reportUser, setReportUser] = useState(null);
+
+  // Firebase Auth đã khôi phục phiên chưa (cần để xác thực quyền Super Admin)
+  const [authReady, setAuthReady] = useState(false);
+  const [, setFirebaseEmail] = useState(null);
+
+  const authModalOpenRef = useRef(false);
+  useEffect(() => { authModalOpenRef.current = showAuthModal; }, [showAuthModal]);
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, async (fbUser) => {
+      setFirebaseEmail(fbUser?.email || null); // re-render để Header/Admin tính lại quyền
+
+      if (!fbUser) {
+        setUser(null);
+        cacheActiveUser(null);
+        setAuthReady(true);
+        return;
+      }
+
+      try {
+        const profile = await fetchUserProfile(fbUser.uid);
+        if (profile) {
+          setUser(profile);
+          cacheActiveUser(profile);
+        } else if (!authModalOpenRef.current) {
+          // Đã đăng nhập nhưng chưa có hồ sơ (vd. quay về từ redirect Google): yêu cầu bổ sung
+          setAuthTabMode('confirm_google');
+          setShowAuthModal(true);
+        }
+      } catch (err) {
+        console.warn('Không tải được hồ sơ từ Firestore, dùng bản cache:', err);
+      }
+      setAuthReady(true);
+    });
+  }, []);
+
+  // Tải lịch sử làm test của tài khoản đang đăng nhập
+  useEffect(() => {
+    if (!user) {
+      setHistoryList([]);
+      return;
+    }
+    let cancelled = false;
+    fetchMyHistory(user).then((list) => { if (!cancelled) setHistoryList(list); });
+    return () => { cancelled = true; };
+  }, [user?.uid]);
+
+  const userIsAdmin = isAdmin(user);
+
+  // Chặn truy cập Trang Quản Trị khi không có quyền
+  useEffect(() => {
+    if (currentScreen === 'admin' && authReady && !userIsAdmin) {
+      setCurrentScreen('selectTest');
+    }
+  }, [currentScreen, authReady, userIsAdmin]);
 
   // Current test results
   const [discResult, setDiscResult] = useState(null);
@@ -91,10 +149,7 @@ export default function App() {
   const [mbtiResult, setMbtiResult] = useState(null);
 
   // History
-  const [historyList, setHistoryList] = useState(() => {
-    const saved = localStorage.getItem('disc_test_history');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [historyList, setHistoryList] = useState([]);
 
   // Save language setting
   useEffect(() => {
@@ -108,12 +163,12 @@ export default function App() {
 
   // ROUTE PROTECTION GUARD: Bắt buộc đăng nhập để vào bài test
   useEffect(() => {
-    if (!user && (currentScreen === 'quizDisc' || currentScreen === 'quizHolland' || currentScreen === 'quizMbti' || currentScreen === 'results')) {
+    if (authReady && !user && (currentScreen === 'quizDisc' || currentScreen === 'quizHolland' || currentScreen === 'quizMbti' || currentScreen === 'results')) {
       setCurrentScreen('selectTest');
       setAuthTabMode('login');
       setShowAuthModal(true);
     }
-  }, [currentScreen, user]);
+  }, [currentScreen, user, authReady]);
 
   // Open Auth modal with specific tab ('login' or 'register')
   const handleOpenAuthModal = (tab = 'login') => {
@@ -204,9 +259,10 @@ export default function App() {
   // Auth Success Callback
   const handleAuthSuccess = (userData) => {
     setUser(userData);
+    cacheActiveUser(userData);
     setShowAuthModal(false);
 
-    if (userData.email.toLowerCase() === 'pmarcomvn@gmail.com') {
+    if (isSuperAdmin(userData)) {
       if (window.confirm('Chào mừng Super Admin P Marcom! Bạn có muốn mở Trang Quản Trị Admin ngay không?')) {
         setCurrentScreen('admin');
         return;
@@ -217,9 +273,17 @@ export default function App() {
     setShowCategoryNoticeModal(true);
   };
 
+  const handleCloseAuthModal = () => {
+    setShowAuthModal(false);
+    if (auth.currentUser && !user) {
+      signOut(auth).catch(() => {});
+    }
+  };
+
   // Save Profile Update
   const handleSaveProfile = (updatedUserData) => {
     setUser(updatedUserData);
+    cacheActiveUser(updatedUserData);
     setShowProfileModal(false);
   };
 
@@ -227,7 +291,9 @@ export default function App() {
   const handleLogout = () => {
     if (window.confirm(lang === 'vi' ? 'Bạn có chắc chắn muốn đăng xuất tài khoản?' : 'Are you sure you want to log out?')) {
       setUser(null);
-      localStorage.removeItem('disc_active_user');
+      cacheActiveUser(null);
+      setHistoryList([]);
+      signOut(auth).catch(() => {});
       setCurrentScreen('selectTest');
     }
   };
@@ -276,10 +342,10 @@ export default function App() {
       mbtiResult: mRes
     };
 
-    const updatedHistory = [historyItem, ...historyList];
-    setHistoryList(updatedHistory);
-    localStorage.setItem('disc_test_history', JSON.stringify(updatedHistory));
+    setHistoryList((prev) => [historyItem, ...prev]);
+    saveTestResult(historyItem); // bản trên máy + Firestore (chạy nền)
 
+    setReportUser(null);
     setCurrentScreen('results');
   };
 
@@ -291,7 +357,7 @@ export default function App() {
   };
 
   const handleSelectHistoryItem = (item) => {
-    setUser(item.user);
+    setReportUser(item.user || null);
     setDiscResult(item.discResult);
     setHollandResult(item.hollandResult);
     setMbtiResult(item.mbtiResult);
@@ -299,9 +365,12 @@ export default function App() {
   };
 
   const handleClearHistory = () => {
-    if (window.confirm(lang === 'vi' ? 'Bạn có chắc muốn xóa toàn bộ lịch sử test trên thiết bị này?' : 'Clear all test history on this device?')) {
-      setHistoryList([]);
-      localStorage.removeItem('disc_test_history');
+    if (window.confirm(lang === 'vi'
+      ? 'Xóa bản lưu lịch sử trên thiết bị này? Các kết quả đã lưu vào tài khoản của bạn vẫn được giữ.'
+      : 'Clear test history saved on this device? Results saved to your account are kept.')) {
+      clearLocalHistory();
+      if (user) fetchMyHistory(user).then(setHistoryList);
+      else setHistoryList([]);
     }
   };
 
@@ -387,7 +456,7 @@ export default function App() {
 
           {currentScreen === 'results' && user && (
             <ResultsDashboard
-              user={user}
+              user={reportUser || user}
               discResult={discResult}
               hollandResult={hollandResult}
               mbtiResult={mbtiResult}
@@ -404,10 +473,9 @@ export default function App() {
             />
           )}
 
-          {currentScreen === 'admin' && (
+          {currentScreen === 'admin' && userIsAdmin && (
             <AdminDashboard
               currentUser={user}
-              historyList={historyList}
               onSelectHistory={handleSelectHistoryItem}
               onClose={() => setCurrentScreen('selectTest')}
             />
@@ -431,15 +499,15 @@ export default function App() {
       {showAuthModal && (
         <AuthModal
           initialTab={authTabMode}
-          onSuccess={handleAuthSuccess}
-          onClose={() => setShowAuthModal(false)}
+          onAuthSuccess={handleAuthSuccess}
+          onClose={handleCloseAuthModal}
         />
       )}
 
       {showProfileModal && user && (
         <ProfileModal
           user={user}
-          onSave={handleSaveProfile}
+          onSaveProfile={handleSaveProfile}
           onClose={() => setShowProfileModal(false)}
         />
       )}

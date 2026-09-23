@@ -1,133 +1,148 @@
 /**
- * Quản lý người dùng, phân quyền Super Admin (pmarcomvn@gmail.com) và Lưu trữ danh sách thành viên
+ * Quản lý người dùng & phân quyền — dữ liệu lưu trên Firestore (collection `users/{uid}`).
+ * localStorage chỉ giữ bản cache hồ sơ đang đăng nhập để hiển thị nhanh khi tải trang.
  */
 
-const SUPER_ADMIN_EMAIL = 'pmarcomvn@gmail.com';
+import { auth, db } from '../config/firebase';
+import { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs } from 'firebase/firestore';
 
-// Danh sách thành viên khởi tạo mẫu cho Admin kiểm tra
-const INITIAL_USERS = [
-  {
-    id: 'u-super-admin',
-    fullName: 'P Marcom Super Admin',
-    email: SUPER_ADMIN_EMAIL,
-    phone: '0988 888 888',
-    role: 'super_admin',
-    category: 'professional',
-    createdAt: '2026-08-01T08:00:00.000Z'
-  },
-  {
-    id: 'u-sample-1',
-    fullName: 'Nguyễn Văn An',
-    email: 'nguyenvanan@gmail.com',
-    phone: '0912 345 678',
-    role: 'user',
-    category: 'student',
-    createdAt: '2026-08-10T10:30:00.000Z'
-  },
-  {
-    id: 'u-sample-2',
-    fullName: 'Trần Thị Mai',
-    email: 'tranthimai@gmail.com',
-    phone: '0903 888 999',
-    role: 'admin',
-    category: 'professional',
-    createdAt: '2026-08-12T14:20:00.000Z'
-  }
-];
+export const SUPER_ADMIN_EMAIL = 'pmarcomvn@gmail.com';
 
-// Lấy danh sách toàn bộ thành viên
-export function getRegisteredUsers() {
-  const saved = localStorage.getItem('pmarcom_users_list');
-  if (!saved) {
-    localStorage.setItem('pmarcom_users_list', JSON.stringify(INITIAL_USERS));
-    return INITIAL_USERS;
-  }
-  return JSON.parse(saved);
+const ACTIVE_USER_KEY = 'disc_active_user';
+const LEGACY_USERS_KEY = 'pmarcom_users_list';
+
+export function isSuperAdminEmail(email) {
+  return !!email && email.toLowerCase().trim() === SUPER_ADMIN_EMAIL;
 }
 
-// Tìm thông tin thành viên theo Email đã đăng ký
-export function findRegisteredUserByEmail(email) {
-  if (!email) return null;
-  const users = getRegisteredUsers();
-  return users.find(u => u.email.toLowerCase() === email.toLowerCase().trim()) || null;
+// ---------- Cache hồ sơ đang đăng nhập ----------
+
+export function getCachedActiveUser() {
+  try {
+    const saved = localStorage.getItem(ACTIVE_USER_KEY);
+    const parsed = saved ? JSON.parse(saved) : null;
+    return parsed?.uid ? parsed : null; // bản cache cũ (không có uid) không còn hợp lệ
+  } catch {
+    return null;
+  }
 }
 
-// Đăng ký hoặc cập nhật tài khoản người dùng
-export function saveOrUpdateUser(userData) {
-  const users = getRegisteredUsers();
-  const emailLower = userData.email.toLowerCase().trim();
+export function cacheActiveUser(profile) {
+  try {
+    if (profile) localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(profile));
+    else localStorage.removeItem(ACTIVE_USER_KEY);
+  } catch { /* localStorage bị chặn — bỏ qua */ }
+}
 
-  // Xác định vai trò
-  let role = 'user';
-  if (emailLower === SUPER_ADMIN_EMAIL.toLowerCase()) {
-    role = 'super_admin';
-  } else if (userData.role) {
-    role = userData.role;
-  }
+// Dọn danh sách thành viên lưu cục bộ của phiên bản cũ (dữ liệu nay nằm trên Firestore)
+try { localStorage.removeItem(LEGACY_USERS_KEY); } catch { /* ignore */ }
 
-  const existingIndex = users.findIndex(u => u.email.toLowerCase() === emailLower);
+// ---------- Hồ sơ thành viên (Firestore) ----------
 
-  const fullUserData = {
-    id: existingIndex !== -1 ? users[existingIndex].id : `user-${Date.now()}`,
-    fullName: userData.fullName.trim(),
-    email: emailLower,
-    phone: userData.phone.trim(),
-    role: role,
-    category: userData.category || 'student',
-    createdAt: existingIndex !== -1 ? users[existingIndex].createdAt : new Date().toISOString()
+export async function fetchUserProfile(uid) {
+  const snap = await getDoc(doc(db, 'users', uid));
+  return snap.exists() ? { ...snap.data(), uid } : null;
+}
+
+// Tạo mới hoặc cập nhật hồ sơ của chính người đang đăng nhập (không bao giờ tự nâng quyền)
+export async function saveUserProfile({ fullName, phone, category }) {
+  const fbUser = auth.currentUser;
+  if (!fbUser) throw new Error('not-signed-in');
+
+  const ref = doc(db, 'users', fbUser.uid);
+  const snap = await getDoc(ref);
+  const now = new Date().toISOString();
+  const fields = {
+    fullName: fullName.trim(),
+    phone: phone.trim(),
+    category: category || 'student',
+    updatedAt: now
   };
 
-  if (existingIndex !== -1) {
-    users[existingIndex] = fullUserData;
+  if (snap.exists()) {
+    await updateDoc(ref, fields);
   } else {
-    users.unshift(fullUserData);
+    await setDoc(ref, {
+      ...fields,
+      email: (fbUser.email || '').toLowerCase(),
+      role: isSuperAdmin({ email: fbUser.email }) ? 'super_admin' : 'user',
+      createdAt: now
+    });
   }
 
-  localStorage.setItem('pmarcom_users_list', JSON.stringify(users));
-  localStorage.setItem('disc_active_user', JSON.stringify(fullUserData));
-  return fullUserData;
+  const profile = await fetchUserProfile(fbUser.uid);
+  cacheActiveUser(profile);
+  return profile;
 }
 
-// Xóa thành viên (Dành cho Admin)
-export function deleteUserByEmail(targetEmail) {
-  if (targetEmail.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()) {
+// Danh sách toàn bộ thành viên (chỉ Admin — Security Rules chặn người khác)
+export async function listAllUsers() {
+  const snap = await getDocs(collection(db, 'users'));
+  return snap.docs
+    .map(d => ({ ...d.data(), uid: d.id }))
+    .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+}
+
+// Xóa hồ sơ thành viên (chỉ Super Admin). Tài khoản đăng nhập Firebase Auth vẫn còn,
+// muốn xóa hẳn thì xóa thêm trong Firebase Console > Authentication.
+export async function deleteUserProfile(member) {
+  if (isSuperAdminEmail(member.email)) {
     alert('Không thể xóa tài khoản Super Admin chính!');
     return false;
   }
-
-  let users = getRegisteredUsers();
-  users = users.filter(u => u.email.toLowerCase() !== targetEmail.toLowerCase());
-  localStorage.setItem('pmarcom_users_list', JSON.stringify(users));
+  await deleteDoc(doc(db, 'users', member.uid));
   return true;
 }
 
-// Nâng quyền hoặc thay đổi quyền thành viên
-export function updateUserRole(targetEmail, newRole) {
-  if (targetEmail.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()) {
-    alert('Tài khoản Super Admin pmarcomvn@gmail.com luôn có quyền cao nhất!');
+export async function updateUserRole(member, newRole) {
+  if (isSuperAdminEmail(member.email)) {
+    alert(`Tài khoản Super Admin ${SUPER_ADMIN_EMAIL} luôn có quyền cao nhất!`);
     return false;
   }
-
-  const users = getRegisteredUsers();
-  const userObj = users.find(u => u.email.toLowerCase() === targetEmail.toLowerCase());
-
-  if (userObj) {
-    userObj.role = newRole;
-    localStorage.setItem('pmarcom_users_list', JSON.stringify(users));
-    return true;
-  }
-  return false;
+  await updateDoc(doc(db, 'users', member.uid), { role: newRole });
+  return true;
 }
 
-// Kiểm tra quyền Admin
+// ---------- Phân quyền ----------
+
+// Super Admin: bắt buộc phiên Firebase Auth đã xác minh đúng email quản trị (đăng nhập Google)
+export function isSuperAdmin(user) {
+  if (!user || !isSuperAdminEmail(user.email)) return false;
+  const fbUser = auth.currentUser;
+  return !!fbUser && fbUser.emailVerified && isSuperAdminEmail(fbUser.email);
+}
+
+// Admin thường: quyền `admin` đọc từ hồ sơ Firestore (Security Rules cũng kiểm tra lại phía server)
 export function isAdmin(user) {
   if (!user || !user.email) return false;
-  const emailLower = user.email.toLowerCase();
-  return emailLower === SUPER_ADMIN_EMAIL.toLowerCase() || user.role === 'super_admin' || user.role === 'admin';
+  return isSuperAdmin(user) || (user.role === 'admin' && user.uid === auth.currentUser?.uid);
 }
 
-// Kiểm tra quyền Super Admin
-export function isSuperAdmin(user) {
-  if (!user || !user.email) return false;
-  return user.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase() || user.role === 'super_admin';
+// ---------- Thông báo lỗi Firebase Auth ----------
+
+export function authErrorMessage(code) {
+  switch (code) {
+    case 'auth/invalid-credential':
+    case 'auth/wrong-password':
+    case 'auth/user-not-found':
+      return 'Email hoặc mật khẩu không đúng. Nếu bạn từng đăng ký trước khi hệ thống nâng cấp bảo mật, vui lòng chọn "Đăng Ký Mới" để tạo lại tài khoản.';
+    case 'auth/email-already-in-use':
+      return 'Email này đã được đăng ký. Vui lòng chuyển sang tab "Đăng Nhập", hoặc dùng "Quên mật khẩu".';
+    case 'auth/invalid-email':
+      return 'Địa chỉ email không hợp lệ.';
+    case 'auth/weak-password':
+      return 'Mật khẩu quá yếu, cần ít nhất 6 ký tự.';
+    case 'auth/too-many-requests':
+      return 'Bạn thử quá nhiều lần. Vui lòng đợi vài phút rồi thử lại.';
+    case 'auth/network-request-failed':
+      return 'Mất kết nối mạng. Vui lòng kiểm tra Internet và thử lại.';
+    case 'auth/account-exists-with-different-credential':
+      return 'Email này đã đăng ký bằng mật khẩu. Vui lòng đăng nhập bằng Email & Mật khẩu.';
+    case 'permission-denied':
+      return 'Hệ thống chưa cho phép lưu hồ sơ. Vui lòng liên hệ quản trị viên P Marcom.';
+    case 'unavailable':
+      return 'Không kết nối được máy chủ. Vui lòng kiểm tra Internet và thử lại.';
+    default:
+      return 'Đăng nhập/Đăng ký không thành công. Vui lòng thử lại!';
+  }
 }
