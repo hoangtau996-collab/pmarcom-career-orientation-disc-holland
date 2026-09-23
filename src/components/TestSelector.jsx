@@ -97,19 +97,19 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
 
   const singleTests = [
     {
-      mode: 'disc', icon: BookOpen, tone: 'text-rose-600 bg-rose-50 dark:bg-rose-950/50 dark:text-rose-300',
+      mode: 'disc', icon: BookOpen, image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=700&auto=format&fit=crop', alt: vi ? 'Trao đổi trong môi trường làm việc' : 'Colleagues talking at work', tone: 'text-rose-600 bg-rose-50 dark:bg-rose-950/50 dark:text-rose-300',
       title: t('discTitle'), time: vi ? `8 – 10 phút · ${DISC_TOTAL} câu` : `8 – 10 min · ${DISC_TOTAL} questions`,
       desc: vi ? 'Phong cách hành vi, giao tiếp và làm việc của bạn.' : 'Your behavioral, communication and work style.',
       cta: t('startDisc')
     },
     {
-      mode: 'holland', icon: Layers, tone: 'text-teal-700 bg-teal-50 dark:bg-teal-950/50 dark:text-teal-300',
+      mode: 'holland', icon: Layers, image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=700&auto=format&fit=crop', alt: vi ? 'Nhóm làm việc cùng nhau' : 'Team working together', tone: 'text-teal-700 bg-teal-50 dark:bg-teal-950/50 dark:text-teal-300',
       title: vi ? 'Sở thích nghề nghiệp Holland' : 'Holland Career Interests', time: vi ? `6 – 8 phút · ${HOLLAND_TOTAL} thẻ` : `6 – 8 min · ${HOLLAND_TOTAL} cards`,
       desc: vi ? 'Tìm mã Holland top 3 trong 6 nhóm nghề RIASEC.' : 'Find your top-3 code across 6 RIASEC groups.',
       cta: t('startHolland')
     },
     {
-      mode: 'mbti', icon: Brain, tone: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 dark:text-indigo-300',
+      mode: 'mbti', icon: Brain, image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=700&auto=format&fit=crop', alt: vi ? 'Góc làm việc và suy ngẫm' : 'A quiet workspace for reflection', tone: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 dark:text-indigo-300',
       title: vi ? 'MBTI 16 nhóm tính cách' : 'MBTI 16 Personalities', time: vi ? `4 – 6 phút · ${MBTI_TOTAL} câu` : `4 – 6 min · ${MBTI_TOTAL} questions`,
       desc: vi ? 'Khám phá 4 chiều tính cách và mã MBTI của bạn.' : 'Discover your 4 dimensions and MBTI code.',
       cta: vi ? 'Bắt đầu test MBTI' : 'Start MBTI test'
@@ -280,12 +280,19 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
 
         {/* Bài lẻ */}
         <div className="grid sm:grid-cols-3 gap-4 sm:gap-6">
-          {singleTests.map(({ mode, icon: Icon, tone, title, time, desc, cta }) => (
-            <div key={mode} className="group flex flex-col p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-teal-400 dark:hover:border-teal-600 hover:shadow-lg transition-all">
-              <span className={`w-11 h-11 rounded-xl flex items-center justify-center ${tone}`}>
-                <Icon className="w-5 h-5" />
-              </span>
-              <h3 className="mt-4 font-bold text-lg text-slate-900 dark:text-white">{title}</h3>
+          {singleTests.map(({ mode, icon: Icon, tone, image, alt, title, time, desc, cta }) => (
+            <div key={mode} className="group flex flex-col overflow-hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-teal-400 dark:hover:border-teal-600 hover:shadow-lg transition-all">
+              <div className="relative">
+                <div className="relative h-40 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                  <img src={image} alt={alt} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 to-transparent" />
+                </div>
+                <span className={`absolute left-5 -bottom-5 w-11 h-11 rounded-xl flex items-center justify-center ring-4 ring-white dark:ring-slate-900 ${tone}`}>
+                  <Icon className="w-5 h-5" />
+                </span>
+              </div>
+              <div className="flex flex-col flex-1 p-6 pt-8">
+              <h3 className="font-bold text-lg text-slate-900 dark:text-white">{title}</h3>
               <p className="mt-1 text-slate-600 dark:text-slate-400 flex-1">{desc}</p>
               <p className="mt-3 flex items-center gap-1.5 text-sm text-slate-500"><Clock className="w-4 h-4" />{time}</p>
               <button
@@ -294,36 +301,43 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
               >
                 {cta} <ArrowRight className="w-4 h-4" />
               </button>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ACADEMY (thu gọn, đặt cuối trang) */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-blue-950 to-teal-950 text-white p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="absolute -right-16 -top-16 w-72 h-72 bg-teal-500/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative flex items-start gap-4">
-          <span className="w-12 h-12 rounded-2xl bg-teal-500/20 text-teal-300 flex items-center justify-center shrink-0">
-            <GraduationCap className="w-6 h-6" />
-          </span>
-          <div className="space-y-1">
-            <div className="text-xs font-bold uppercase tracking-wider text-teal-300">P Marcom Academy</div>
-            <h2 className="text-xl sm:text-2xl font-black">{vi ? 'Khóa học Digital Marketing thực chiến' : 'Practical Digital Marketing Course'}</h2>
-            <p className="text-slate-300 max-w-2xl">
-              {vi
-                ? 'SEO & Content, Performance Ads, xây dựng thương hiệu và ứng dụng AI trong Marketing — học qua dự án thật, có chứng chỉ.'
-                : 'SEO & Content, Performance Ads, branding and AI in marketing — project-based, with certification.'}
-            </p>
-          </div>
+      {/* ACADEMY (đặt cuối trang) */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-blue-950 to-teal-950 text-white grid md:grid-cols-5">
+        <div className="absolute -left-16 -top-16 w-72 h-72 bg-teal-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative md:order-2 md:col-span-2 h-44 md:h-auto min-h-[12rem]">
+          <img
+            src="https://images.unsplash.com/photo-1557838923-2985c318be48?q=80&w=900&auto=format&fit=crop"
+            alt={vi ? 'Khóa học Digital Marketing thực chiến P Marcom Academy' : 'P Marcom Academy digital marketing course'}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-slate-950/80 via-slate-950/20 to-transparent" />
         </div>
-        <a
-          href="https://academy.pmarcom.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="relative shrink-0 px-6 py-3.5 rounded-xl bg-white text-slate-900 hover:bg-teal-50 font-bold transition-colors flex items-center justify-center gap-2"
-        >
-          {vi ? 'Xem khóa học' : 'View course'} <ExternalLink className="w-4 h-4" />
-        </a>
+        <div className="relative md:order-1 md:col-span-3 p-6 sm:p-10 space-y-4">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-teal-300">
+            <GraduationCap className="w-4 h-4" /> P Marcom Academy
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black">{vi ? 'Khóa học Digital Marketing thực chiến' : 'Practical Digital Marketing Course'}</h2>
+          <p className="text-slate-300 max-w-xl">
+            {vi
+              ? 'SEO & Content, Performance Ads, xây dựng thương hiệu và ứng dụng AI trong Marketing — học qua dự án thật, có chứng chỉ.'
+              : 'SEO & Content, Performance Ads, branding and AI in marketing — project-based, with certification.'}
+          </p>
+          <a
+            href="https://academy.pmarcom.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex px-6 py-3.5 rounded-xl bg-white text-slate-900 hover:bg-teal-50 font-bold transition-colors items-center gap-2"
+          >
+            {vi ? 'Xem khóa học' : 'View course'} <ExternalLink className="w-4 h-4" />
+          </a>
+        </div>
       </section>
     </div>
   );
