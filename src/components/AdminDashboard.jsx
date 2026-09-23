@@ -75,10 +75,16 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
     exportFullTestLogsToCsv(historyList);
   };
 
-  const handleViewMemberReport = (member) => {
-    const userTests = historyList.filter(
-      h => h.user?.email?.toLowerCase() === member.email.toLowerCase()
+  // Bài test của một thành viên: khớp theo mã tài khoản (uid) hoặc email
+  const getMemberTests = (member) => {
+    const email = (member.email || '').toLowerCase();
+    return historyList.filter(h =>
+      (member.uid && h.uid === member.uid) || (email && h.user?.email?.toLowerCase() === email)
     );
+  };
+
+  const handleViewMemberReport = (member) => {
+    const userTests = getMemberTests(member);
 
     if (userTests.length > 0) {
       if (onSelectHistory) {
@@ -122,7 +128,7 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
   const handleBatchDownloadPdf = async () => {
     const targetUsers = filteredUsers.filter(u => selectedUserEmails.has(u.email));
     const usersWithTests = targetUsers.filter(u => 
-      historyList.some(h => h.user?.email?.toLowerCase() === u.email.toLowerCase())
+      getMemberTests(u).length > 0
     );
 
     if (usersWithTests.length === 0) {
@@ -139,7 +145,7 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
 
     for (let i = 0; i < usersWithTests.length; i++) {
       const u = usersWithTests[i];
-      const userTests = historyList.filter(h => h.user?.email?.toLowerCase() === u.email.toLowerCase());
+      const userTests = getMemberTests(u);
       const latestTest = userTests[0];
 
       setBatchProgress({ current: i + 1, total: usersWithTests.length, currentName: u.fullName });
@@ -153,7 +159,7 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
     }
 
     setBatchDownloading(false);
-    alert(`🎉 Đã hoàn tất tải hàng loạt ${usersWithTests.length} báo cáo PDF bài test!`);
+    alert(`Đã hoàn tất tải hàng loạt ${usersWithTests.length} báo cáo PDF bài test!`);
   };
 
   const canManageRoles = isSuperAdmin(currentUser);
@@ -337,9 +343,7 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
                 </tr>
               ) : (
                 filteredUsers.map((u, idx) => {
-                  const userTests = historyList.filter(
-                    h => h.user?.email?.toLowerCase() === u.email.toLowerCase()
-                  );
+                  const userTests = getMemberTests(u);
                   const latestTest = userTests[0] || null;
                   const dRes = latestTest?.discResult || latestTest?.result;
                   const hRes = latestTest?.hollandResult;
@@ -384,12 +388,12 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
 
                       <td className="p-4">
                         {u.category === 'student' ? (
-                          <span className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 rounded-full font-bold text-[11px]">
-                            🎓 Sinh viên
+                          <span className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 rounded-full font-bold text-xs">
+                            Sinh viên
                           </span>
                         ) : (
-                          <span className="px-2.5 py-1 bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 rounded-full font-bold text-[11px]">
-                            💼 Người đi làm
+                          <span className="px-2.5 py-1 bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 rounded-full font-bold text-xs">
+                            Người đi làm
                           </span>
                         )}
                       </td>
@@ -400,38 +404,58 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
                           <div className="space-y-1">
                             <div className="flex items-center space-x-1.5">
                               {dRes && (
-                                <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold text-[10px] rounded">
+                                <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold text-[11px] rounded">
                                   DISC: {dRes.primaryTrait}
                                 </span>
                               )}
                               {hRes && (
-                                <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-bold text-[10px] rounded">
+                                <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-bold text-[11px] rounded">
                                   Holland: {hRes.top3Code}
                                 </span>
                               )}
                             </div>
-                            <span className="text-[10px] text-slate-400 font-semibold block">
+                            <span className="text-[11px] text-slate-400 font-semibold block">
                               Đã làm {userTests.length} bài test
                             </span>
+                            <div className="flex items-center space-x-1.5 pt-0.5">
+                              <button
+                                onClick={() => handleViewMemberReport(u)}
+                                className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-lg flex items-center space-x-1 transition-all whitespace-nowrap"
+                                title="Xem báo cáo bài test mới nhất của thành viên này"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>Xem Báo Cáo</span>
+                              </button>
+                              {userTests.length > 1 && (
+                                <button
+                                  onClick={() => setSelectedMember({ userObj: u, tests: userTests })}
+                                  className="px-2 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-bold flex items-center space-x-1 transition-all whitespace-nowrap"
+                                  title="Xem lịch sử tất cả các lần test"
+                                >
+                                  <FileText className="w-3.5 h-3.5" />
+                                  <span>Tất cả ({userTests.length})</span>
+                                </button>
+                              )}
+                            </div>
                           </div>
                         ) : (
-                          <span className="text-slate-400 text-[11px] font-medium">Chưa làm bài test</span>
+                          <span className="text-slate-400 text-xs font-medium">Chưa làm bài test</span>
                         )}
                       </td>
 
                       <td className="p-4">
                         {u.role === 'super_admin' ? (
-                          <span className="px-2.5 py-1 bg-amber-500 text-slate-950 rounded-full font-black text-[11px] flex items-center space-x-1 w-fit shadow-sm">
+                          <span className="px-2.5 py-1 bg-amber-500 text-slate-950 rounded-full font-black text-xs flex items-center space-x-1 w-fit shadow-sm">
                             <Crown className="w-3 h-3 fill-slate-950" />
                             <span>Super Admin</span>
                           </span>
                         ) : u.role === 'admin' ? (
-                          <span className="px-2.5 py-1 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 rounded-full font-extrabold text-[11px]">
-                            🛡️ Admin
+                          <span className="px-2.5 py-1 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 rounded-full font-extrabold text-xs">
+                            Admin
                           </span>
                         ) : (
-                          <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-full font-semibold text-[11px]">
-                            👤 User
+                          <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-full font-semibold text-xs">
+                            User
                           </span>
                         )}
                       </td>
@@ -444,7 +468,7 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
                             <>
                               <button
                                 onClick={() => handleViewMemberReport(u)}
-                                className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold text-[11px] rounded-lg border border-indigo-200 dark:border-indigo-800 flex items-center space-x-1 transition-all"
+                                className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold text-xs rounded-lg border border-indigo-200 dark:border-indigo-800 flex items-center space-x-1 transition-all"
                                 title="Xem báo cáo kết quả bài test của thành viên này"
                               >
                                 <Eye className="w-3.5 h-3.5" />
@@ -453,7 +477,7 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
 
                               <button
                                 onClick={() => setSelectedMember({ userObj: u, tests: userTests })}
-                                className="p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-bold transition-all"
+                                className="p-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-bold transition-all"
                                 title="Xem lịch sử tất cả các lần test"
                               >
                                 <FileText className="w-3.5 h-3.5" />
@@ -466,7 +490,7 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
                               {canManageRoles && (
                                 <button
                                   onClick={() => handleToggleRole(u)}
-                                  className={`px-2 py-1 rounded-lg font-bold text-[10px] transition-all border ${
+                                  className={`px-2 py-1 rounded-lg font-bold text-[11px] transition-all border ${
                                     u.role === 'admin'
                                       ? 'border-slate-300 text-slate-600 hover:bg-slate-100'
                                       : 'border-amber-400 bg-amber-50 text-amber-800 hover:bg-amber-100'
@@ -568,7 +592,7 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
 
               {batchProgress.currentName && (
                 <p className="text-xs font-bold text-indigo-300 pt-1 truncate">
-                  📄 Đang xuất: <strong>{batchProgress.currentName}</strong>
+                  Đang xuất: <strong>{batchProgress.currentName}</strong>
                 </p>
               )}
             </div>
@@ -617,7 +641,7 @@ export default function AdminDashboard({ currentUser, onSelectHistory, onClose }
                         <Calendar className="w-3.5 h-3.5 text-indigo-500" />
                         <span>Lần {selectedMember.tests.length - idx}: {new Date(item.date).toLocaleDateString('vi-VN')}</span>
                       </div>
-                      <div className="flex items-center space-x-2 text-[11px]">
+                      <div className="flex items-center space-x-2 text-xs">
                         {dRes && <span className="text-indigo-600 dark:text-indigo-400 font-bold">DISC: Nhóm {dRes.primaryTrait}</span>}
                         {hRes && <span className="text-purple-600 dark:text-purple-400 font-bold">Holland: {hRes.top3Code}</span>}
                       </div>

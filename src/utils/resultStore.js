@@ -56,6 +56,24 @@ export async function saveTestResult(item) {
   }
 }
 
+// Bài test chỉ nằm trên máy (làm trước khi chuyển sang Firestore hoặc lúc mất mạng):
+// đẩy lên tài khoản để Admin cũng xem được. Chạy nền, lỗi thì lần đăng nhập sau thử lại.
+const uploadingIds = new Set(); // tránh đẩy trùng khi lịch sử được tải 2 lần liên tiếp
+
+function uploadLocalOnly(remote, local, uid) {
+  const remoteIds = new Set(remote.map(i => i.id));
+  local
+    .filter(i => i.id && !remoteIds.has(i.id) && !uploadingIds.has(i.id))
+    .forEach(i => {
+      uploadingIds.add(i.id);
+      addDoc(collection(db, 'test_results'), toPlain({ ...i, uid }))
+        .catch(err => {
+          uploadingIds.delete(i.id);
+          console.warn('Đồng bộ bài test cũ lên Firestore thất bại:', err);
+        });
+    });
+}
+
 // Lịch sử của người đang đăng nhập (server + bản trên máy cùng tài khoản)
 export async function fetchMyHistory(profile) {
   const uid = auth.currentUser?.uid;
@@ -67,7 +85,9 @@ export async function fetchMyHistory(profile) {
 
   try {
     const snap = await getDocs(query(collection(db, 'test_results'), where('uid', '==', uid)));
-    return mergeHistory(snap.docs.map(d => d.data()), local);
+    const remote = snap.docs.map(d => d.data());
+    uploadLocalOnly(remote, local, uid);
+    return mergeHistory(remote, local);
   } catch (err) {
     console.warn('Không tải được lịch sử từ Firestore, dùng bản trên máy:', err);
     return local.sort(byDateDesc);
