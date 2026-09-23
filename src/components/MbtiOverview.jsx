@@ -75,7 +75,7 @@ export default function MbtiOverview({ onStartTest, lang = 'vi' }) {
                 className="w-full h-48 sm:h-56 object-cover transform hover:scale-105 transition-transform duration-500"
               />
               <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2 text-xs text-slate-500 font-medium">
-                📷 Ảnh minh họa: Giải mã chiều sâu tư duy và khuôn mẫu nhận thức tâm lý con người
+                Ảnh minh họa: Giải mã chiều sâu tư duy và khuôn mẫu nhận thức tâm lý con người
               </div>
             </div>
 
@@ -128,14 +128,14 @@ export default function MbtiOverview({ onStartTest, lang = 'vi' }) {
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-purple-200 dark:border-purple-900/60 shadow-xl space-y-3 flex flex-col justify-between">
             <div className="space-y-3">
               <span className="px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 font-extrabold text-xs rounded-full inline-block">
-                🧩 Analysts (NT)
+                Analysts (NT)
               </span>
               <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">Nhóm Nhà Phân Tích</h3>
               <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 INTJ, INTP, ENTJ, ENTP. Tầm nhìn chiến lược, tư duy logic sắc bén, coi trọng tri thức và liên tục cải tiến hệ thống.
               </p>
             </div>
-            <div className="pt-2 text-[11px] font-bold text-purple-600 dark:text-purple-400">
+            <div className="pt-2 text-xs font-bold text-purple-600 dark:text-purple-400">
               Phong cách: Chiến lược &amp; Đổi mới
             </div>
           </div>
@@ -144,14 +144,14 @@ export default function MbtiOverview({ onStartTest, lang = 'vi' }) {
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-emerald-200 dark:border-emerald-900/60 shadow-xl space-y-3 flex flex-col justify-between">
             <div className="space-y-3">
               <span className="px-3 py-1 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-extrabold text-xs rounded-full inline-block">
-                🕊️ Diplomats (NF)
+                Diplomats (NF)
               </span>
               <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">Nhóm Nhà Tưởng Tượng</h3>
               <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 INFJ, INFP, ENFJ, ENFP. Giàu lòng trắc ẩn, hướng tới các giá trị nhân văn, truyền cảm hứng và giúp đỡ người khác phát triển.
               </p>
             </div>
-            <div className="pt-2 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+            <div className="pt-2 text-xs font-bold text-emerald-600 dark:text-emerald-400">
               Phong cách: Thấu cảm &amp; Ý nghĩa
             </div>
           </div>
@@ -160,14 +160,14 @@ export default function MbtiOverview({ onStartTest, lang = 'vi' }) {
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-blue-200 dark:border-blue-900/60 shadow-xl space-y-3 flex flex-col justify-between">
             <div className="space-y-3">
               <span className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-extrabold text-xs rounded-full inline-block">
-                🛡️ Sentinels (SJ)
+                Sentinels (SJ)
               </span>
               <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">Nhóm Người Bảo Vệ</h3>
               <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 ISTJ, ISFJ, ESTJ, ESFJ. Kỷ luật, trách nhiệm, tôn trọng trật tự chuẩn mực và sự ổn định bền vững của tổ chức.
               </p>
             </div>
-            <div className="pt-2 text-[11px] font-bold text-blue-600 dark:text-blue-400">
+            <div className="pt-2 text-xs font-bold text-blue-600 dark:text-blue-400">
               Phong cách: Chuẩn mực &amp; Trách nhiệm
             </div>
           </div>
@@ -176,14 +176,14 @@ export default function MbtiOverview({ onStartTest, lang = 'vi' }) {
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-amber-200 dark:border-amber-900/60 shadow-xl space-y-3 flex flex-col justify-between">
             <div className="space-y-3">
               <span className="px-3 py-1 bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 font-extrabold text-xs rounded-full inline-block">
-                🎨 Explorers (SP)
+                Explorers (SP)
               </span>
               <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">Nhóm Nhà Khám Phá</h3>
               <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 ISTP, ISFP, ESTP, ESFP. Linh hoạt, thích trải nghiệm thực tế, phản ứng nhanh nhạy trước các tình huống bất ngờ.
               </p>
             </div>
-            <div className="pt-2 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+            <div className="pt-2 text-xs font-bold text-amber-600 dark:text-amber-400">
               Phong cách: Linh hoạt &amp; Thực tiễn
             </div>
           </div>

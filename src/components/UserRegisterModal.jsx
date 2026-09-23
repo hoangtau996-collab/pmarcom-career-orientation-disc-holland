@@ -78,7 +78,7 @@ export default function UserRegisterModal({ onSubmitUser, onCancel }) {
                 </div>
                 <div>
                   <div className="font-bold text-sm">Sinh Viên / Học Sinh</div>
-                  <div className="text-[11px] opacity-75">Định hướng ngành & học tập</div>
+                  <div className="text-xs opacity-75">Định hướng ngành & học tập</div>
                 </div>
               </button>
 
@@ -96,7 +96,7 @@ export default function UserRegisterModal({ onSubmitUser, onCancel }) {
                 </div>
                 <div>
                   <div className="font-bold text-sm">Người Đi Làm</div>
-                  <div className="text-[11px] opacity-75">Sự nghiệp & Phong cách sếp</div>
+                  <div className="text-xs opacity-75">Sự nghiệp & Phong cách sếp</div>
                 </div>
               </button>
             </div>
@@ -147,7 +147,7 @@ export default function UserRegisterModal({ onSubmitUser, onCancel }) {
           {/* Số điện thoại (Tùy chọn) */}
           <div className="space-y-1.5">
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-              Số điện thoại <span className="text-slate-400 font-normal text-[11px]">(Không bắt buộc)</span>
+              Số điện thoại <span className="text-slate-400 font-normal text-xs">(Không bắt buộc)</span>
             </label>
             <div className="relative">
               <Phone className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />

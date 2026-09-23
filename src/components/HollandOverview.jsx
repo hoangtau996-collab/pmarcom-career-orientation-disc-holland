@@ -70,7 +70,7 @@ export default function HollandOverview({ onStartTest }) {
                 className="w-full h-48 sm:h-56 object-cover transform hover:scale-105 transition-transform duration-500"
               />
               <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2 text-xs text-slate-500 font-medium">
-                📷 Ảnh minh họa: Định hướng sự nghiệp và lựa chọn môi trường làm việc lý tưởng
+                Ảnh minh họa: Định hướng sự nghiệp và lựa chọn môi trường làm việc lý tưởng
               </div>
             </div>
 
@@ -146,7 +146,7 @@ export default function HollandOverview({ onStartTest }) {
                 {/* Characteristics Pill Tags */}
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {profile.characteristics.map((char, idx) => (
-                    <span key={idx} className="px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/60 text-purple-700 dark:text-purple-300 text-[11px] font-semibold">
+                    <span key={idx} className="px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/60 text-purple-700 dark:text-purple-300 text-xs font-semibold">
                       • {char}
                     </span>
                   ))}
@@ -155,12 +155,12 @@ export default function HollandOverview({ onStartTest }) {
 
               {/* Suitable Careers List */}
               <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider block">
+                <span className="text-xs font-extrabold text-slate-400 uppercase tracking-wider block">
                   Ngành nghề tiêu biểu nổi bật:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {profile.suitableCareers.slice(0, 4).map((career, idx) => (
-                    <span key={idx} className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-medium border border-slate-200/80 dark:border-slate-700">
+                    <span key={idx} className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium border border-slate-200/80 dark:border-slate-700">
                       {career}
                     </span>
                   ))}

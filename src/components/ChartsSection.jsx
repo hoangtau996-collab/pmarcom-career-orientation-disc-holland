@@ -26,7 +26,7 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
       {hasMbti && (
         <div className="space-y-6">
           <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 border-b pb-2">
-            🧠 Phân Tích 4 Chiều Đo MBTI ({mbtiResult.code} - {mbtiResult.profile.name})
+            Phân Tích 4 Chiều Đo MBTI ({mbtiResult.code} - {mbtiResult.profile.name})
           </h4>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -87,13 +87,13 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
       {hasDisc && (
         <div className="space-y-6">
           <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 border-b pb-2">
-            📊 Phân Tích Mô Hình DISC (William Marston)
+            Phân Tích Mô Hình DISC (William Marston)
           </h4>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
             {/* Radar Chart */}
             <div className="bg-slate-50 dark:bg-slate-950/60 rounded-2xl p-3 sm:p-4 border border-slate-200 dark:border-slate-800 flex flex-col items-center">
-              <span className="text-[11px] font-bold text-slate-500 mb-2">Biểu Đồ Radar DISC</span>
+              <span className="text-xs font-bold text-slate-500 mb-2">Biểu Đồ Radar DISC</span>
               <div className="w-full h-[220px] sm:h-[260px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart cx="50%" cy="50%" outerRadius="75%" data={discResult.chartData}>
@@ -108,7 +108,7 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
 
             {/* Bar Chart */}
             <div className="bg-slate-50 dark:bg-slate-950/60 rounded-2xl p-3 sm:p-4 border border-slate-200 dark:border-slate-800 flex flex-col items-center">
-              <span className="text-[11px] font-bold text-slate-500 mb-2">Biểu Đồ Cột DISC %</span>
+              <span className="text-xs font-bold text-slate-500 mb-2">Biểu Đồ Cột DISC %</span>
               <div className="w-full h-[220px] sm:h-[260px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={[
@@ -144,7 +144,7 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
             {/* Radar Chart Holland Hexagon */}
             <div className="bg-slate-50 dark:bg-slate-950/60 rounded-2xl p-3 sm:p-4 border border-slate-200 dark:border-slate-800 flex flex-col items-center">
-              <span className="text-[11px] font-bold text-slate-500 mb-2">Biểu Đồ Lục Giác Holland RIASEC</span>
+              <span className="text-xs font-bold text-slate-500 mb-2">Biểu Đồ Lục Giác Holland RIASEC</span>
               <div className="w-full h-[220px] sm:h-[260px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart cx="50%" cy="50%" outerRadius="75%" data={hollandResult.chartData}>
@@ -159,7 +159,7 @@ export default function ChartsSection({ discResult, hollandResult, mbtiResult })
 
             {/* Bar Chart Holland */}
             <div className="bg-slate-50 dark:bg-slate-950/60 rounded-2xl p-3 sm:p-4 border border-slate-200 dark:border-slate-800 flex flex-col items-center">
-              <span className="text-[11px] font-bold text-slate-500 mb-2">Tỉ Lệ % 6 Nhóm Sở Thích</span>
+              <span className="text-xs font-bold text-slate-500 mb-2">Tỉ Lệ % 6 Nhóm Sở Thích</span>
               <div className="w-full h-[220px] sm:h-[260px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={hollandResult.chartData}>

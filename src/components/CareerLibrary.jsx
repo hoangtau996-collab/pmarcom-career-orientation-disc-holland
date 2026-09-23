@@ -244,7 +244,7 @@ export default function CareerLibrary({ onStartTest, userCategory = 'student' })
               }`}
             >
               <GraduationCap className="w-3.5 h-3.5" />
-              <span>🎓 Sinh Viên / Học Sinh</span>
+              <span>Sinh Viên / Học Sinh</span>
             </button>
 
             <button
@@ -256,7 +256,7 @@ export default function CareerLibrary({ onStartTest, userCategory = 'student' })
               }`}
             >
               <Briefcase className="w-3.5 h-3.5" />
-              <span>💼 Người Đi Làm</span>
+              <span>Người Đi Làm</span>
             </button>
           </div>
 
@@ -291,7 +291,7 @@ export default function CareerLibrary({ onStartTest, userCategory = 'student' })
                       : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300'
                   }`}
                 >
-                  <span className="w-4 h-4 rounded-full bg-teal-200 text-teal-800 font-extrabold text-[10px] flex items-center justify-center">
+                  <span className="w-4 h-4 rounded-full bg-teal-200 text-teal-800 font-extrabold text-[11px] flex items-center justify-center">
                     {code}
                   </span>
                   <span>{p.name.split(' - ')[1] || p.name}</span>
@@ -308,7 +308,7 @@ export default function CareerLibrary({ onStartTest, userCategory = 'student' })
                       : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300'
                   }`}
                 >
-                  <span className="w-4 h-4 rounded-full bg-indigo-200 text-indigo-800 font-extrabold text-[10px] flex items-center justify-center">
+                  <span className="w-4 h-4 rounded-full bg-indigo-200 text-indigo-800 font-extrabold text-[11px] flex items-center justify-center">
                     {code}
                   </span>
                   <span>{p.name}</span>
@@ -372,7 +372,7 @@ export default function CareerLibrary({ onStartTest, userCategory = 'student' })
           </div>
 
           <span className="text-xs text-slate-400">
-            {isStudent ? 'Chế độ: 🎓 Ngành Học & Thực Tập' : 'Chế độ: 💼 Vị Trí Công Việc & Lộ Trình'}
+            {isStudent ? 'Chế độ: Ngành Học & Thực Tập' : 'Chế độ: Vị Trí Công Việc & Lộ Trình'}
           </span>
         </div>
 
@@ -404,7 +404,7 @@ export default function CareerLibrary({ onStartTest, userCategory = 'student' })
                   
                   {/* Card Header Tag */}
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-[11px] font-extrabold flex items-center space-x-1">
+                    <span className="px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs font-extrabold flex items-center space-x-1">
                       <span>{item.codeName}</span>
                     </span>
 
@@ -510,7 +510,7 @@ export default function CareerLibrary({ onStartTest, userCategory = 'student' })
                 {selectedItemDetail.softSkills && (
                   <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2">
                     <h5 className="font-bold text-slate-900 dark:text-white">
-                      💡 Kỹ năng mềm cần rèn luyện thời sinh viên:
+                      Kỹ năng mềm cần rèn luyện thời sinh viên:
                     </h5>
                     <div className="flex flex-wrap gap-2">
                       {selectedItemDetail.softSkills.map((skill, idx) => (
@@ -531,7 +531,7 @@ export default function CareerLibrary({ onStartTest, userCategory = 'student' })
                 {selectedItemDetail.leadershipStyle && (
                   <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/50 space-y-1.5">
                     <h5 className="font-bold text-purple-900 dark:text-purple-200">
-                      👑 Phong cách làm việc &amp; Lãnh đạo:
+                      Phong cách làm việc &amp; Lãnh đạo:
                     </h5>
                     <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
                       {selectedItemDetail.leadershipStyle}
@@ -543,7 +543,7 @@ export default function CareerLibrary({ onStartTest, userCategory = 'student' })
                 {selectedItemDetail.stressManagement && (
                   <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-100 dark:border-amber-900/50 space-y-1.5">
                     <h5 className="font-bold text-amber-900 dark:text-amber-200">
-                      🧘‍♂️ Giải pháp quản lý stress công sở:
+                      Giải pháp quản lý stress công sở:
                     </h5>
                     <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
                       {selectedItemDetail.stressManagement}
@@ -555,7 +555,7 @@ export default function CareerLibrary({ onStartTest, userCategory = 'student' })
                 {selectedItemDetail.recommendedCertificates && (
                   <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2">
                     <h5 className="font-bold text-slate-900 dark:text-white">
-                      🏆 Chứng chỉ &amp; Khóa học đề xuất nâng tầm sự nghiệp:
+                      Chứng chỉ &amp; Khóa học đề xuất nâng tầm sự nghiệp:
                     </h5>
                     <div className="flex flex-wrap gap-2">
                       {selectedItemDetail.recommendedCertificates.map((cert, idx) => (

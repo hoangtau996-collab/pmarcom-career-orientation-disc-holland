@@ -1,19 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, Eye, Crown, LogIn, LogOut, Menu, X, User, Globe, UserPlus, Brain } from 'lucide-react';
-import { getVisitorStats, subscribeToVisitorStats } from '../utils/visitorCounter';
+import React, { useState, useEffect, useRef } from 'react';
+import { Compass, BookOpen, Layers, History, Sun, Moon, Crown, LogIn, LogOut, Menu, X, User, UserPlus, Brain, ChevronDown, Home } from 'lucide-react';
 import { isAdmin, isSuperAdmin, getAvatarUrl, getInitials } from '../utils/userManager';
+import { getTranslation } from '../utils/translations';
 
 function UserAvatar({ user, className }) {
   const url = getAvatarUrl(user);
   return url ? (
     <img src={url} alt="" referrerPolicy="no-referrer" className={`${className} rounded-full object-cover shrink-0`} />
   ) : (
-    <span className={`${className} rounded-full shrink-0 bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-[9px] font-extrabold flex items-center justify-center`}>
+    <span className={`${className} rounded-full shrink-0 bg-gradient-to-br from-teal-500 to-slate-800 text-white text-[11px] font-extrabold flex items-center justify-center`}>
       {getInitials(user?.fullName)}
     </span>
   );
 }
-import { getTranslation } from '../utils/translations';
+
+// Đóng menu thả xuống khi bấm ra ngoài
+function useClickOutside(ref, onOutside) {
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) onOutside(); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [ref, onOutside]);
+}
 
 export default function Header({
   currentScreen = 'selectTest',
@@ -32,18 +40,17 @@ export default function Header({
   onOpenAdmin,
   onLogoClick
 }) {
-  const [stats, setStats] = useState(getVisitorStats());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = subscribeToVisitorStats((newStats) => {
-      setStats(newStats);
-    });
-    return () => unsubscribe();
-  }, []);
+  const [testsMenuOpen, setTestsMenuOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const testsRef = useRef(null);
+  const accountRef = useRef(null);
+  useClickOutside(testsRef, () => setTestsMenuOpen(false));
+  useClickOutside(accountRef, () => setAccountMenuOpen(false));
 
   const userIsAdmin = isAdmin(user);
   const userIsSuperAdmin = isSuperAdmin(user);
+  const vi = lang === 'vi';
 
   const t = (key, params) => getTranslation(lang, key, params);
 
@@ -58,6 +65,8 @@ export default function Header({
       setCurrentScreen(screen);
     }
     setMobileMenuOpen(false);
+    setTestsMenuOpen(false);
+    setAccountMenuOpen(false);
   };
 
   const handleLoginClick = () => {
@@ -73,324 +82,242 @@ export default function Header({
   };
 
   const toggleLanguage = () => {
-    const nextLang = lang === 'vi' ? 'en' : 'vi';
-    if (setLang) setLang(nextLang);
+    if (setLang) setLang(vi ? 'en' : 'vi');
   };
 
+  const testPages = [
+    { screen: 'overviewDisc', icon: BookOpen, label: 'DISC', desc: vi ? 'Phong cách hành vi & giao tiếp' : 'Behavioral & communication style' },
+    { screen: 'overviewHolland', icon: Layers, label: 'Holland RIASEC', desc: vi ? 'Sở thích & môi trường nghề nghiệp' : 'Career interests & environments' },
+    { screen: 'overviewMbti', icon: Brain, label: 'MBTI', desc: vi ? '16 nhóm tính cách' : '16 personality types' }
+  ];
+  const isTestPage = testPages.some(p => p.screen === currentScreen);
+
+  const navItemClass = (active) =>
+    `flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-colors ${
+      active
+        ? 'bg-teal-50 text-teal-800 dark:bg-teal-950/70 dark:text-teal-300'
+        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:text-white'
+    }`;
+
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-md bg-white/95 dark:bg-slate-950/95 border-b border-teal-100 dark:border-slate-800 transition-colors shadow-sm">
-      {/* Top Colorful Accent Line: Xanh ngọc - Cyan - Xanh Navi */}
-      <div className="h-1 w-full bg-gradient-to-r from-teal-400 via-cyan-500 to-slate-900"></div>
+    <header className="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-slate-950/90 border-b border-slate-200/80 dark:border-slate-800 transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        
-        {/* P Marcom Logo + Title */}
-        <div 
-          onClick={() => navigateTo('selectTest')}
-          className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group shrink-0"
-        >
-          <div className="h-10 px-3 bg-gradient-to-r from-teal-600 to-cyan-700 rounded-2xl border-2 border-teal-300 dark:border-teal-400 shadow-md flex items-center justify-center group-hover:scale-105 transition-transform">
-            <img 
-              src="/logo-pmarcom.png" 
-              alt="P Marcom Logo" 
-              className="h-7 w-auto object-contain filter brightness-110 drop-shadow" 
-            />
+        {/* Logo */}
+        <button onClick={() => navigateTo('selectTest')} className="flex items-center gap-2.5 shrink-0 group" aria-label={vi ? 'Về trang chủ' : 'Go to home'}>
+          <span className="h-10 px-2.5 bg-gradient-to-br from-teal-600 to-cyan-700 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+            <img src="/logo-pmarcom.png" alt="P Marcom" className="h-6 w-auto object-contain" />
+          </span>
+          <span className="text-left leading-tight">
+            <span className="block font-black text-base text-slate-900 dark:text-white tracking-tight">P Marcom Career</span>
+            <span className="hidden sm:block text-xs text-slate-500 dark:text-slate-400 font-medium">
+              {vi ? 'Định hướng nghề nghiệp' : 'Career orientation'}
+            </span>
+          </span>
+        </button>
+
+        {/* Desktop navigation */}
+        <nav className="hidden lg:flex items-center gap-1" aria-label={vi ? 'Điều hướng chính' : 'Main navigation'}>
+          <button onClick={() => navigateTo('selectTest')} className={navItemClass(currentScreen === 'selectTest')}>
+            {t('home')}
+          </button>
+
+          <div className="relative" ref={testsRef}>
+            <button
+              onClick={() => setTestsMenuOpen(!testsMenuOpen)}
+              className={navItemClass(isTestPage)}
+              aria-expanded={testsMenuOpen}
+              aria-haspopup="true"
+            >
+              <span>{vi ? 'Các bài test' : 'Assessments'}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${testsMenuOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {testsMenuOpen && (
+              <div className="absolute left-0 top-full mt-2 w-72 p-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl animate-fade-in">
+                {testPages.map(({ screen, icon: Icon, label, desc }) => (
+                  <button
+                    key={screen}
+                    onClick={() => navigateTo(screen)}
+                    className={`w-full flex items-start gap-3 p-3 rounded-xl text-left transition-colors ${
+                      currentScreen === screen ? 'bg-teal-50 dark:bg-teal-950/60' : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    <span className="w-9 h-9 rounded-lg bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300 flex items-center justify-center shrink-0">
+                      <Icon className="w-5 h-5" />
+                    </span>
+                    <span>
+                      <span className="block text-sm font-bold text-slate-900 dark:text-white">{label}</span>
+                      <span className="block text-xs text-slate-500 dark:text-slate-400">{desc}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div>
-            <div className="flex items-center space-x-1.5">
-              <span className="font-black text-sm sm:text-base md:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-teal-600 via-cyan-600 to-slate-900 dark:from-teal-300 dark:via-cyan-300 dark:to-white">
-                {t('heroTitle')}
-              </span>
-            </div>
-            <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 -mt-0.5 hidden xs:block font-medium">
-              {t('heroSubtitle')}
-            </p>
-          </div>
-        </div>
+          <button onClick={() => navigateTo('careerLibrary')} className={navItemClass(currentScreen === 'careerLibrary')}>
+            {vi ? 'Thư viện ngành nghề' : 'Career library'}
+          </button>
 
-        {/* Desktop & iPad Navigation */}
-        <div className="hidden lg:flex items-center space-x-2 xl:space-x-3">
-          
-          {/* Visitor Counter */}
-          <div className="flex items-center space-x-1.5 px-3 py-1 bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/60 dark:to-cyan-950/60 border border-teal-200 dark:border-teal-800 rounded-full text-xs font-bold text-teal-900 dark:text-teal-300 shadow-xs shrink-0 whitespace-nowrap">
-            <Eye className="w-3.5 h-3.5 text-teal-600 animate-pulse shrink-0" />
-            <span className="whitespace-nowrap">{stats.totalVisits} {lang === 'vi' ? 'lượt xem' : 'visits'}</span>
-          </div>
+          <button onClick={() => navigateTo('history')} className={navItemClass(currentScreen === 'history')}>
+            {t('history')}
+          </button>
+        </nav>
 
-          {/* Admin Button */}
+        {/* Desktop right side */}
+        <div className="hidden lg:flex items-center gap-2 shrink-0">
           {userIsAdmin && (
             <button
               onClick={() => navigateTo('admin')}
-              className="flex items-center space-x-1 px-3.5 py-1.5 bg-gradient-to-r from-teal-500 via-cyan-600 to-slate-900 hover:from-teal-600 hover:to-slate-950 text-white font-black text-xs rounded-xl shadow-md transition-all scale-105 transform hover:scale-110 active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-colors"
             >
-              <Crown className="w-3.5 h-3.5 fill-teal-300" />
-              <span>{t('adminPortal')}</span>
+              <Crown className="w-4 h-4" />
+              <span>Admin</span>
             </button>
           )}
 
           <button
-            onClick={() => navigateTo('selectTest')}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              currentScreen === 'selectTest'
-                ? 'bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-300'
-                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+            onClick={toggleLanguage}
+            className="px-2.5 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            title={vi ? 'Switch to English' : 'Chuyển sang tiếng Việt'}
           >
-            <Sparkles className="w-3.5 h-3.5 text-teal-500" />
-            <span>{t('home')}</span>
+            {vi ? 'EN' : 'VI'}
           </button>
 
           <button
-            onClick={() => navigateTo('overviewDisc')}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              currentScreen === 'overviewDisc'
-                ? 'bg-cyan-100 text-cyan-900 dark:bg-cyan-950 dark:text-cyan-300'
-                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+            onClick={() => setDarkMode(!darkMode)}
+            className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            aria-label={darkMode ? (vi ? 'Giao diện sáng' : 'Light mode') : (vi ? 'Giao diện tối' : 'Dark mode')}
           >
-            <BookOpen className="w-3.5 h-3.5 text-cyan-600" />
-            <span>{t('discOverview')}</span>
+            {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
           </button>
 
-          <button
-            onClick={() => navigateTo('overviewHolland')}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              currentScreen === 'overviewHolland'
-                ? 'bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-300'
-                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5 text-teal-600" />
-            <span>{t('hollandOverview')}</span>
-          </button>
-
-          <button
-            onClick={() => navigateTo('overviewMbti')}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              currentScreen === 'overviewMbti'
-                ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300'
-                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
-          >
-            <Brain className="w-3.5 h-3.5 text-emerald-600" />
-            <span>MBTI</span>
-          </button>
-
-          <button
-            onClick={() => navigateTo('careerLibrary')}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              currentScreen === 'careerLibrary'
-                ? 'bg-gradient-to-r from-teal-500 to-indigo-600 text-white shadow-md'
-                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
-          >
-            <Compass className="w-3.5 h-3.5 text-indigo-500" />
-            <span>Thư Viện Ngành Nghề</span>
-          </button>
-
-          <button
-            onClick={() => navigateTo('history')}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              currentScreen === 'history'
-                ? 'bg-slate-200 text-slate-900 dark:bg-slate-800 dark:text-white'
-                : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
-          >
-            <History className="w-3.5 h-3.5 text-slate-600" />
-            <span>{t('history')}</span>
-          </button>
-
-          {/* User Status / Edit Profile Button OR 2 Distinct Auth Buttons */}
           {user ? (
-            <div className="flex items-center space-x-2">
+            <div className="relative" ref={accountRef}>
               <button
-                onClick={onOpenProfile}
-                className="flex items-center space-x-1.5 px-3 py-1 bg-teal-50 hover:bg-teal-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-full border border-teal-200 dark:border-slate-700 transition-all"
-                title="Bấm để chỉnh sửa hồ sơ cá nhân"
+                onClick={() => setAccountMenuOpen(!accountMenuOpen)}
+                className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-700 hover:border-teal-400 dark:hover:border-teal-600 transition-colors"
+                aria-expanded={accountMenuOpen}
+                aria-haspopup="true"
               >
-                <UserAvatar user={user} className="w-5 h-5 -ml-1.5" />
-                <span className="max-w-[100px] truncate">{user.fullName}</span>
-                {userIsSuperAdmin && <span className="text-[10px] text-amber-500 font-bold">👑</span>}
+                <UserAvatar user={user} className="w-8 h-8" />
+                <span className="max-w-[120px] truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{user.fullName}</span>
+                {userIsSuperAdmin && <Crown className="w-3.5 h-3.5 text-amber-500" />}
+                <ChevronDown className="w-4 h-4 text-slate-400" />
               </button>
-
-              <button
-                onClick={onLogout}
-                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-xl transition-colors"
-                title={t('logout')}
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
+              {accountMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-60 p-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl animate-fade-in">
+                  <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 mb-1">
+                    <div className="text-sm font-bold text-slate-900 dark:text-white truncate">{user.fullName}</div>
+                    <div className="text-xs text-slate-500 truncate">{user.email}</div>
+                  </div>
+                  <button onClick={() => { setAccountMenuOpen(false); onOpenProfile(); }} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <User className="w-4 h-4" /> {vi ? 'Hồ sơ cá nhân' : 'My profile'}
+                  </button>
+                  <button onClick={() => navigateTo('history')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <History className="w-4 h-4" /> {t('history')}
+                  </button>
+                  <button onClick={() => { setAccountMenuOpen(false); onLogout(); }} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40" title={t('logout')}>
+                    <LogOut className="w-4 h-4" /> {t('logout')}
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
-            /* 2 DISTINCT SEPARATE BUTTONS FOR LOGIN & REGISTER */
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handleLoginClick}
-                className="flex items-center space-x-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-teal-700 dark:text-teal-300 text-xs font-bold rounded-xl transition-colors"
-              >
-                <LogIn className="w-3.5 h-3.5" />
-                <span>{t('login')}</span>
+            <>
+              <button onClick={handleLoginClick} className="px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                {t('login')}
               </button>
-
-              <button
-                onClick={handleRegisterClick}
-                className="flex items-center space-x-1 px-3.5 py-1.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-bold text-xs rounded-xl shadow transition-all hover:scale-105"
-              >
-                <UserPlus className="w-3.5 h-3.5" />
-                <span>{t('register')}</span>
+              <button onClick={handleRegisterClick} className="px-4 py-2 rounded-xl text-sm font-bold text-white bg-teal-600 hover:bg-teal-500 shadow-sm transition-colors">
+                {t('register')}
               </button>
-            </div>
+            </>
           )}
-
-          {/* Language Switcher Toggle */}
-          <button
-            onClick={toggleLanguage}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-sm"
-            title="Chuyển đổi Ngôn ngữ / Switch Language"
-          >
-            <Globe className="w-3.5 h-3.5 text-teal-600" />
-            <span>{lang === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}</span>
-          </button>
-
-          {/* Dark Mode */}
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-xl text-slate-500 hover:text-slate-700 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          >
-            {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
-          </button>
         </div>
 
-        {/* Mobile & Tablet Controls */}
-        <div className="flex items-center space-x-1.5 lg:hidden">
-          
-          <button
-            onClick={toggleLanguage}
-            className="px-2 py-1 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200"
-          >
-            {lang === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}
-          </button>
-
+        {/* Mobile controls */}
+        <div className="flex items-center gap-1 lg:hidden">
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-xl text-slate-500 dark:text-slate-400"
+            className="p-2.5 rounded-xl text-slate-500 dark:text-slate-400"
+            aria-label={darkMode ? 'Light mode' : 'Dark mode'}
           >
-            {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
+            {darkMode ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
           </button>
-
+          {user && <UserAvatar user={user} className="w-8 h-8" />}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-xl text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800"
+            className="p-2.5 rounded-xl text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800"
+            aria-label={mobileMenuOpen ? (vi ? 'Đóng menu' : 'Close menu') : (vi ? 'Mở menu' : 'Open menu')}
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
-
       </div>
 
-      {/* Mobile Drawer Dropdown Menu */}
+      {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-4 space-y-3 shadow-xl">
-          
-          {/* User info on mobile */}
+        <div className="lg:hidden bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 px-4 py-4 space-y-4 shadow-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
           {user ? (
-            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
-              <button onClick={() => { onOpenProfile(); setMobileMenuOpen(false); }} className="flex items-center space-x-2 text-left">
-                <UserAvatar user={user} className="w-8 h-8" />
-                <div>
-                  <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center space-x-1">
-                    <span>{user.fullName}</span>
-                    {userIsSuperAdmin && <span>👑</span>}
-                  </div>
-                  <div className="text-[10px] text-teal-600 dark:text-teal-400">SĐT: {user.phone || 'Bấm để sửa'}</div>
-                </div>
+            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl">
+              <button onClick={() => { onOpenProfile(); setMobileMenuOpen(false); }} className="flex items-center gap-3 text-left min-w-0">
+                <UserAvatar user={user} className="w-10 h-10" />
+                <span className="min-w-0">
+                  <span className="flex items-center gap-1 font-bold text-sm text-slate-900 dark:text-white">
+                    <span className="truncate">{user.fullName}</span>
+                    {userIsSuperAdmin && <Crown className="w-3.5 h-3.5 text-amber-500 shrink-0" />}
+                  </span>
+                  <span className="block text-xs text-teal-700 dark:text-teal-400">{vi ? 'Xem hồ sơ cá nhân' : 'View profile'}</span>
+                </span>
               </button>
-
-              <button onClick={onLogout} className="text-xs text-red-500 font-bold">
-                {t('logout')}
+              <button onClick={() => { setMobileMenuOpen(false); onLogout(); }} className="p-2.5 text-red-500" aria-label={t('logout')}>
+                <LogOut className="w-5 h-5" />
               </button>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={handleLoginClick}
-                className="py-2.5 bg-slate-100 dark:bg-slate-800 text-teal-600 dark:text-teal-400 font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
-              >
-                <LogIn className="w-4 h-4" />
-                <span>{t('login')}</span>
+              <button onClick={handleLoginClick} className="py-3 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-sm rounded-xl flex items-center justify-center gap-2">
+                <LogIn className="w-4 h-4" /> {t('login')}
               </button>
-
-              <button
-                onClick={handleRegisterClick}
-                className="py-2.5 bg-teal-600 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
-              >
-                <UserPlus className="w-4 h-4" />
-                <span>{t('register')}</span>
+              <button onClick={handleRegisterClick} className="py-3 bg-teal-600 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2">
+                <UserPlus className="w-4 h-4" /> {t('register')}
               </button>
             </div>
           )}
 
           {userIsAdmin && (
-            <button
-              onClick={() => navigateTo('admin')}
-              className="w-full py-2.5 bg-gradient-to-r from-teal-500 to-slate-900 text-white font-black text-xs rounded-xl flex items-center justify-center space-x-2 shadow-sm"
-            >
-              <Crown className="w-4 h-4" />
-              <span>{t('adminPortal')}</span>
+            <button onClick={() => navigateTo('admin')} className="w-full py-3 bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 font-bold text-sm rounded-xl flex items-center justify-center gap-2">
+              <Crown className="w-4 h-4" /> {t('adminPortal')}
             </button>
           )}
 
-          <div className="grid grid-cols-2 gap-2 text-xs font-bold pt-1">
-            <button
-              onClick={() => navigateTo('selectTest')}
-              className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
-            >
-              <Sparkles className="w-4 h-4 text-teal-500" />
-              <span>{t('home')}</span>
-            </button>
-
-            <button
-              onClick={() => navigateTo('history')}
-              className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
-            >
-              <History className="w-4 h-4 text-slate-600" />
-              <span>{t('history')}</span>
-            </button>
-
-            <button
-              onClick={() => navigateTo('overviewDisc')}
-              className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
-            >
-              <BookOpen className="w-4 h-4 text-cyan-600" />
-              <span>{t('discOverview')}</span>
-            </button>
-
-            <button
-              onClick={() => navigateTo('overviewHolland')}
-              className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-800 dark:text-slate-200 flex items-center justify-center space-x-1.5"
-            >
-              <Layers className="w-4 h-4 text-teal-600" />
-              <span>{t('hollandOverview')}</span>
-            </button>
-
-            <button
-              onClick={() => navigateTo('careerLibrary')}
-              className="col-span-2 p-2.5 bg-gradient-to-r from-teal-600 to-indigo-600 text-white rounded-xl font-bold flex items-center justify-center space-x-1.5 shadow-sm"
-            >
-              <Compass className="w-4 h-4" />
-              <span>Thư Viện Ngành Nghề</span>
-            </button>
+          <div className="space-y-1">
+            {[
+              { screen: 'selectTest', icon: Home, label: t('home') },
+              ...testPages.map(p => ({ screen: p.screen, icon: p.icon, label: (vi ? 'Giới thiệu ' : 'About ') + p.label })),
+              { screen: 'careerLibrary', icon: Compass, label: vi ? 'Thư viện ngành nghề' : 'Career library' },
+              { screen: 'history', icon: History, label: t('history') }
+            ].map(({ screen, icon: Icon, label }) => (
+              <button
+                key={screen}
+                onClick={() => navigateTo(screen)}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-colors ${
+                  currentScreen === screen
+                    ? 'bg-teal-50 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
+                }`}
+              >
+                <Icon className="w-5 h-5 shrink-0" /> {label}
+              </button>
+            ))}
           </div>
 
-          <div className="pt-2 text-center text-[11px] text-teal-700 dark:text-teal-400 font-semibold flex items-center justify-center space-x-1 shrink-0 whitespace-nowrap">
-            <Eye className="w-3.5 h-3.5 shrink-0" />
-            <span className="whitespace-nowrap">{stats.totalVisits} {lang === 'vi' ? 'lượt truy cập hệ thống' : 'system visits'}</span>
-          </div>
-
+          <button onClick={toggleLanguage} className="w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-600 dark:text-slate-300">
+            {vi ? 'Switch to English' : 'Chuyển sang tiếng Việt'}
+          </button>
         </div>
       )}
-
     </header>
   );
 }

@@ -1,482 +1,330 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, Sparkles, Layers, ArrowRight, CheckCircle2, Star, Eye, ShieldCheck, Lock, UserCheck, Bell, Award, ExternalLink, GraduationCap, Rocket, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Eye, Clock, GraduationCap, ExternalLink, ListChecks, MousePointerClick, FileBarChart, BookOpen, Layers, Brain, Sparkles, PlayCircle, X } from 'lucide-react';
 import { getVisitorStats, subscribeToVisitorStats } from '../utils/visitorCounter';
 import { getTranslation } from '../utils/translations';
+import { DISC_QUESTIONS } from '../data/discQuestions';
+import { HOLLAND_CARDS } from '../data/hollandCards';
+
+const DISC_TOTAL = DISC_QUESTIONS.length;
+const HOLLAND_TOTAL = HOLLAND_CARDS.length;
+const MBTI_TOTAL = 28; // MBTI_QUESTIONS nạp lười (lazy) nên không import vào trang chủ
+
+const MODE_KEY = 'pmarcom_active_test_mode';
+const COMBO_DISC_KEY = 'pmarcom_combo_disc_result';
+
+function readProgress() {
+  try {
+    const disc = JSON.parse(localStorage.getItem('disc_current_answers') || '{}');
+    const holland = JSON.parse(localStorage.getItem('holland_current_choices') || '{}');
+    return {
+      dCount: Object.values(disc).filter(a => a && a.most && a.least).length,
+      hCount: Object.keys(holland).length,
+      comboDiscDone: !!localStorage.getItem(COMBO_DISC_KEY),
+      mode: localStorage.getItem(MODE_KEY) || ''
+    };
+  } catch {
+    return { dCount: 0, hCount: 0, comboDiscDone: false, mode: '' };
+  }
+}
+
+// Minh họa báo cáo mẫu trên hero (dữ liệu mẫu, có ghi rõ nhãn "Mẫu")
+function SampleReportCard({ vi }) {
+  const bars = [
+    { k: 'D', v: 72, c: 'bg-red-500' },
+    { k: 'I', v: 88, c: 'bg-amber-500' },
+    { k: 'S', v: 41, c: 'bg-emerald-500' },
+    { k: 'C', v: 55, c: 'bg-blue-500' }
+  ];
+  return (
+    <div className="w-64 p-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur rounded-2xl shadow-2xl border border-white/60 dark:border-slate-700 text-slate-900 dark:text-white">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{vi ? 'Mẫu báo cáo' : 'Sample report'}</span>
+        <span className="px-2 py-0.5 rounded-md bg-amber-100 text-amber-700 text-xs font-bold">DISC · I/D</span>
+      </div>
+      <div className="mt-1 text-sm font-extrabold">{vi ? 'Người Truyền Cảm Hứng' : 'The Inspirer'}</div>
+      <div className="mt-3 space-y-1.5">
+        {bars.map(b => (
+          <div key={b.k} className="flex items-center gap-2 text-xs font-bold">
+            <span className="w-3 text-slate-500">{b.k}</span>
+            <span className="flex-1 h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+              <span className={`block h-full rounded-full ${b.c}`} style={{ width: `${b.v}%` }} />
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+        {vi ? 'Gợi ý: Marketing, Truyền thông, Kinh doanh…' : 'Suggested: Marketing, Communications, Sales…'}
+      </div>
+    </div>
+  );
+}
 
 export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
   const [stats, setStats] = useState(getVisitorStats());
-  const [hasUnfinished, setHasUnfinished] = useState(() => {
-    const discSaved = localStorage.getItem('disc_current_answers');
-    const hollandSaved = localStorage.getItem('holland_current_choices');
-    const dCount = discSaved ? Object.keys(JSON.parse(discSaved)).length : 0;
-    const hCount = hollandSaved ? Object.keys(JSON.parse(hollandSaved)).length : 0;
-    return { dCount, hCount };
-  });
+  const [progress, setProgress] = useState(readProgress);
+  const vi = lang === 'vi';
+  const t = (key, params) => getTranslation(lang, key, params);
 
-  useEffect(() => {
-    const unsubscribe = subscribeToVisitorStats((newStats) => {
-      setStats(newStats);
-    });
-    return () => unsubscribe();
-  }, []);
+  useEffect(() => subscribeToVisitorStats(setStats), []);
+
+  const hasUnfinished = progress.dCount > 0 || progress.hCount > 0 || progress.comboDiscDone;
+
+  // Tiếp tục đúng chế độ đang làm dở (Combo / DISC / Holland)
+  const handleResume = () => {
+    const mode = progress.comboDiscDone ? 'combo' : progress.mode || (progress.dCount > 0 ? 'disc' : 'holland');
+    onSelectTestMode(mode);
+  };
 
   const handleClearSavedProgress = () => {
-    if (window.confirm(lang === 'vi' ? 'Bạn có muốn xóa câu trả lời dở dang và làm lại từ đầu?' : 'Clear saved progress and start fresh?')) {
+    if (window.confirm(vi ? 'Xóa câu trả lời đang làm dở và làm lại từ đầu?' : 'Clear saved progress and start fresh?')) {
       localStorage.removeItem('disc_current_answers');
       localStorage.removeItem('holland_current_choices');
-      setHasUnfinished({ dCount: 0, hCount: 0 });
+      localStorage.removeItem(MODE_KEY);
+      localStorage.removeItem(COMBO_DISC_KEY);
+      setProgress(readProgress());
     }
   };
 
-  const t = (key, params) => getTranslation(lang, key, params);
+  const scrollToTests = () => {
+    document.getElementById('chon-bai-test')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const steps = [
+    { icon: ListChecks, title: vi ? 'Chọn bài đánh giá' : 'Pick an assessment', desc: vi ? 'Combo DISC + Holland, hoặc từng bài riêng lẻ.' : 'DISC + Holland combo, or a single test.' },
+    { icon: MousePointerClick, title: vi ? 'Trả lời theo cảm nhận' : 'Answer honestly', desc: vi ? '4 – 18 phút tùy bài, tự lưu tiến độ, làm tiếp bất cứ lúc nào.' : '4 – 18 minutes per test, progress saved automatically.' },
+    { icon: FileBarChart, title: vi ? 'Nhận báo cáo ngay' : 'Get your report', desc: vi ? 'Biểu đồ tính cách, ngành học & nghề nghiệp phù hợp, tải PDF.' : 'Personality charts, matching majors & careers, PDF export.' }
+  ];
+
+  const singleTests = [
+    {
+      mode: 'disc', icon: BookOpen, tone: 'text-rose-600 bg-rose-50 dark:bg-rose-950/50 dark:text-rose-300',
+      title: t('discTitle'), time: vi ? `8 – 10 phút · ${DISC_TOTAL} câu` : `8 – 10 min · ${DISC_TOTAL} questions`,
+      desc: vi ? 'Phong cách hành vi, giao tiếp và làm việc của bạn.' : 'Your behavioral, communication and work style.',
+      cta: t('startDisc')
+    },
+    {
+      mode: 'holland', icon: Layers, tone: 'text-teal-700 bg-teal-50 dark:bg-teal-950/50 dark:text-teal-300',
+      title: vi ? 'Sở thích nghề nghiệp Holland' : 'Holland Career Interests', time: vi ? `6 – 8 phút · ${HOLLAND_TOTAL} thẻ` : `6 – 8 min · ${HOLLAND_TOTAL} cards`,
+      desc: vi ? 'Tìm mã Holland top 3 trong 6 nhóm nghề RIASEC.' : 'Find your top-3 code across 6 RIASEC groups.',
+      cta: t('startHolland')
+    },
+    {
+      mode: 'mbti', icon: Brain, tone: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 dark:text-indigo-300',
+      title: vi ? 'MBTI 16 nhóm tính cách' : 'MBTI 16 Personalities', time: vi ? `4 – 6 phút · ${MBTI_TOTAL} câu` : `4 – 6 min · ${MBTI_TOTAL} questions`,
+      desc: vi ? 'Khám phá 4 chiều tính cách và mã MBTI của bạn.' : 'Discover your 4 dimensions and MBTI code.',
+      cta: vi ? 'Bắt đầu test MBTI' : 'Start MBTI test'
+    }
+  ];
 
   return (
-    <div className="space-y-8 sm:space-y-10 py-4 sm:py-6">
+    <div className="space-y-14 sm:space-y-20 pb-6">
 
-      {/* UNFINISHED TEST RESUME BANNER */}
-      {(hasUnfinished.dCount > 0 || hasUnfinished.hCount > 0) && (
-        <div className="p-4 bg-teal-500/10 border-2 border-teal-400 dark:border-teal-500/50 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md animate-in fade-in slide-in-from-top duration-300">
-          <div className="flex items-center space-x-3 text-center sm:text-left">
-            <div className="p-2.5 rounded-xl bg-teal-500 text-slate-950 shrink-0">
-              <Zap className="w-5 h-5 animate-pulse" />
-            </div>
+      {/* Banner làm tiếp bài dở */}
+      {hasUnfinished && (
+        <div className="animate-fade-in p-4 sm:p-5 bg-white dark:bg-slate-900 border border-teal-300 dark:border-teal-700 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="w-11 h-11 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0">
+              <PlayCircle className="w-6 h-6" />
+            </span>
             <div>
-              <h4 className="font-black text-sm text-slate-900 dark:text-white flex items-center justify-center sm:justify-start space-x-1.5">
-                <span>{lang === 'vi' ? 'Phát hiện bài test đang làm dở dang!' : 'Unfinished test in progress!'}</span>
-              </h4>
-              <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-                {hasUnfinished.dCount > 0 && `• Bài DISC: Đã xong ${hasUnfinished.dCount}/28 câu. `}
-                {hasUnfinished.hCount > 0 && `• Bài Holland: Đã xếp ${hasUnfinished.hCount}/36 thẻ.`}
-              </p>
+              <div className="font-bold text-slate-900 dark:text-white">{vi ? 'Bạn đang làm dở một bài test' : 'You have a test in progress'}</div>
+              <div className="text-sm text-slate-600 dark:text-slate-300">
+                {progress.comboDiscDone && (vi ? 'Combo: đã xong phần DISC' : 'Combo: DISC part done')}
+                {progress.comboDiscDone && (progress.dCount > 0 || progress.hCount > 0) && ' · '}
+                {progress.dCount > 0 && (vi ? `DISC: ${progress.dCount}/${DISC_TOTAL} câu` : `DISC: ${progress.dCount}/${DISC_TOTAL}`)}
+                {progress.dCount > 0 && progress.hCount > 0 && ' · '}
+                {progress.hCount > 0 && (vi ? `Holland: ${progress.hCount}/${HOLLAND_TOTAL} thẻ` : `Holland: ${progress.hCount}/${HOLLAND_TOTAL}`)}
+              </div>
             </div>
           </div>
-
-          <div className="flex items-center space-x-2 shrink-0">
-            <button
-              onClick={() => onSelectTestMode(hasUnfinished.dCount > 0 ? 'disc' : 'holland')}
-              className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white font-black text-xs rounded-xl shadow transition-all flex items-center space-x-1"
-            >
-              <span>{lang === 'vi' ? 'Tiếp tục làm bài' : 'Resume Test'}</span>
-              <ArrowRight className="w-4 h-4" />
+          <div className="flex items-center gap-2 shrink-0">
+            <button onClick={handleResume} className="flex-1 sm:flex-none px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2">
+              {vi ? 'Làm tiếp' : 'Resume'} <ArrowRight className="w-4 h-4" />
             </button>
-            <button
-              onClick={handleClearSavedProgress}
-              className="px-3 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition-all"
-            >
-              {lang === 'vi' ? 'Xóa dở dang' : 'Clear'}
+            <button onClick={handleClearSavedProgress} className="p-2.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label={vi ? 'Xóa bài làm dở' : 'Clear progress'} title={vi ? 'Xóa bài làm dở' : 'Clear progress'}>
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
       )}
-      
-      {/* GUEST NOTICE BANNER FOR FIRST TIME VISITORS */}
-      {!user && (
-        <div className="p-4 bg-gradient-to-r from-teal-500/10 via-cyan-500/10 to-slate-900/10 border-2 border-teal-300 dark:border-teal-500/40 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
-          <div className="flex items-center space-x-3 text-center sm:text-left">
-            <div className="p-2.5 rounded-xl bg-teal-500 text-slate-950 shrink-0">
-              <Bell className="w-5 h-5 animate-bounce" />
-            </div>
-            <div>
-              <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center justify-center sm:justify-start space-x-1.5">
-                <span>{lang === 'vi' ? 'Chào mừng bạn đến với P Marcom!' : 'Welcome to P Marcom Career Platform!'}</span>
-                <Sparkles className="w-4 h-4 text-teal-500" />
-              </h4>
-              <p className="text-xs text-slate-600 dark:text-slate-300">
-                {t('guestNotice')}
-              </p>
-            </div>
-          </div>
 
-          <button
-            onClick={() => onSelectTestMode('combo')}
-            className="px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-bold text-xs rounded-xl shadow shrink-0"
-          >
-            {t('login')}
-          </button>
-        </div>
-      )}
+      {/* HERO */}
+      <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-950 via-blue-950 to-teal-900 text-white shadow-2xl">
+        <div className="absolute -top-32 -right-32 w-[28rem] h-[28rem] bg-teal-400/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -left-20 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* HERO BANNER SECTION - GAM MÀU TRẮNG, XANH NGỌC & XANH NAVI */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-blue-950 to-teal-900 text-white p-6 sm:p-12 shadow-2xl border border-teal-400/40">
-        
-        {/* Glow Background */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="relative grid lg:grid-cols-12 gap-10 items-center px-6 py-10 sm:px-12 sm:py-16">
+          <div className="lg:col-span-7 space-y-6 text-center lg:text-left animate-rise-in">
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-sm font-semibold text-teal-200">
+              <Sparkles className="w-4 h-4" />
+              {vi ? 'Miễn phí · Có báo cáo ngay' : 'Free · Instant report'}
+            </span>
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          
-          {/* Left Content */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-teal-300 text-xs font-black uppercase tracking-wider shadow-sm">
-              <img src="/logo-pmarcom.png" alt="Logo P Marcom" className="h-5 w-auto object-contain" />
-              <span>{lang === 'vi' ? 'Nền Tảng Độc Quyền P Marcom' : 'Exclusive P Marcom Platform'}</span>
-            </div>
-
-            {/* HEADLINE */}
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight drop-shadow-md">
-              {t('heroTitle')} <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 via-cyan-200 to-white">
-                {t('heroSubtitle')}
+            <h1 className="text-3xl sm:text-5xl lg:text-[3.4rem] font-black tracking-tight leading-[1.1]">
+              {t('heroTitle')}
+              <span className="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-teal-300 via-cyan-200 to-white">
+                DISC · Holland · MBTI
               </span>
             </h1>
 
-            {/* PARAGRAPH */}
-            <p className="text-teal-100 text-xs sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
-              {t('heroDesc')}
+            <p className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              {vi
+                ? 'Hiểu rõ tính cách, sở thích và thế mạnh của bạn trong chưa đến 20 phút — nhận gợi ý ngành học, nghề nghiệp phù hợp cho học sinh, sinh viên và người đi làm.'
+                : 'Understand your personality, interests and strengths in under 20 minutes — get matching majors and careers for students and professionals.'}
             </p>
 
-            {/* STATS PILLS - ĐỒNG BỘ REALTIME TOÀN CẦU */}
-            <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3">
-              
-              {/* Visit Counter Pill */}
-              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/20 shadow-md text-xs font-semibold shrink-0 whitespace-nowrap">
-                <Eye className="w-4 h-4 text-cyan-300 shrink-0 animate-pulse" />
-                <span className="text-white font-extrabold text-sm whitespace-nowrap">{stats.totalVisits}</span>
-                <span className="text-teal-100 whitespace-nowrap">{t('statsVisits')}</span>
-              </div>
-
-              {/* Completed Tests Counter Pill */}
-              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/20 shadow-md text-xs font-semibold shrink-0 whitespace-nowrap">
-                <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
-                <span className="text-white font-extrabold text-sm whitespace-nowrap">{stats.totalTests}</span>
-                <span className="text-teal-100 whitespace-nowrap">{t('statsCompletedTests')}</span>
-              </div>
-
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
+              <button
+                onClick={() => onSelectTestMode('combo')}
+                className="w-full sm:w-auto px-7 py-4 rounded-2xl bg-teal-400 hover:bg-teal-300 text-slate-950 font-extrabold text-base shadow-lg shadow-teal-500/30 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
+              >
+                {vi ? 'Bắt đầu miễn phí' : 'Start for free'} <ArrowRight className="w-5 h-5" />
+              </button>
+              <button
+                onClick={scrollToTests}
+                className="w-full sm:w-auto px-6 py-4 rounded-2xl border border-white/25 hover:bg-white/10 text-white font-semibold text-base transition-colors"
+              >
+                {vi ? 'Xem các bài test' : 'See all tests'}
+              </button>
             </div>
 
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 pt-2 text-sm text-slate-300">
+              <span className="flex items-center gap-2"><Eye className="w-4 h-4 text-cyan-300" /><strong className="text-white">{stats.totalVisits}</strong> {vi ? 'lượt truy cập' : 'visits'}</span>
+              <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-300" /><strong className="text-white">{stats.totalTests}</strong> {vi ? 'bài test đã hoàn thành' : 'tests completed'}</span>
+            </div>
+
+            {!user && (
+              <p className="text-sm text-slate-400">
+                {vi ? 'Đăng ký miễn phí để lưu kết quả và xem lại bất cứ lúc nào.' : 'Sign up free to save your results and revisit anytime.'}
+              </p>
+            )}
           </div>
 
-          {/* Right Hero Image - Ảnh Minh Họa Người Thật Chuyên Nghiệp */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative mx-auto max-w-md rounded-3xl overflow-hidden shadow-2xl border-4 border-teal-300/30 group">
+          <div className="lg:col-span-5 relative hidden sm:block">
+            <div className="relative mx-auto max-w-md rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/20">
               <img
                 src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop"
-                alt="Định hướng nghề nghiệp P Marcom với hình ảnh người thật"
-                className="w-full h-64 sm:h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                alt={vi ? 'Nhóm bạn trẻ cùng thảo luận định hướng nghề nghiệp' : 'Young people discussing career paths'}
+                className="w-full h-80 object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
-              
-              <div className="absolute bottom-4 left-4 right-4 p-3.5 bg-slate-900/85 backdrop-blur-md rounded-2xl border border-teal-400/30 text-xs shadow-lg">
-                <div className="font-black text-teal-300 flex items-center space-x-1.5">
-                  <Star className="w-4 h-4 fill-teal-300 text-teal-300" />
-                  <span>{lang === 'vi' ? 'Ma Trận Gợi Ý 50+ Ngành Học & Nghề Nghiệp' : 'Matrix of 50+ Recommended Majors & Careers'}</span>
-                </div>
-                <div className="text-[11px] text-slate-200 font-medium mt-0.5">{lang === 'vi' ? 'Dành cho Sinh viên/Học sinh và Người đi làm' : 'For Students, Fresh Grads & Working Professionals'}</div>
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent" />
+            </div>
+            <div className="absolute -bottom-6 -left-2 lg:-left-10 animate-rise-in" style={{ animationDelay: '0.25s' }}>
+              <SampleReportCard vi={vi} />
             </div>
           </div>
-
         </div>
-      </div>
+      </section>
 
-      {/* FOUR TEST CARDS - BỘ MÀU TRẮNG, XANH NGỌC, XANH NAVI */}
-      <div className="space-y-4">
-        <div className="text-center space-y-1">
-          <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-            {t('selectMode')}
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-500">
-            {lang === 'vi' ? 'Khuyến nghị thực hiện ' : 'Recommended to take the '}
-            <strong className="font-bold text-teal-600 dark:text-teal-400">{t('comboTitle')}</strong>
-          </p>
+      {/* 3 BƯỚC */}
+      <section className="space-y-8">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">{vi ? 'Cách hoạt động' : 'How it works'}</h2>
+          <p className="text-slate-500 dark:text-slate-400">{vi ? 'Ba bước đơn giản để hiểu mình hơn' : 'Three simple steps'}</p>
+        </div>
+        <ol className="grid sm:grid-cols-3 gap-4 sm:gap-6">
+          {steps.map(({ icon: Icon, title, desc }, i) => (
+            <li key={title} className="relative p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+              <span className="absolute top-5 right-5 text-4xl font-black text-slate-100 dark:text-slate-800 select-none">{i + 1}</span>
+              <span className="w-11 h-11 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 flex items-center justify-center">
+                <Icon className="w-5 h-5" />
+              </span>
+              <h3 className="mt-4 font-bold text-lg text-slate-900 dark:text-white">{title}</h3>
+              <p className="mt-1 text-slate-600 dark:text-slate-400">{desc}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* CHỌN BÀI TEST */}
+      <section id="chon-bai-test" className="space-y-8 scroll-mt-24">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">{t('selectMode')}</h2>
+          <p className="text-slate-500 dark:text-slate-400">{vi ? 'Lần đầu làm? Hãy chọn Combo để có báo cáo đầy đủ nhất.' : 'First time? Pick the combo for the most complete report.'}</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
-          
-          {/* CARD 1: DISC TEST */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-slate-200 dark:border-slate-800 shadow-xl flex flex-col justify-between space-y-5 hover:border-teal-500 hover:shadow-teal-500/20 transition-all hover:scale-[1.02]">
-            
-            <div className="space-y-4">
-              <div className="relative rounded-2xl overflow-hidden h-36">
-                <img
-                  src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600&auto=format&fit=crop"
-                  alt="DISC Assessment"
-                  className="w-full h-full object-cover"
-                />
-                <span className="absolute top-3 left-3 px-3 py-1 bg-slate-900 text-white font-extrabold text-xs rounded-full shadow">
-                  DISC Model
-                </span>
-              </div>
-
-              <div>
-                <h4 className="text-lg font-black text-slate-900 dark:text-white">
-                  {t('discTitle')}
-                </h4>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  {t('discDesc')}
-                </p>
-              </div>
-
-              <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-500 shrink-0" />
-                  <span>{t('discTime')}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-500 shrink-0" />
-                  <span>{lang === 'vi' ? 'Phân tích phong cách hành vi' : 'Behavioral Style Analysis'}</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => onSelectTestMode('disc')}
-              className="w-full py-3 px-4 bg-gradient-to-r from-slate-900 to-teal-700 hover:from-slate-950 hover:to-teal-600 text-white font-black text-xs rounded-2xl shadow-lg transition-all flex items-center justify-center space-x-2 transform hover:scale-[1.02] active:scale-95"
-            >
-              <span>{t('startDisc')}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
+        {/* Combo nổi bật */}
+        <div className="relative grid md:grid-cols-5 overflow-hidden rounded-3xl bg-white dark:bg-slate-900 border-2 border-teal-400 dark:border-teal-600 shadow-xl shadow-teal-500/10">
+          <span className="absolute top-4 left-4 z-10 px-3 py-1 rounded-full bg-teal-600 text-white text-xs font-bold uppercase tracking-wider shadow">
+            {vi ? 'Khuyên dùng' : 'Recommended'}
+          </span>
+          <div className="md:col-span-2 relative h-48 md:h-auto">
+            <img
+              src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop"
+              alt={vi ? 'Làm bài đánh giá định hướng nghề nghiệp' : 'Taking a career assessment'}
+              loading="lazy"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
           </div>
-
-          {/* CARD 2: HOLLAND CARD SORT */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-teal-200 dark:border-teal-900 shadow-xl flex flex-col justify-between space-y-5 hover:border-teal-500 hover:shadow-teal-500/20 transition-all hover:scale-[1.02]">
-            
-            <div className="space-y-4">
-              <div className="relative rounded-2xl overflow-hidden h-36">
-                <img
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=600&auto=format&fit=crop"
-                  alt="Holland Card Sort"
-                  className="w-full h-full object-cover"
-                />
-                <span className="absolute top-3 left-3 px-3 py-1 bg-teal-600 text-white font-black text-xs rounded-full shadow-md">
-                  Holland Code (RIASEC)
-                </span>
-              </div>
-
-              <div>
-                <h4 className="text-lg font-black text-slate-900 dark:text-white">
-                  {t('hollandTitle')}
-                </h4>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  {t('hollandDesc')}
-                </p>
-              </div>
-
-              <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-500 shrink-0" />
-                  <span>{t('hollandTime')}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-500 shrink-0" />
-                  <span>{lang === 'vi' ? 'Tìm Mã Holland Top 3' : 'Top 3 Holland RIASEC Code'}</span>
-                </div>
-              </div>
+          <div className="md:col-span-3 p-6 sm:p-8 space-y-5">
+            <div className="space-y-2">
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white">{vi ? 'Đánh giá Combo: DISC + Holland' : 'Combo: DISC + Holland'}</h3>
+              <p className="text-slate-600 dark:text-slate-300">{t('comboDesc')}</p>
             </div>
-
-            <button
-              onClick={() => onSelectTestMode('holland')}
-              className="w-full py-3 px-4 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-black text-xs rounded-2xl shadow-lg transition-all flex items-center justify-center space-x-2 transform hover:scale-[1.02] active:scale-95"
-            >
-              <span>{t('startHolland')}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-          </div>
-
-          {/* CARD 3: MBTI 16 PERSONALITY TYPES (NEW STANDALONE TEST) */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border-2 border-cyan-200 dark:border-cyan-900 shadow-xl flex flex-col justify-between space-y-5 hover:border-cyan-500 hover:shadow-cyan-500/20 transition-all hover:scale-[1.02]">
-            
-            <div className="space-y-4">
-              <div className="relative rounded-2xl overflow-hidden h-36">
-                <img
-                  src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=600&auto=format&fit=crop"
-                  alt="MBTI 16 Personality Types"
-                  className="w-full h-full object-cover"
-                />
-                <span className="absolute top-3 left-3 px-3 py-1 bg-cyan-600 text-white font-black text-xs rounded-full shadow-md">
-                  MBTI 16 Types
-                </span>
-              </div>
-
-              <div>
-                <h4 className="text-lg font-black text-slate-900 dark:text-white">
-                  {lang === 'vi' ? 'Bài Test MBTI 16 Nhóm' : 'MBTI 16 Personality Test'}
-                </h4>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  {lang === 'vi' ? 'Khám phá 4 chiều đo nhân cách cốt lõi (E/I, S/N, T/F, J/P) và định hình mã MBTI 16 loại.' : 'Identify your 4 personality dichotomies and discover your 16 MBTI code.'}
-                </p>
-              </div>
-
-              <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-500 shrink-0" />
-                  <span>{lang === 'vi' ? '⏱️ 3-5 phút (20 câu)' : '⏱️ 3-5 mins (20 questions)'}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-500 shrink-0" />
-                  <span>{lang === 'vi' ? 'Bài test độc lập 100%' : '100% Standalone Assessment'}</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => onSelectTestMode('mbti')}
-              className="w-full py-3 px-4 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-black text-xs rounded-2xl shadow-lg transition-all flex items-center justify-center space-x-2 transform hover:scale-[1.02] active:scale-95"
-            >
-              <span>{lang === 'vi' ? 'Bắt đầu Test MBTI' : 'Start MBTI Test'}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-          </div>
-
-          {/* CARD 4: COMBO TEST (RECOMMENDED) */}
-          <div className="bg-gradient-to-b from-teal-50/60 to-cyan-50/40 dark:from-slate-900 dark:to-slate-900 rounded-3xl p-6 border-2 border-teal-400 dark:border-teal-500/60 shadow-2xl flex flex-col justify-between space-y-5 relative transform hover:scale-[1.03] transition-all">
-            
-            <div className="absolute -top-3.5 right-6 px-3 py-1 bg-teal-600 text-white font-black text-[11px] rounded-full uppercase tracking-wider shadow">
-              🔥 {lang === 'vi' ? 'Khuyên Dùng' : 'Recommended'}
-            </div>
-
-            <div className="space-y-4">
-              <div className="relative rounded-2xl overflow-hidden h-40">
-                <img
-                  src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600&auto=format&fit=crop"
-                  alt="Combo Assessment"
-                  className="w-full h-full object-cover"
-                />
-                <span className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-black text-xs rounded-full shadow">
-                  {lang === 'vi' ? 'Đánh Giá Kép Toàn Diện' : 'Comprehensive Dual Combo'}
-                </span>
-              </div>
-
-              <div>
-                <h4 className="text-lg font-black text-slate-900 dark:text-white">
-                  {t('comboTitle')}
-                </h4>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  {t('comboDesc')}
-                </p>
-              </div>
-
-              <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  <span>{lang === 'vi' ? 'Báo cáo tỉ lệ & Biểu đồ kép' : 'Dual Radar & Bar Charts'}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  <span>{lang === 'vi' ? 'Xuất file PDF phân trang chuẩn A4' : 'A4 PDF Report Export'}</span>
-                </div>
-              </div>
-            </div>
-
+            <ul className="grid sm:grid-cols-2 gap-2.5 text-sm text-slate-700 dark:text-slate-300">
+              {(vi
+                ? ['Khoảng 15 – 18 phút cho cả hai phần', 'Biểu đồ tính cách & sở thích', 'Gợi ý ngành học, nghề nghiệp', 'Xuất báo cáo PDF khổ A4']
+                : ['About 15 – 18 minutes in total', 'Personality & interest charts', 'Matching majors and careers', 'A4 PDF report export']
+              ).map(item => (
+                <li key={item} className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />{item}</li>
+              ))}
+            </ul>
             <button
               onClick={() => onSelectTestMode('combo')}
-              className="w-full py-3.5 px-4 bg-gradient-to-r from-teal-500 via-cyan-500 to-slate-900 hover:from-teal-600 hover:to-slate-950 text-white font-black text-xs sm:text-sm rounded-2xl shadow-lg transition-all flex items-center justify-center space-x-2"
+              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold transition-colors flex items-center justify-center gap-2"
             >
-              <Sparkles className="w-4 h-4 animate-pulse text-cyan-300" />
-              <span>{t('startCombo')}</span>
-              <ArrowRight className="w-4 h-4" />
+              {vi ? 'Làm bài Combo' : 'Take the combo'} <ArrowRight className="w-5 h-5" />
             </button>
-
           </div>
-
         </div>
-      </div>
 
-      {/* BANNER GIỚI THIỆU KHÓA HỌC DIGITAL MARKETING (P MARCOM ACADEMY) */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-blue-950 to-teal-950 text-white p-6 sm:p-10 shadow-2xl border-2 border-teal-500/40 group">
-        
-        {/* Decorative Ambient Lighting */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          
-          {/* Left Course Information */}
-          <div className="lg:col-span-7 space-y-5 text-center lg:text-left">
-            
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-teal-400/40 text-teal-300 text-xs font-black uppercase tracking-wider">
-              <GraduationCap className="w-4 h-4 text-teal-300 shrink-0" />
-              <span>P Marcom Academy • Digital Marketing Professional</span>
-            </div>
-
-            <h3 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-snug">
-              {lang === 'vi' ? (
-                <>
-                  Khóa Học <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 via-cyan-200 to-white">Digital Marketing Thực Chiến</span> – Kiến Tạo Sự Nghiệp Đột Phá
-                </>
-              ) : (
-                <>
-                  Practical <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 via-cyan-200 to-white">Digital Marketing Masterclass</span> – Accelerate Your Career
-                </>
-              )}
-            </h3>
-
-            <p className="text-slate-300 text-xs sm:text-sm max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
-              {lang === 'vi' 
-                ? 'Lộ trình đào tạo chuẩn doanh nghiệp từ cơ bản đến chuyên sâu: SEO & Content Strategy, Performance Ads, Xây dựng thương hiệu & Ứng dụng AI trong Marketing.'
-                : 'Enterprise-grade practical training from foundations to advanced: SEO & Content Strategy, Performance Ads, Brand Strategy & AI Marketing Application.'}
-            </p>
-
-            {/* Feature Pills */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 pt-1">
-              <span className="px-3.5 py-1.5 bg-white/10 backdrop-blur-md rounded-xl text-xs font-bold text-slate-200 border border-white/15 flex items-center space-x-1.5 shadow-sm">
-                <Rocket className="w-4 h-4 text-teal-300 shrink-0" />
-                <span>{lang === 'vi' ? 'Thực chiến 100% Dự án thật' : '100% Real-world Projects'}</span>
+        {/* Bài lẻ */}
+        <div className="grid sm:grid-cols-3 gap-4 sm:gap-6">
+          {singleTests.map(({ mode, icon: Icon, tone, title, time, desc, cta }) => (
+            <div key={mode} className="group flex flex-col p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-teal-400 dark:hover:border-teal-600 hover:shadow-lg transition-all">
+              <span className={`w-11 h-11 rounded-xl flex items-center justify-center ${tone}`}>
+                <Icon className="w-5 h-5" />
               </span>
-
-              <span className="px-3.5 py-1.5 bg-white/10 backdrop-blur-md rounded-xl text-xs font-bold text-slate-200 border border-white/15 flex items-center space-x-1.5 shadow-sm">
-                <Zap className="w-4 h-4 text-cyan-300 shrink-0" />
-                <span>{lang === 'vi' ? 'Ứng dụng AI Marketing Tool' : 'AI Marketing Workflows'}</span>
-              </span>
-
-              <span className="px-3.5 py-1.5 bg-white/10 backdrop-blur-md rounded-xl text-xs font-bold text-slate-200 border border-white/15 flex items-center space-x-1.5 shadow-sm">
-                <Award className="w-4 h-4 text-emerald-300 shrink-0" />
-                <span>{lang === 'vi' ? 'Cấp chứng chỉ khóa học' : 'Course Certification Included'}</span>
-              </span>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
-              <a
-                href="https://academy.pmarcom.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-teal-500 via-cyan-500 to-slate-900 hover:from-teal-600 hover:to-slate-950 text-white font-black text-xs sm:text-sm rounded-2xl shadow-xl transition-all duration-300 transform group-hover:scale-105 flex items-center justify-center space-x-2"
+              <h3 className="mt-4 font-bold text-lg text-slate-900 dark:text-white">{title}</h3>
+              <p className="mt-1 text-slate-600 dark:text-slate-400 flex-1">{desc}</p>
+              <p className="mt-3 flex items-center gap-1.5 text-sm text-slate-500"><Clock className="w-4 h-4" />{time}</p>
+              <button
+                onClick={() => onSelectTestMode(mode)}
+                className="mt-5 w-full py-3 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 dark:group-hover:bg-white dark:group-hover:text-slate-900 transition-colors flex items-center justify-center gap-2"
               >
-                <span>{lang === 'vi' ? 'Khám Phá Khóa Học Ngay' : 'Explore Academy Courses'}</span>
-                <ExternalLink className="w-4 h-4 text-white stroke-[2.5]" />
-              </a>
-              <span className="text-xs text-slate-400 font-medium">
-                👉 academy.pmarcom.com
-              </span>
+                {cta} <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
-
-          </div>
-
-          {/* Right Realistic Banner Image */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative mx-auto rounded-3xl overflow-hidden shadow-2xl border-2 border-teal-400/30 group-hover:border-cyan-400/50 transition-all duration-500">
-              <img
-                src="https://images.unsplash.com/photo-1557838923-2985c318be48?q=80&w=800&auto=format&fit=crop"
-                alt="Khóa học Digital Marketing Thực Chiến P Marcom Academy"
-                className="w-full h-56 sm:h-72 object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
-
-              {/* Floating Badge on Image */}
-              <div className="absolute bottom-3 left-3 right-3 p-3 bg-slate-950/85 backdrop-blur-md rounded-2xl border border-teal-400/30 text-xs flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <div className="font-extrabold text-teal-300 text-xs flex items-center space-x-1">
-                    <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
-                    <span>Digital Marketing & AI Tools 2026</span>
-                  </div>
-                  <div className="text-[11px] text-slate-300">Performance Ads • SEO & Content Strategy</div>
-                </div>
-                <span className="px-2.5 py-1 bg-teal-600 text-white font-extrabold text-[10px] rounded-lg shrink-0">
-                  P MARCOM ACADEMY
-                </span>
-              </div>
-            </div>
-          </div>
-
+          ))}
         </div>
+      </section>
 
-      </div>
-
+      {/* ACADEMY (thu gọn, đặt cuối trang) */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-blue-950 to-teal-950 text-white p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="absolute -right-16 -top-16 w-72 h-72 bg-teal-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative flex items-start gap-4">
+          <span className="w-12 h-12 rounded-2xl bg-teal-500/20 text-teal-300 flex items-center justify-center shrink-0">
+            <GraduationCap className="w-6 h-6" />
+          </span>
+          <div className="space-y-1">
+            <div className="text-xs font-bold uppercase tracking-wider text-teal-300">P Marcom Academy</div>
+            <h2 className="text-xl sm:text-2xl font-black">{vi ? 'Khóa học Digital Marketing thực chiến' : 'Practical Digital Marketing Course'}</h2>
+            <p className="text-slate-300 max-w-2xl">
+              {vi
+                ? 'SEO & Content, Performance Ads, xây dựng thương hiệu và ứng dụng AI trong Marketing — học qua dự án thật, có chứng chỉ.'
+                : 'SEO & Content, Performance Ads, branding and AI in marketing — project-based, with certification.'}
+            </p>
+          </div>
+        </div>
+        <a
+          href="https://academy.pmarcom.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative shrink-0 px-6 py-3.5 rounded-xl bg-white text-slate-900 hover:bg-teal-50 font-bold transition-colors flex items-center justify-center gap-2"
+        >
+          {vi ? 'Xem khóa học' : 'View course'} <ExternalLink className="w-4 h-4" />
+        </a>
+      </section>
     </div>
   );
 }

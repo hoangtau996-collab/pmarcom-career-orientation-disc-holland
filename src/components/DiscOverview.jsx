@@ -71,7 +71,7 @@ export default function DiscOverview({ onStartTest }) {
                 className="w-full h-48 sm:h-56 object-cover transform hover:scale-105 transition-transform duration-500"
               />
               <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2 text-xs text-slate-500 font-medium">
-                📷 Ảnh minh họa: Nghiên cứu khoa học tâm lý hành vi con người thế kỷ 20
+                Ảnh minh họa: Nghiên cứu khoa học tâm lý hành vi con người thế kỷ 20
               </div>
             </div>
 
@@ -164,10 +164,10 @@ export default function DiscOverview({ onStartTest }) {
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                   Bạn là người mạnh mẽ, quyết đoán, coi trọng kết quả và thích cạnh tranh. Bạn không ngại đối mặt với thách thức và thích cầm quyền chỉ đạo.
                 </p>
-                <div className="pt-2 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300">
-                  <div>🎯 <strong>Động lực chính:</strong> Thách thức, quyền lực và thành tích.</div>
-                  <div>😨 <strong>Nỗi sợ chính:</strong> Bị người khác lợi dụng hoặc mất kiểm soát.</div>
-                  <div>💬 <strong>Giao tiếp:</strong> Thẳng thắn, đi thẳng vào vấn đề.</div>
+                <div className="pt-2 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                  <div><strong>Động lực chính:</strong> Thách thức, quyền lực và thành tích.</div>
+                  <div><strong>Nỗi sợ chính:</strong> Bị người khác lợi dụng hoặc mất kiểm soát.</div>
+                  <div><strong>Giao tiếp:</strong> Thẳng thắn, đi thẳng vào vấn đề.</div>
                 </div>
               </div>
             </div>
@@ -194,10 +194,10 @@ export default function DiscOverview({ onStartTest }) {
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                   Bạn là người nhiệt huyết, hòa đồng, giàu năng lượng sáng tạo. Bạn có khả năng diễn thuyết và kết nối cộng đồng bứt phá.
                 </p>
-                <div className="pt-2 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300">
-                  <div>🎯 <strong>Động lực chính:</strong> Sự công nhận, sự hào hứng và quan hệ xã hội.</div>
-                  <div>😨 <strong>Nỗi sợ chính:</strong> Bị từ chối, cô lập hoặc quy trình cứng nhắc.</div>
-                  <div>💬 <strong>Giao tiếp:</strong> Truyền cảm hứng, cởi mở và lạc quan.</div>
+                <div className="pt-2 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                  <div><strong>Động lực chính:</strong> Sự công nhận, sự hào hứng và quan hệ xã hội.</div>
+                  <div><strong>Nỗi sợ chính:</strong> Bị từ chối, cô lập hoặc quy trình cứng nhắc.</div>
+                  <div><strong>Giao tiếp:</strong> Truyền cảm hứng, cởi mở và lạc quan.</div>
                 </div>
               </div>
             </div>
@@ -224,10 +224,10 @@ export default function DiscOverview({ onStartTest }) {
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                   Bạn là người kiên nhẫn, chân thành, biết lắng nghe thấu cảm và tôn trọng tập thể. Bạn là chỗ dựa tinh thần đáng tin cậy.
                 </p>
-                <div className="pt-2 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300">
-                  <div>🎯 <strong>Động lực chính:</strong> Sự an toàn, hòa hợp và làm việc nhóm.</div>
-                  <div>😨 <strong>Nỗi sợ chính:</strong> Thay đổi đột ngột hoặc xung đột gay gắt.</div>
-                  <div>💬 <strong>Giao tiếp:</strong> Ôn hòa, lắng nghe và đồng cảm.</div>
+                <div className="pt-2 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                  <div><strong>Động lực chính:</strong> Sự an toàn, hòa hợp và làm việc nhóm.</div>
+                  <div><strong>Nỗi sợ chính:</strong> Thay đổi đột ngột hoặc xung đột gay gắt.</div>
+                  <div><strong>Giao tiếp:</strong> Ôn hòa, lắng nghe và đồng cảm.</div>
                 </div>
               </div>
             </div>
@@ -254,10 +254,10 @@ export default function DiscOverview({ onStartTest }) {
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                   Bạn là người tỉ mỉ, kỷ luật, tư duy dựa trên logic và số liệu thực tế. Bạn luôn yêu cầu sự chính xác cao nhất trong công việc.
                 </p>
-                <div className="pt-2 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300">
-                  <div>🎯 <strong>Động lực chính:</strong> Chất lượng, sự chính xác và chuẩn mực.</div>
-                  <div>😨 <strong>Nỗi sợ chính:</strong> Sai sót chuyên môn hoặc bị chỉ trích thiếu logic.</div>
-                  <div>💬 <strong>Giao tiếp:</strong> Dựa trên số liệu, chi tiết và nguyên tắc.</div>
+                <div className="pt-2 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                  <div><strong>Động lực chính:</strong> Chất lượng, sự chính xác và chuẩn mực.</div>
+                  <div><strong>Nỗi sợ chính:</strong> Sai sót chuyên môn hoặc bị chỉ trích thiếu logic.</div>
+                  <div><strong>Giao tiếp:</strong> Dựa trên số liệu, chi tiết và nguyên tắc.</div>
                 </div>
               </div>
             </div>

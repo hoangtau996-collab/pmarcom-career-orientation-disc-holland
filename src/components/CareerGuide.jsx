@@ -89,7 +89,7 @@ export default function CareerGuide({
             </div>
             <div>
               <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-                {isStudent ? '🎯 Định Hướng Ngành Nghề & Lĩnh Vực Phù Hợp' : '💼 Gợi Ý Sự Nghiệp & Vị Trí Công Việc'}
+                {isStudent ? 'Định Hướng Ngành Nghề & Lĩnh Vực Phù Hợp' : 'Gợi Ý Sự Nghiệp & Vị Trí Công Việc'}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                 {activePerspective === 'holland' && hollandResult && (
@@ -276,7 +276,7 @@ export default function CareerGuide({
           {/* Soft Skills */}
           <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-3">
             <h4 className="font-bold text-slate-900 dark:text-white text-sm">
-              💡 Kỹ Năng Mềm Cần Tập Trung Rèn Luyện Trong Thời Sinh Viên:
+              Kỹ Năng Mềm Cần Tập Trung Rèn Luyện Trong Thời Sinh Viên:
             </h4>
             <div className="flex flex-wrap gap-2">
               {mapping.student.softSkills.map((skill, idx) => (
@@ -334,7 +334,7 @@ export default function CareerGuide({
             
             <div className="p-6 rounded-2xl bg-purple-50/50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900/60 space-y-2">
               <h4 className="font-bold text-purple-900 dark:text-purple-200 text-sm">
-                👑 Phong Cách Lãnh Đạo / Quản Lý:
+                Phong Cách Lãnh Đạo / Quản Lý:
               </h4>
               <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                 {mapping.professional.leadershipStyle}
@@ -343,7 +343,7 @@ export default function CareerGuide({
 
             <div className="p-6 rounded-2xl bg-amber-50/50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 space-y-2">
               <h4 className="font-bold text-amber-900 dark:text-amber-200 text-sm">
-                🧘‍♂️ Quản Lý Căng Thẳng Công Sở (Stress Solution):
+                Quản Lý Căng Thẳng Công Sở (Stress Solution):
               </h4>
               <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                 {mapping.professional.stressManagement}
@@ -355,7 +355,7 @@ export default function CareerGuide({
           {/* Certificates */}
           <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-3">
             <h4 className="font-bold text-slate-900 dark:text-white text-sm">
-              🏆 Chứng Chỉ & Khóa Học Đề Xuất Để Nâng Tầm Sự Nghiệp:
+              Chứng Chỉ & Khóa Học Đề Xuất Để Nâng Tầm Sự Nghiệp:
             </h4>
             <div className="flex flex-wrap gap-2">
               {mapping.professional.recommendedCertificates.map((cert, idx) => (

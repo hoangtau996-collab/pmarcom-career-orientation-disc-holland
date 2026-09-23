@@ -140,11 +140,11 @@ export default function ProfileModal({ user, onSaveProfile, onClose, onLogout })
                     </button>
                   )}
                 </div>
-                <p className="text-[11px] text-slate-400">JPG, PNG — ảnh được cắt vuông tự động</p>
+                <p className="text-xs text-slate-400">JPG, PNG — ảnh được cắt vuông tự động</p>
               </div>
               <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePickAvatar} className="hidden" />
             </div>
-            {errors.avatar && <p className="text-[11px] text-red-500 font-medium">{errors.avatar}</p>}
+            {errors.avatar && <p className="text-xs text-red-500 font-medium">{errors.avatar}</p>}
 
             {/* Email (Read only) */}
             <div className="space-y-1">
@@ -176,7 +176,7 @@ export default function ProfileModal({ user, onSaveProfile, onClose, onLogout })
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                 />
               </div>
-              {errors.fullName && <p className="text-[11px] text-red-500 font-medium">{errors.fullName}</p>}
+              {errors.fullName && <p className="text-xs text-red-500 font-medium">{errors.fullName}</p>}
             </div>
 
             {/* Phone Number */}
@@ -193,7 +193,7 @@ export default function ProfileModal({ user, onSaveProfile, onClose, onLogout })
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                 />
               </div>
-              {errors.phone && <p className="text-[11px] text-red-500 font-medium">{errors.phone}</p>}
+              {errors.phone && <p className="text-xs text-red-500 font-medium">{errors.phone}</p>}
             </div>
 
             {/* Category */}
@@ -211,7 +211,7 @@ export default function ProfileModal({ user, onSaveProfile, onClose, onLogout })
                       : 'border-slate-200 dark:border-slate-800 text-slate-600'
                   }`}
                 >
-                  🎓 Sinh Viên / Học Sinh
+                  Sinh Viên / Học Sinh
                 </button>
                 <button
                   type="button"
@@ -222,7 +222,7 @@ export default function ProfileModal({ user, onSaveProfile, onClose, onLogout })
                       : 'border-slate-200 dark:border-slate-800 text-slate-600'
                   }`}
                 >
-                  💼 Người Đi Làm
+                  Người Đi Làm
                 </button>
               </div>
             </div>

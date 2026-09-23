@@ -15,8 +15,12 @@ export default {
           c: '#3B82F6', // Blue for Conscientiousness
         }
       },
+      // Nâng cỡ chữ nhỏ nhất cho dễ đọc trên điện thoại (mặc định 12px → 13px)
+      fontSize: {
+        xs: ['0.8125rem', { lineHeight: '1.15rem' }],
+      },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
       }
     },
   },

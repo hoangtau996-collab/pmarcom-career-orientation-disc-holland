@@ -1,6 +1,22 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
+// Bỏ dấu tiếng Việt: font mặc định của jsPDF không hiển thị được chữ có dấu, tên file cũng gọn hơn
+const toAscii = (str = '') =>
+  String(str).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+
+const fileSafe = (str = '') => toAscii(str).trim().replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '') || 'User';
+
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Trang kết quả chia tab: tạm hiện mọi tab để PDF/ảnh có đủ nội dung, trả về hàm khôi phục
+async function revealAllTabPanels(container) {
+  const hidden = [...container.querySelectorAll('[data-tab-panel].hidden')];
+  hidden.forEach((el) => el.classList.remove('hidden'));
+  if (hidden.length) await wait(450); // chờ biểu đồ đo lại kích thước
+  return () => hidden.forEach((el) => el.classList.add('hidden'));
+}
+
 /**
  * Xuất báo cáo DISC sang file PDF dàn trải chuẩn A4, không cắt ngang chữ/biểu đồ
  * @param {string} containerId - ID phần tử chứa báo cáo
@@ -13,7 +29,10 @@ export async function exportToPdf(containerId, userName = 'User') {
     return;
   }
 
+  let restoreTabs = () => {};
   try {
+    restoreTabs = await revealAllTabPanels(container);
+
     // Ẩn tạm thời các phần tử no-print
     const noPrintElements = container.querySelectorAll('.no-print');
     noPrintElements.forEach(el => (el.style.display = 'none'));
@@ -37,15 +56,15 @@ export async function exportToPdf(containerId, userName = 'User') {
       pdfDoc.setTextColor(148, 163, 184); // Slate 400
       
       // Header
-      pdfDoc.text(`Báo Cáo Đánh Giá Tính Cách DISC Standard • Chuẩn Marston Hoa Kỳ`, margin, 7);
-      pdfDoc.text(`Người làm test: ${userName}`, pageWidth - margin, 7, { align: 'right' });
+      pdfDoc.text('Bao cao dinh huong nghe nghiep - P Marcom Career', margin, 7);
+      pdfDoc.text(`Nguoi lam test: ${toAscii(userName)}`, pageWidth - margin, 7, { align: 'right' });
       pdfDoc.setDrawColor(226, 232, 240);
       pdfDoc.line(margin, 8, pageWidth - margin, 8);
 
       // Footer
       pdfDoc.line(margin, pageHeight - 8, pageWidth - margin, pageHeight - 8);
       pdfDoc.text(`Trang ${currentPage} / ${totalPages}`, pageWidth - margin, pageHeight - 4, { align: 'right' });
-      pdfDoc.text(`Ngày xuất báo cáo: ${new Date().toLocaleDateString('vi-VN')}`, margin, pageHeight - 4);
+      pdfDoc.text(`Ngay xuat bao cao: ${new Date().toLocaleDateString('vi-VN')}  |  career.pmarcom.com`, margin, pageHeight - 4);
     };
 
     if (sections.length > 0) {
@@ -100,12 +119,14 @@ export async function exportToPdf(containerId, userName = 'User') {
     // Hiện lại các phần tử no-print
     noPrintElements.forEach(el => (el.style.display = ''));
 
-    const fileName = `Bao_Cao_DISC_${userName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.pdf`;
+    const fileName = `Bao_Cao_Dinh_Huong_${fileSafe(userName)}_${new Date().toISOString().slice(0, 10)}.pdf`;
     pdf.save(fileName);
 
   } catch (error) {
     console.error('Lỗi khi xuất PDF:', error);
     alert('Có lỗi xảy ra khi tạo file PDF. Vui lòng thử lại!');
+  } finally {
+    restoreTabs();
   }
 }
 
@@ -119,7 +140,9 @@ export async function exportToImage(containerId, userName = 'User') {
     return;
   }
 
+  let restoreTabs = () => {};
   try {
+    restoreTabs = await revealAllTabPanels(container);
     const noPrintElements = container.querySelectorAll('.no-print');
     noPrintElements.forEach(el => (el.style.display = 'none'));
 
@@ -134,7 +157,7 @@ export async function exportToImage(containerId, userName = 'User') {
 
     const image = canvas.toDataURL('image/png');
     const link = document.createElement('a');
-    const fileName = `Ket_Qua_DISC_${userName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.png`;
+    const fileName = `Ket_Qua_${fileSafe(userName)}_${new Date().toISOString().slice(0, 10)}.png`;
     
     link.href = image;
     link.download = fileName;
@@ -142,8 +165,49 @@ export async function exportToImage(containerId, userName = 'User') {
   } catch (error) {
     console.error('Lỗi khi xuất file ảnh:', error);
     alert('Có lỗi xảy ra khi tạo file Ảnh. Vui lòng thử lại!');
+  } finally {
+    restoreTabs();
   }
 }
+
+/**
+ * Tạo ảnh thẻ kết quả để chia sẻ mạng xã hội.
+ * Điện thoại hỗ trợ Web Share: mở bảng chia sẻ (Facebook, Zalo, Messenger...); máy tính: tải ảnh PNG.
+ * @returns {'shared'|'downloaded'|'cancelled'|'error'}
+ */
+export async function shareResultCard(elementId, userName = 'User', shareText = '') {
+  const el = document.getElementById(elementId);
+  if (!el) return 'error';
+
+  try {
+    const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false, backgroundColor: null });
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+    const fileName = `Ket_Qua_${fileSafe(userName)}.png`;
+    const file = new File([blob], fileName, { type: 'image/png' });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: 'Kết quả định hướng nghề nghiệp', text: shareText });
+        return 'shared';
+      } catch (err) {
+        if (err && err.name === 'AbortError') return 'cancelled';
+        // Trình duyệt từ chối chia sẻ file: chuyển sang tải ảnh
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return 'downloaded';
+  } catch (error) {
+    console.error('Lỗi khi tạo ảnh chia sẻ:', error);
+    return 'error';
+  }
+}
+
 
 /**
  * Xuất danh sách thành viên và kết quả bài kiểm tra sang file CSV/Excel (BOM UTF-8 chuẩn font tiếng Việt)

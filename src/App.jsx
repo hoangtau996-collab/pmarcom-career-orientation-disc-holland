@@ -8,6 +8,7 @@ import ProfileModal from './components/ProfileModal';
 import CategoryNoticeModal from './components/CategoryNoticeModal';
 import QuizScreen from './components/QuizScreen';
 import HollandCardSort from './components/HollandCardSort';
+import ComboBreakModal from './components/ComboBreakModal';
 
 // Code Splitting cho các trang nặng giúp tối ưu tốc độ tải trang chủ (FCP)
 const ResultsDashboard = lazy(() => import('./components/ResultsDashboard'));
@@ -26,6 +27,12 @@ import { saveTestResult, fetchMyHistory, clearLocalHistory } from './utils/resul
 import { auth } from './config/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { getTranslation } from './utils/translations';
+
+// Chế độ đang làm & kết quả DISC tạm của Combo (giữ qua lần tải lại trang)
+const MODE_KEY = 'pmarcom_active_test_mode';
+const COMBO_DISC_KEY = 'pmarcom_combo_disc_result';
+const readJson = (key) => { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } };
+const writeLS = (key, value) => { try { value == null ? localStorage.removeItem(key) : localStorage.setItem(key, value); } catch { /* ignore */ } };
 
 // Static URL Hash mapping
 const SCREEN_HASH_MAP = {
@@ -70,7 +77,9 @@ export default function App() {
     return localStorage.getItem('disc_lang') || 'vi';
   });
 
-  const [testMode, setTestMode] = useState('combo'); // 'disc' | 'holland' | 'mbti' | 'combo'
+  const [testMode, setTestMode] = useState(() => localStorage.getItem(MODE_KEY) || 'combo'); // 'disc' | 'holland' | 'mbti' | 'combo'
+  const [showComboBreak, setShowComboBreak] = useState(false);
+  const [reportDate, setReportDate] = useState(null);
   const [pendingTestMode, setPendingTestMode] = useState('combo');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authTabMode, setAuthTabMode] = useState('login'); // 'login' | 'register'
@@ -244,7 +253,12 @@ export default function App() {
   };
 
   const startTest = (mode) => {
-    if (mode === 'disc') {
+    setTestMode(mode);
+    writeLS(MODE_KEY, mode);
+    if (mode === 'combo' && readJson(COMBO_DISC_KEY)) {
+      // Đã xong phần DISC của Combo trước đó: làm tiếp phần Holland
+      setCurrentScreen('quizHolland');
+    } else if (mode === 'disc') {
       setCurrentScreen('quizDisc');
     } else if (mode === 'holland') {
       setCurrentScreen('quizHolland');
@@ -306,6 +320,8 @@ export default function App() {
     setDiscResult(dRes);
 
     if (testMode === 'combo') {
+      writeLS(COMBO_DISC_KEY, JSON.stringify(dRes));
+      setShowComboBreak(true);
       setCurrentScreen('quizHolland');
     } else {
       incrementTestCount();
@@ -320,7 +336,8 @@ export default function App() {
     setHollandResult(hRes);
 
     incrementTestCount();
-    saveAndShowResults(discResult, hRes, null);
+    const comboDisc = testMode === 'combo' ? (discResult || readJson(COMBO_DISC_KEY)) : null;
+    saveAndShowResults(comboDisc, hRes, null);
   };
 
   // MBTI completed
@@ -346,6 +363,11 @@ export default function App() {
     setHistoryList((prev) => [historyItem, ...prev]);
     saveTestResult(historyItem); // bản trên máy + Firestore (chạy nền)
 
+    writeLS(MODE_KEY, null);
+    writeLS(COMBO_DISC_KEY, null);
+    setShowComboBreak(false);
+    setDiscResult(dRes);
+    setReportDate(historyItem.date);
     setReportUser(null);
     setCurrentScreen('results');
   };
@@ -359,6 +381,7 @@ export default function App() {
 
   const handleSelectHistoryItem = (item) => {
     setReportUser(item.user || null);
+    setReportDate(item.date || null);
     setDiscResult(item.discResult);
     setHollandResult(item.hollandResult);
     setMbtiResult(item.mbtiResult);
@@ -431,6 +454,10 @@ export default function App() {
           />
         )}
 
+        {showComboBreak && currentScreen === 'quizHolland' && (
+          <ComboBreakModal discResult={discResult} onContinue={() => setShowComboBreak(false)} />
+        )}
+
         <Suspense fallback={
           <div className="py-16 text-center space-y-3">
             <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
@@ -458,6 +485,7 @@ export default function App() {
           {currentScreen === 'results' && user && (
             <ResultsDashboard
               user={reportUser || user}
+              reportDate={reportDate}
               discResult={discResult}
               hollandResult={hollandResult}
               mbtiResult={mbtiResult}

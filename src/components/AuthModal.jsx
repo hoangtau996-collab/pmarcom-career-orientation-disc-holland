@@ -280,7 +280,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs font-bold"
                 />
               </div>
-              {errors.fullName && <p className="text-[11px] text-red-500 font-bold">{errors.fullName}</p>}
+              {errors.fullName && <p className="text-xs text-red-500 font-bold">{errors.fullName}</p>}
             </div>
 
             {/* Phone Number */}
@@ -298,7 +298,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs font-bold"
                 />
               </div>
-              {errors.phone && <p className="text-[11px] text-red-500 font-bold">{errors.phone}</p>}
+              {errors.phone && <p className="text-xs text-red-500 font-bold">{errors.phone}</p>}
             </div>
 
             {/* Category */}
@@ -316,7 +316,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                       : 'border-slate-200 dark:border-slate-800 text-slate-600'
                   }`}
                 >
-                  🎓 Sinh Viên / Học Sinh
+                  Sinh Viên / Học Sinh
                 </button>
                 <button
                   type="button"
@@ -327,7 +327,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                       : 'border-slate-200 dark:border-slate-800 text-slate-600'
                   }`}
                 >
-                  💼 Người Đi Làm
+                  Người Đi Làm
                 </button>
               </div>
             </div>
@@ -393,7 +393,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                 className="w-full py-3 px-4 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700/80 border-2 border-indigo-200 dark:border-indigo-800 rounded-xl font-extrabold text-indigo-600 dark:text-indigo-300 text-xs sm:text-sm transition-all flex items-center justify-center space-x-3 shadow-sm hover:shadow active:scale-[0.98]"
               >
                 <GoogleGIcon className="w-5 h-5 shrink-0" />
-                <span>🔑 Đăng Nhập Nhanh bằng Google (Gmail)</span>
+                <span>Đăng Nhập Nhanh bằng Google (Gmail)</span>
               </button>
             ) : (
               <button
@@ -403,13 +403,13 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                 className="w-full py-3 px-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-800 hover:bg-purple-100 dark:hover:bg-slate-700 border-2 border-purple-300 dark:border-purple-700 rounded-xl font-extrabold text-purple-700 dark:text-purple-300 text-xs sm:text-sm transition-all flex items-center justify-center space-x-3 shadow-sm hover:shadow active:scale-[0.98]"
               >
                 <GoogleGIcon className="w-5 h-5 shrink-0" />
-                <span>✨ Đăng Ký Mới bằng Google (Gmail)</span>
+                <span>Đăng Ký Mới bằng Google (Gmail)</span>
               </button>
             )}
 
             <div className="flex items-center space-x-2 my-1">
               <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800"></div>
-              <span className="text-[11px] text-slate-400 font-medium">Hoặc bằng Email &amp; Mật khẩu</span>
+              <span className="text-xs text-slate-400 font-medium">Hoặc bằng Email &amp; Mật khẩu</span>
               <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800"></div>
             </div>
 
@@ -447,7 +447,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                       className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                     />
                   </div>
-                  {errors.fullName && <p className="text-[11px] text-red-500 font-bold">{errors.fullName}</p>}
+                  {errors.fullName && <p className="text-xs text-red-500 font-bold">{errors.fullName}</p>}
                 </div>
               )}
 
@@ -466,7 +466,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                   />
                 </div>
-                {errors.email && <p className="text-[11px] text-red-500 font-bold">{errors.email}</p>}
+                {errors.email && <p className="text-xs text-red-500 font-bold">{errors.email}</p>}
               </div>
 
               {/* Phone Number (Required on Register) */}
@@ -485,7 +485,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                       className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                     />
                   </div>
-                  {errors.phone && <p className="text-[11px] text-red-500 font-bold">{errors.phone}</p>}
+                  {errors.phone && <p className="text-xs text-red-500 font-bold">{errors.phone}</p>}
                 </div>
               )}
 
@@ -505,13 +505,13 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold"
                   />
                 </div>
-                {errors.password && <p className="text-[11px] text-red-500 font-bold">{errors.password}</p>}
+                {errors.password && <p className="text-xs text-red-500 font-bold">{errors.password}</p>}
                 {activeTab === 'login' && (
                   <button
                     type="button"
                     onClick={handleForgotPassword}
                     disabled={loading}
-                    className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+                    className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
                   >
                     Quên mật khẩu?
                   </button>
@@ -533,7 +533,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                         : 'border-slate-200 dark:border-slate-800 text-slate-600'
                     }`}
                   >
-                    🎓 Sinh Viên / Học Sinh
+                    Sinh Viên / Học Sinh
                   </button>
                   <button
                     type="button"
@@ -544,7 +544,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                         : 'border-slate-200 dark:border-slate-800 text-slate-600'
                     }`}
                   >
-                    💼 Người Đi Làm
+                    Người Đi Làm
                   </button>
                 </div>
               </div>
@@ -568,7 +568,7 @@ export default function AuthModal({ initialTab = 'login', onAuthSuccess, onClose
                       : 'bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500'
                   }`}
                 >
-                  {loading ? 'Đang xử lý...' : activeTab === 'login' ? '🔑 Đăng Nhập & Quay Về Trang Chủ' : '✨ Đăng Ký & Quay Về Trang Chủ'}
+                  {loading ? 'Đang xử lý...' : activeTab === 'login' ? 'Đăng Nhập & Quay Về Trang Chủ' : 'Đăng Ký & Quay Về Trang Chủ'}
                 </button>
               </div>
 

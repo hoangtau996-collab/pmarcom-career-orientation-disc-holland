@@ -82,7 +82,7 @@ export default function HistoryModal({ historyList, onSelectHistory, onClearHist
                     <div className="flex items-center space-x-2">
                       <User className="w-3.5 h-3.5 text-indigo-500" />
                       <span className="font-bold text-sm text-slate-900 dark:text-white">{item.user?.fullName || 'Người test'}</span>
-                      <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold rounded-full">
+                      <span className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-[11px] font-bold rounded-full">
                         {item.user?.category === 'student' ? 'Sinh viên' : 'Người đi làm'}
                       </span>
                     </div>
@@ -162,17 +162,17 @@ export default function HistoryModal({ historyList, onSelectHistory, onClearHist
               
               {/* Lần test 1 (Gần nhất) */}
               <div className="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900 space-y-2">
-                <span className="px-2.5 py-0.5 bg-indigo-600 text-white font-extrabold text-[10px] rounded-full uppercase">
+                <span className="px-2.5 py-0.5 bg-indigo-600 text-white font-extrabold text-[11px] rounded-full uppercase">
                   Lần 1 (Gần nhất)
                 </span>
                 <p className="text-xs font-bold text-slate-500">
-                  📅 {new Date(item1.date).toLocaleDateString('vi-VN')}
+                  {new Date(item1.date).toLocaleDateString('vi-VN')}
                 </p>
                 <div className="space-y-1 pt-1">
                   <p className="text-xs font-bold text-slate-900 dark:text-white">
                     DISC: <strong className="text-indigo-600">Nhóm {getDiscTrait(item1)}</strong>
                   </p>
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300">{getDiscName(item1)}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">{getDiscName(item1)}</p>
                   <p className="text-xs font-bold text-purple-600 pt-1">
                     Holland: {getHollandCode(item1)}
                   </p>
@@ -181,17 +181,17 @@ export default function HistoryModal({ historyList, onSelectHistory, onClearHist
 
               {/* Lần test 2 (Trước đó) */}
               <div className="p-4 rounded-2xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2">
-                <span className="px-2.5 py-0.5 bg-slate-600 text-white font-extrabold text-[10px] rounded-full uppercase">
+                <span className="px-2.5 py-0.5 bg-slate-600 text-white font-extrabold text-[11px] rounded-full uppercase">
                   Lần 2 (Trước đó)
                 </span>
                 <p className="text-xs font-bold text-slate-500">
-                  📅 {new Date(item2.date).toLocaleDateString('vi-VN')}
+                  {new Date(item2.date).toLocaleDateString('vi-VN')}
                 </p>
                 <div className="space-y-1 pt-1">
                   <p className="text-xs font-bold text-slate-900 dark:text-white">
                     DISC: <strong className="text-indigo-600">Nhóm {getDiscTrait(item2)}</strong>
                   </p>
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300">{getDiscName(item2)}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">{getDiscName(item2)}</p>
                   <p className="text-xs font-bold text-purple-600 pt-1">
                     Holland: {getHollandCode(item2)}
                   </p>

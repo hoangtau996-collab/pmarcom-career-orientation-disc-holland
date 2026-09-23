@@ -60,9 +60,9 @@ export default function CategoryNoticeModal({ user, pendingTestMode, onConfirmSt
         {/* Notice Explanation Box */}
         <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-50 via-indigo-50/50 to-slate-50 dark:from-slate-800/80 dark:via-indigo-950/40 dark:to-slate-800/80 border border-indigo-100 dark:border-indigo-900/50 text-xs text-slate-600 dark:text-slate-300 space-y-2 leading-relaxed">
           <p className="font-semibold text-slate-800 dark:text-slate-200">
-            💡 <strong>Báo cáo kết quả và gợi ý định hướng sự nghiệp sẽ khác nhau hoàn toàn</strong> tùy thuộc vào đối tượng của bạn:
+            <strong>Báo cáo kết quả và gợi ý định hướng sự nghiệp sẽ khác nhau hoàn toàn</strong> tùy thuộc vào đối tượng của bạn:
           </p>
-          <ul className="list-disc pl-4 space-y-1 text-[11px] text-slate-500 dark:text-slate-400">
+          <ul className="list-disc pl-4 space-y-1 text-xs text-slate-500 dark:text-slate-400">
             <li><strong>Sinh viên / Học sinh:</strong> Nhận gợi ý ngành học đại học, hoạt động câu lạc bộ, hướng thực tập và kỹ năng phát triển bản thân.</li>
             <li><strong>Người đi làm:</strong> Nhận gợi ý vị trí công việc, lộ trình thăng tiến, phong cách lãnh đạo, giải pháp stress & chứng chỉ chuyên môn.</li>
           </ul>
@@ -89,13 +89,13 @@ export default function CategoryNoticeModal({ user, pendingTestMode, onConfirmSt
               <div className="flex items-center justify-between">
                 <span className="font-extrabold text-xs text-indigo-900 dark:text-indigo-200 flex items-center space-x-1.5">
                   <GraduationCap className="w-4 h-4 text-indigo-600" />
-                  <span>🎓 Sinh Viên / Học Sinh</span>
+                  <span>Sinh Viên / Học Sinh</span>
                 </span>
                 {selectedCategory === 'student' && (
                   <CheckCircle2 className="w-4 h-4 text-indigo-600" />
                 )}
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
                 Dành cho người đang đi học, tìm kiếm ngành trường và hướng đi thực tập.
               </p>
             </div>
@@ -112,13 +112,13 @@ export default function CategoryNoticeModal({ user, pendingTestMode, onConfirmSt
               <div className="flex items-center justify-between">
                 <span className="font-extrabold text-xs text-purple-900 dark:text-purple-200 flex items-center space-x-1.5">
                   <Briefcase className="w-4 h-4 text-purple-600" />
-                  <span>💼 Người Đi Làm</span>
+                  <span>Người Đi Làm</span>
                 </span>
                 {selectedCategory === 'professional' && (
                   <CheckCircle2 className="w-4 h-4 text-purple-600" />
                 )}
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">
                 Dành cho người đã đi làm, muốn định hướng nhảy việc hoặc thăng tiến.
               </p>
             </div>

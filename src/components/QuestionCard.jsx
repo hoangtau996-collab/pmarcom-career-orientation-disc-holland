@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThumbsUp, ThumbsDown, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, CheckCircle2 } from 'lucide-react';
 
 export default function QuestionCard({
   question,
@@ -8,7 +8,7 @@ export default function QuestionCard({
 }) {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {question.options.map((opt) => {
           const isMost = answer.most === opt.type;
           const isLeast = answer.least === opt.type;
@@ -26,10 +26,10 @@ export default function QuestionCard({
             >
               {/* Option Text */}
               <div className="space-y-1.5 pb-4">
-                <p className="font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug">
+                <p className="font-bold text-slate-900 dark:text-white text-base leading-snug">
                   {opt.text}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   {opt.description}
                 </p>
               </div>
@@ -41,28 +41,30 @@ export default function QuestionCard({
                 <button
                   type="button"
                   onClick={() => onSelectOption(question.id, opt.type, 'most')}
-                  className={`min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center space-x-1.5 active:scale-95 ${
+                  aria-pressed={isMost}
+                  className={`min-h-[48px] py-2.5 px-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center space-x-1.5 active:scale-95 ${
                     isMost
                       ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-emerald-100 hover:text-emerald-700 dark:hover:bg-emerald-900/50'
                   }`}
                 >
-                  <ThumbsUp className="w-4 h-4 shrink-0" />
-                  <span>{isMost ? 'Đã Chọn: Đúng Nhất' : 'Đúng Nhất'}</span>
+                  {isMost ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <ThumbsUp className="w-4 h-4 shrink-0" />}
+                  <span>Đúng nhất</span>
                 </button>
 
                 {/* Button LEAST */}
                 <button
                   type="button"
                   onClick={() => onSelectOption(question.id, opt.type, 'least')}
-                  className={`min-h-[44px] py-2.5 px-3 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center space-x-1.5 active:scale-95 ${
+                  aria-pressed={isLeast}
+                  className={`min-h-[48px] py-2.5 px-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center space-x-1.5 active:scale-95 ${
                     isLeast
                       ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-100 hover:text-rose-700 dark:hover:bg-rose-900/50'
                   }`}
                 >
-                  <ThumbsDown className="w-4 h-4 shrink-0" />
-                  <span>{isLeast ? 'Đã Chọn: Ít Đúng Nhất' : 'Ít Đúng Nhất'}</span>
+                  {isLeast ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <ThumbsDown className="w-4 h-4 shrink-0" />}
+                  <span>Ít đúng nhất</span>
                 </button>
 
               </div>

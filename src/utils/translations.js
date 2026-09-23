@@ -17,7 +17,7 @@ export const translations = {
     // Hero Banner & Test Selector
     heroTitle: 'Định Hướng Phát Triển Nghề Nghiệp',
     heroSubtitle: 'Hệ Thống Đánh Giá DISC & Holland Code (RIASEC)',
-    heroDesc: 'Giải pháp thấu hiểu bản thân chuẩn mực khoa học Hoa Kỳ. Kết hợp bài đánh giá hành vi DISC & Bộ 36 thẻ bài sở thích Holland RIASEC, mang lại ma trận định hướng ngành học và sự nghiệp tối ưu nhất.',
+    heroDesc: 'Giải pháp thấu hiểu bản thân chuẩn mực khoa học Hoa Kỳ. Kết hợp bài đánh giá hành vi DISC & Bộ 48 thẻ bài sở thích Holland RIASEC, mang lại ma trận định hướng ngành học và sự nghiệp tối ưu nhất.',
     statsVisits: 'Lượt Truy Cập Hệ Thống',
     statsCompletedTests: 'Bài Test Đã Hoàn Thành',
     selectMode: 'Chọn Bài Đánh Giá Phù Hợp Với Bạn',
@@ -30,8 +30,8 @@ export const translations = {
     startDisc: 'Bắt Đầu Test DISC',
 
     hollandTitle: 'Bộ Thẻ Bài Sở Thích Holland',
-    hollandDesc: '36 thẻ bài tương tác sinh động phân loại sở thích cá nhân thành 6 nhóm nghề nghiệp RIASEC chuẩn Hoa Kỳ.',
-    hollandTime: 'Thời gian: 5 - 7 phút',
+    hollandDesc: '48 thẻ bài tương tác sinh động phân loại sở thích cá nhân thành 6 nhóm nghề nghiệp RIASEC chuẩn Hoa Kỳ.',
+    hollandTime: 'Thời gian: 6 - 8 phút',
     startHolland: 'Bắt Đầu Test Holland',
 
     comboTitle: 'Đánh Giá Combo Kép (Khuyên Dùng)',
@@ -84,7 +84,7 @@ export const translations = {
     // Hero Banner & Test Selector
     heroTitle: 'Career Development & Orientation',
     heroSubtitle: 'DISC Behavior & Holland RIASEC Assessment System',
-    heroDesc: 'Scientifically validated US career guidance platform. Combines DISC behavioral assessment & 36 Holland RIASEC interest cards to deliver your optimal career matrix.',
+    heroDesc: 'Scientifically validated US career guidance platform. Combines DISC behavioral assessment & 48 Holland RIASEC interest cards to deliver your optimal career matrix.',
     statsVisits: 'Total System Visits',
     statsCompletedTests: 'Tests Completed',
     selectMode: 'Select Your Assessment Mode',
@@ -97,7 +97,7 @@ export const translations = {
     startDisc: 'Start DISC Assessment',
 
     hollandTitle: 'Holland RIASEC Card Sort',
-    hollandDesc: '36 interactive cards mapping your personal interests into 6 US standard occupational categories.',
+    hollandDesc: '48 interactive cards mapping your personal interests into 6 US standard occupational categories.',
     hollandTime: 'Duration: 5 - 7 mins',
     startHolland: 'Start Holland Card Sort',
 
