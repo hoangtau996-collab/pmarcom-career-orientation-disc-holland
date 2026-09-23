@@ -80,6 +80,7 @@ export default function App() {
   const [testMode, setTestMode] = useState(() => localStorage.getItem(MODE_KEY) || 'combo'); // 'disc' | 'holland' | 'mbti' | 'combo'
   const [showComboBreak, setShowComboBreak] = useState(false);
   const [reportDate, setReportDate] = useState(null);
+  const [libraryCategory, setLibraryCategory] = useState('ALL'); // nhóm Holland lọc sẵn khi mở thư viện từ trang chủ
   const [pendingTestMode, setPendingTestMode] = useState('combo');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authTabMode, setAuthTabMode] = useState('login'); // 'login' | 'register'
@@ -131,6 +132,11 @@ export default function App() {
       setAuthReady(true);
     });
   }, []);
+
+  // Rời thư viện ngành nghề thì bỏ bộ lọc nhóm đã chọn từ trang chủ
+  useEffect(() => {
+    if (currentScreen !== 'careerLibrary') setLibraryCategory('ALL');
+  }, [currentScreen]);
 
   // Tải lịch sử làm test của tài khoản đang đăng nhập
   useEffect(() => {
@@ -425,6 +431,11 @@ export default function App() {
         {currentScreen === 'selectTest' && (
           <TestSelector
             onSelectTestMode={handleSelectTestMode}
+            onOpenCareerLibrary={(category = 'ALL') => {
+              setLibraryCategory(category);
+              setCurrentScreen('careerLibrary');
+              window.scrollTo({ top: 0 });
+            }}
             user={user}
             lang={lang}
           />
@@ -470,6 +481,8 @@ export default function App() {
 
           {currentScreen === 'careerLibrary' && (
             <CareerLibrary
+              key={libraryCategory}
+              initialCategory={libraryCategory}
               onStartTest={handleSelectTestMode}
               userCategory={user?.category || 'student'}
             />

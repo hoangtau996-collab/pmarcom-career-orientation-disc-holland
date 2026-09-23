@@ -8,9 +8,9 @@ import {
   Lightbulb, ExternalLink
 } from 'lucide-react';
 
-export default function CareerLibrary({ onStartTest, userCategory = 'student' }) {
+export default function CareerLibrary({ onStartTest, userCategory = 'student', initialCategory = 'ALL' }) {
   const [modelType, setModelType] = useState('holland'); // 'holland' | 'disc'
-  const [activeCategory, setActiveCategory] = useState('ALL'); // 'ALL' | 'R' | 'I' | 'A' | 'S' | 'E' | 'C' or 'D' | 'I' | 'S' | 'C'
+  const [activeCategory, setActiveCategory] = useState(initialCategory); // 'ALL' | 'R' | 'I' | 'A' | 'S' | 'E' | 'C' or 'D' | 'I' | 'S' | 'C'
   const [audienceMode, setAudienceMode] = useState(userCategory); // 'student' | 'professional'
   const [searchQuery, setSearchQuery] = useState('');
   const [industryFilter, setIndustryFilter] = useState('all');

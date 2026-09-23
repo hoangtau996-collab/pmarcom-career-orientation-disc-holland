@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, CheckCircle2, Eye, Clock, GraduationCap, ExternalLink, ListChecks, MousePointerClick, FileBarChart, BookOpen, Layers, Brain, Sparkles, PlayCircle, X } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Eye, Clock, GraduationCap, ExternalLink, ListChecks, MousePointerClick, FileBarChart, BookOpen, Layers, Brain, Sparkles, PlayCircle, X, Compass } from 'lucide-react';
 import { getVisitorStats, subscribeToVisitorStats } from '../utils/visitorCounter';
 import { getTranslation } from '../utils/translations';
 import { DISC_QUESTIONS } from '../data/discQuestions';
 import { HOLLAND_CARDS } from '../data/hollandCards';
+import { HOLLAND_TYPES } from '../data/hollandProfiles';
 
 const DISC_TOTAL = DISC_QUESTIONS.length;
 const HOLLAND_TOTAL = HOLLAND_CARDS.length;
@@ -59,7 +60,7 @@ function SampleReportCard({ vi }) {
   );
 }
 
-export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
+export default function TestSelector({ onSelectTestMode, onOpenCareerLibrary = () => {}, user, lang = 'vi' }) {
   const [stats, setStats] = useState(getVisitorStats());
   const [progress, setProgress] = useState(readProgress);
   const vi = lang === 'vi';
@@ -304,6 +305,61 @@ export default function TestSelector({ onSelectTestMode, user, lang = 'vi' }) {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* THƯ VIỆN NGÀNH NGHỀ */}
+      <section className="space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div className="space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">{vi ? 'Thư viện ngành nghề' : 'Career library'}</h2>
+            <p className="text-slate-500 dark:text-slate-400 max-w-2xl">
+              {vi
+                ? 'Khám phá hơn 50 ngành học và vị trí công việc theo 6 nhóm sở thích Holland — xem trước ngay, không cần làm test.'
+                : 'Explore 50+ majors and job roles across the 6 Holland interest groups — no test needed.'}
+            </p>
+          </div>
+          <button
+            onClick={() => onOpenCareerLibrary('ALL')}
+            className="shrink-0 px-5 py-3 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-semibold hover:bg-slate-900 hover:text-white hover:border-slate-900 dark:hover:bg-white dark:hover:text-slate-900 transition-colors flex items-center justify-center gap-2"
+          >
+            <Compass className="w-4 h-4" /> {vi ? 'Mở toàn bộ thư viện' : 'Open full library'}
+          </button>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Object.values(HOLLAND_TYPES).map((type) => {
+            const [englishName, viName] = type.name.split(' - ');
+            return (
+              <button
+                key={type.code}
+                onClick={() => onOpenCareerLibrary(type.code)}
+                className="group flex flex-col items-stretch justify-start text-left p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:shadow-lg transition-all hover:-translate-y-0.5"
+               
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-11 h-11 rounded-xl text-white text-lg font-black flex items-center justify-center shrink-0" style={{ backgroundColor: type.color }}>
+                    {type.code}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-bold text-slate-900 dark:text-white truncate">{vi ? (viName || type.name) : englishName}</span>
+                    <span className="block text-sm text-slate-500 dark:text-slate-400">{englishName} · {type.english}</span>
+                  </span>
+                </div>
+                <ul className="mt-4 mb-4 flex-1 space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
+                  {(type.suitableCareers || []).slice(0, 3).map((career, i) => (
+                    <li key={career} className={`items-start gap-2 ${i === 2 ? 'hidden sm:flex' : 'flex'}`}>
+                      <span className="w-1.5 h-1.5 mt-2 rounded-full shrink-0" style={{ backgroundColor: type.color }} />
+                      <span>{career}</span>
+                    </li>
+                  ))}
+                </ul>
+                <span className="inline-flex items-center gap-1.5 text-sm font-bold text-teal-700 dark:text-teal-400">
+                  {vi ? 'Xem các ngành' : 'See careers'} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </span>
+              </button>
+            );
+          })}
         </div>
       </section>
 
