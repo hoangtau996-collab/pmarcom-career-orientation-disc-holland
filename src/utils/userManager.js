@@ -45,7 +45,7 @@ export async function fetchUserProfile(uid) {
 }
 
 // Tạo mới hoặc cập nhật hồ sơ của chính người đang đăng nhập (không bao giờ tự nâng quyền)
-export async function saveUserProfile({ fullName, phone, category }) {
+export async function saveUserProfile({ fullName, phone, category, photoURL }) {
   const fbUser = auth.currentUser;
   if (!fbUser) throw new Error('not-signed-in');
 
@@ -58,6 +58,7 @@ export async function saveUserProfile({ fullName, phone, category }) {
     category: category || 'student',
     updatedAt: now
   };
+  if (photoURL !== undefined) fields.photoURL = photoURL || '';
 
   if (snap.exists()) {
     await updateDoc(ref, fields);
@@ -73,6 +74,50 @@ export async function saveUserProfile({ fullName, phone, category }) {
   const profile = await fetchUserProfile(fbUser.uid);
   cacheActiveUser(profile);
   return profile;
+}
+
+// ---------- Avatar ----------
+
+// Ảnh đại diện: ảnh người dùng tự tải lên, nếu chưa có thì dùng ảnh tài khoản Google
+export function getAvatarUrl(user) {
+  if (!user) return '';
+  if (user.photoURL) return user.photoURL;
+  const fbUser = auth.currentUser;
+  return fbUser && fbUser.uid === user.uid ? fbUser.photoURL || '' : '';
+}
+
+// Chữ cái viết tắt từ họ tên (vd. "Nguyễn Văn An" → "NA")
+export function getInitials(name) {
+  const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '?';
+  const first = parts[0][0];
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
+  return (first + last).toUpperCase();
+}
+
+// Cắt vuông + thu nhỏ ảnh về 160px (JPEG ~10KB) để lưu gọn trong hồ sơ Firestore
+export function resizeAvatarFile(file, size = 160) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('read-failed'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('invalid-image'));
+      img.onload = () => {
+        const side = Math.min(img.width, img.height);
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, size, size);
+        ctx.drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
+        resolve(canvas.toDataURL('image/jpeg', 0.85));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 // Danh sách toàn bộ thành viên (chỉ Admin — Security Rules chặn người khác)

@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, UserCheck, Eye, Crown, LogIn, LogOut, Menu, X, User, Globe, UserPlus, Brain } from 'lucide-react';
+import { Compass, BookOpen, Layers, History, Sun, Moon, Sparkles, Eye, Crown, LogIn, LogOut, Menu, X, User, Globe, UserPlus, Brain } from 'lucide-react';
 import { getVisitorStats, subscribeToVisitorStats } from '../utils/visitorCounter';
-import { isAdmin, isSuperAdmin } from '../utils/userManager';
+import { isAdmin, isSuperAdmin, getAvatarUrl, getInitials } from '../utils/userManager';
+
+function UserAvatar({ user, className }) {
+  const url = getAvatarUrl(user);
+  return url ? (
+    <img src={url} alt="" referrerPolicy="no-referrer" className={`${className} rounded-full object-cover shrink-0`} />
+  ) : (
+    <span className={`${className} rounded-full shrink-0 bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-[9px] font-extrabold flex items-center justify-center`}>
+      {getInitials(user?.fullName)}
+    </span>
+  );
+}
 import { getTranslation } from '../utils/translations';
 
 export default function Header({
@@ -198,7 +209,7 @@ export default function Header({
                 className="flex items-center space-x-1.5 px-3 py-1 bg-teal-50 hover:bg-teal-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-full border border-teal-200 dark:border-slate-700 transition-all"
                 title="Bấm để chỉnh sửa hồ sơ cá nhân"
               >
-                <UserCheck className="w-3.5 h-3.5 text-teal-600" />
+                <UserAvatar user={user} className="w-5 h-5 -ml-1.5" />
                 <span className="max-w-[100px] truncate">{user.fullName}</span>
                 {userIsSuperAdmin && <span className="text-[10px] text-amber-500 font-bold">👑</span>}
               </button>
@@ -286,7 +297,7 @@ export default function Header({
           {user ? (
             <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
               <button onClick={() => { onOpenProfile(); setMobileMenuOpen(false); }} className="flex items-center space-x-2 text-left">
-                <UserCheck className="w-4 h-4 text-teal-600 shrink-0" />
+                <UserAvatar user={user} className="w-8 h-8" />
                 <div>
                   <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center space-x-1">
                     <span>{user.fullName}</span>

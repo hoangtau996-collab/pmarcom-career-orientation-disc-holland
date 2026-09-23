@@ -1,14 +1,32 @@
-import React, { useState } from 'react';
-import { User, Mail, Phone, GraduationCap, Briefcase, Save, X, ShieldCheck, CheckCircle } from 'lucide-react';
-import { saveUserProfile, authErrorMessage } from '../utils/userManager';
+import React, { useState, useRef } from 'react';
+import { User, Mail, Phone, Save, X, CheckCircle, Camera, Trash2, LogOut } from 'lucide-react';
+import { saveUserProfile, authErrorMessage, getAvatarUrl, getInitials, resizeAvatarFile } from '../utils/userManager';
 
-export default function ProfileModal({ user, onSaveProfile, onClose }) {
+export default function ProfileModal({ user, onSaveProfile, onClose, onLogout }) {
   const [fullName, setFullName] = useState(user?.fullName || '');
   const [phone, setPhone] = useState(user?.phone || '');
   const [category, setCategory] = useState(user?.category || 'student');
+  const [photoURL, setPhotoURL] = useState(() => getAvatarUrl(user));
   const [errors, setErrors] = useState({});
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handlePickAvatar = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/') || file.size > 10 * 1024 * 1024) {
+      setErrors(prev => ({ ...prev, avatar: 'Vui lòng chọn file ảnh (JPG, PNG...) dưới 10MB' }));
+      return;
+    }
+    try {
+      setPhotoURL(await resizeAvatarFile(file));
+      setErrors(prev => ({ ...prev, avatar: undefined }));
+    } catch {
+      setErrors(prev => ({ ...prev, avatar: 'Không đọc được ảnh, vui lòng thử ảnh khác' }));
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +48,7 @@ export default function ProfileModal({ user, onSaveProfile, onClose }) {
     setSaving(true);
     let updatedData;
     try {
-      updatedData = await saveUserProfile({ fullName, phone, category });
+      updatedData = await saveUserProfile({ fullName, phone, category, photoURL });
     } catch (error) {
       console.error('Save profile error:', error);
       setErrors({ general: authErrorMessage(error.code) });
@@ -82,7 +100,52 @@ export default function ProfileModal({ user, onSaveProfile, onClose }) {
                 {errors.general}
               </p>
             )}
-            
+
+            {/* Avatar */}
+            <div className="flex items-center space-x-4">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="relative group w-20 h-20 shrink-0 rounded-full overflow-hidden ring-4 ring-indigo-100 dark:ring-indigo-950 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center"
+                title="Đổi ảnh đại diện"
+              >
+                {photoURL ? (
+                  <img src={photoURL} alt="Ảnh đại diện" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                ) : (
+                  <span className="text-2xl font-extrabold text-white">{getInitials(fullName)}</span>
+                )}
+                <span className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Camera className="w-6 h-6 text-white" />
+                </span>
+              </button>
+              <div className="space-y-1.5">
+                <p className="text-xs font-bold uppercase text-slate-700 dark:text-slate-300">Ảnh Đại Diện</p>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-xs font-bold transition-colors"
+                  >
+                    <Camera className="w-3.5 h-3.5" />
+                    <span>{photoURL ? 'Đổi ảnh' : 'Tải ảnh lên'}</span>
+                  </button>
+                  {photoURL && (
+                    <button
+                      type="button"
+                      onClick={() => setPhotoURL('')}
+                      className="flex items-center space-x-1 px-3 py-1.5 rounded-lg text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50 text-xs font-semibold transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Xóa</span>
+                    </button>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-400">JPG, PNG — ảnh được cắt vuông tự động</p>
+              </div>
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePickAvatar} className="hidden" />
+            </div>
+            {errors.avatar && <p className="text-[11px] text-red-500 font-medium">{errors.avatar}</p>}
+
             {/* Email (Read only) */}
             <div className="space-y-1">
               <label className="block text-xs font-bold uppercase text-slate-500">
@@ -164,8 +227,18 @@ export default function ProfileModal({ user, onSaveProfile, onClose }) {
               </div>
             </div>
 
-            {/* Save Button */}
+            {/* Logout + Save Buttons */}
             <div className="pt-3 flex items-center justify-end space-x-3">
+              {onLogout && (
+                <button
+                  type="button"
+                  onClick={onLogout}
+                  className="mr-auto flex items-center space-x-1.5 px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50 text-xs font-bold transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Đăng Xuất</span>
+                </button>
+              )}
               <button
                 type="button"
                 onClick={onClose}

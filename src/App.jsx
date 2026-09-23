@@ -293,6 +293,7 @@ export default function App() {
       setUser(null);
       cacheActiveUser(null);
       setHistoryList([]);
+      setShowProfileModal(false);
       signOut(auth).catch(() => {});
       setCurrentScreen('selectTest');
     }
@@ -509,6 +510,7 @@ export default function App() {
           user={user}
           onSaveProfile={handleSaveProfile}
           onClose={() => setShowProfileModal(false)}
+          onLogout={handleLogout}
         />
       )}
 
