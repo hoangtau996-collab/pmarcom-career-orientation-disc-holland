@@ -44,6 +44,18 @@ service cloud.firestore {
       allow write: if request.auth != null && (request.auth.uid == userId || request.auth.token.email == 'pmarcomvn@gmail.com');
     }
 
+    // Bộ đếm lượt truy cập / bài test: ai cũng xem được, khách vãng lai chỉ được +1
+    match /system/stats {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['realVisits', 'totalTests', 'lastUpdated'])
+                    && request.resource.data.get('realVisits', 0) in [0, 1]
+                    && request.resource.data.get('totalTests', 0) <= 601;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['realVisits', 'totalTests', 'lastUpdated'])
+                    && request.resource.data.get('realVisits', 0) - resource.data.get('realVisits', 0) in [0, 1]
+                    && request.resource.data.get('totalTests', 0) - resource.data.get('totalTests', 0) in [0, 1];
+    }
+
     // Quy tắc chung cho toàn bộ tập tài liệu
     match /{document=**} {
       allow read, write: if request.auth != null;

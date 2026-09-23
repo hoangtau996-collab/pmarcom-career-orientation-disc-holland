@@ -20,7 +20,7 @@ const CareerLibrary = lazy(() => import('./components/CareerLibrary'));
 import { calculateDiscResult } from './utils/discCalculator';
 import { calculateHollandResult } from './utils/hollandCalculator';
 import { calculateMbtiResult } from './utils/mbtiCalculator';
-import { incrementVisitCount, incrementTestCount } from './utils/visitorCounter';
+import { trackVisit, incrementTestCount } from './utils/visitorCounter';
 import { isAdmin } from './utils/userManager';
 import { getTranslation } from './utils/translations';
 
@@ -101,13 +101,9 @@ export default function App() {
     localStorage.setItem('disc_lang', lang);
   }, [lang]);
 
-  // Increment real visit count once per session
+  // Ghi nhận lượt truy cập thực tế (1 lượt / phiên, phiên hết hạn sau 30 phút không hoạt động)
   useEffect(() => {
-    const hasVisited = sessionStorage.getItem('pmarcom_visited_session');
-    if (!hasVisited) {
-      sessionStorage.setItem('pmarcom_visited_session', 'true');
-      incrementVisitCount();
-    }
+    trackVisit();
   }, []);
 
   // ROUTE PROTECTION GUARD: Bắt buộc đăng nhập để vào bài test
